@@ -17,7 +17,7 @@ export default function BrandSplit() {
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="group relative h-[600px] overflow-hidden border border-white/10"
           >
@@ -46,7 +46,7 @@ export default function BrandSplit() {
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="group relative h-[600px] overflow-hidden border border-white/10"
           >

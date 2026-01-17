@@ -25,7 +25,7 @@ export default function Exhibition() {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.2 }}
               transition={{ delay: index * 0.2 }}
               className="bg-black border border-white/10 p-8 hover:border-white/30 transition-colors group cursor-pointer"
             >

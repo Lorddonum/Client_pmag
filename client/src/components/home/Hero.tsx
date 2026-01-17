@@ -17,7 +17,8 @@ export default function Hero() {
       <div className="container mx-auto px-6 relative z-20 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.2 }}
         >
           <h2 className="text-accent-foreground/80 font-mono text-sm tracking-[0.3em] uppercase mb-6">
@@ -27,7 +28,8 @@ export default function Hero() {
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.4 }}
           className="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8"
         >
@@ -39,7 +41,8 @@ export default function Hero() {
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.6 }}
           className="max-w-2xl mx-auto text-gray-400 text-lg mb-12 font-light leading-relaxed"
         >
@@ -50,7 +53,8 @@ export default function Hero() {
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.8 }}
           className="flex flex-col md:flex-row gap-6 justify-center"
         >
@@ -66,7 +70,8 @@ export default function Hero() {
       {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false }}
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >

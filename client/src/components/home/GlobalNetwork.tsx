@@ -16,7 +16,7 @@ export default function GlobalNetwork() {
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
               className="text-4xl md:text-5xl font-display font-bold text-white mb-8"
             >
               GLOBAL EXPORT <br />
@@ -44,7 +44,7 @@ export default function GlobalNetwork() {
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.3 }}
                 transition={{ delay: index * 0.1 }}
                 className={`bg-white/5 backdrop-blur-sm border border-white/10 p-8 ${index === 2 ? 'md:col-span-2' : ''}`}
               >
