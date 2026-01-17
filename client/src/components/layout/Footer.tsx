@@ -1,0 +1,59 @@
+export default function Footer() {
+  return (
+    <footer className="bg-black border-t border-white/10 py-20">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+            <h3 className="text-2xl font-display font-bold text-white mb-6">PARALIGHT</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Precision engineered aluminum profiles and advanced magnetic lighting systems for modern architectural spaces.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold uppercase tracking-widest text-xs mb-6">Products</h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li><a href="#" className="hover:text-white transition-colors">Aluminum Profiles</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Magnetic Track Light</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Linear Systems</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">LED Strips</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold uppercase tracking-widest text-xs mb-6">Company</h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Global Network</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Exhibitions</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold uppercase tracking-widest text-xs mb-6">Connect</h4>
+            <p className="text-gray-400 text-sm mb-4">Subscribe to our newsletter for new product launches.</p>
+            <div className="flex">
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/30 w-full"
+              />
+              <button className="bg-white text-black px-4 py-2 text-xs font-bold uppercase hover:bg-gray-200 transition-colors">
+                →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+          <p>© 2026 Paralight. All rights reserved.</p>
+          <div className="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" className="hover:text-white">Privacy Policy</a>
+            <a href="#" className="hover:text-white">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
