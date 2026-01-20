@@ -1,13 +1,38 @@
+import { Facebook, Instagram, Linkedin, Youtube, Twitter, Music2, Pin } from "lucide-react";
+
 export default function Footer() {
+  const socials = [
+    { icon: Facebook, href: "https://www.facebook.com/paralightmaglinear/" },
+    { icon: Instagram, href: "https://www.instagram.com/paralight.group/" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/paralight-group/" },
+    { icon: Youtube, href: "https://www.youtube.com/@ParalightMaglinearLighting" },
+    { icon: Twitter, href: "https://x.com/Paralight_Group" },
+    { icon: Music2, href: "https://www.tiktok.com/@paralightmaglinear" },
+    { icon: Pin, href: "https://www.pinterest.com/ParalightMaglinear/" },
+  ];
+
   return (
     <footer className="bg-black border-t border-white/10 py-20">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
             <h3 className="text-2xl font-display font-bold text-white mb-6">PARALIGHT</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
               Precision engineered aluminum profiles and advanced magnetic lighting systems for modern architectural spaces.
             </p>
+            <div className="flex flex-wrap gap-4">
+              {socials.map((social, i) => (
+                <a 
+                  key={i} 
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black transition-all"
+                >
+                  <social.icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -23,10 +48,10 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold uppercase tracking-widest text-xs mb-6">Company</h4>
             <ul className="space-y-4 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Global Network</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Exhibitions</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              <li><a href="/about" className="hover:text-white transition-colors">About Us</a></li>
+              <li><a href="/#global" className="hover:text-white transition-colors">Global Network</a></li>
+              <li><a href="/#exhibitions" className="hover:text-white transition-colors">Exhibitions</a></li>
+              <li><a href="/contact" className="hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
 

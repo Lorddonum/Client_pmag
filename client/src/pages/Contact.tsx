@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Mail, Phone, MapPin, MessageSquare, Send, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube, Twitter, Music2, Pin } from "lucide-react";
 
 export default function Contact() {
   const contactInfo = [
@@ -9,20 +9,30 @@ export default function Contact() {
       icon: MapPin,
       title: "Our Address",
       details: "No. 11, Longsha Industrial Zone, Jianghai District, Jiangmen City",
-      link: "#"
+      link: "#",
     },
     {
       icon: Phone,
       title: "Phone / Whatsapp",
       details: "+86 181 2825 9727",
-      link: "tel:+8618128259727"
+      link: "tel:+8618128259727",
     },
     {
       icon: Mail,
       title: "Email Address",
       details: "inquiry@paralight.cc",
-      link: "mailto:inquiry@paralight.cc"
-    }
+      link: "mailto:inquiry@paralight.cc",
+    },
+  ];
+
+  const socials = [
+    { icon: Facebook, href: "https://www.facebook.com/paralightmaglinear/" },
+    { icon: Instagram, href: "https://www.instagram.com/paralight.group/" },
+    { icon: Linkedin, href: "https://www.linkedin.com/company/paralight-group/" },
+    { icon: Youtube, href: "https://www.youtube.com/@ParalightMaglinearLighting" },
+    { icon: Twitter, href: "https://x.com/Paralight_Group" },
+    { icon: Music2, href: "https://www.tiktok.com/@paralightmaglinear" },
+    { icon: Pin, href: "https://www.pinterest.com/ParalightMaglinear/" },
   ];
 
   return (
@@ -32,7 +42,7 @@ export default function Contact() {
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-20">
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-5xl md:text-7xl font-display font-bold mb-8"
@@ -40,20 +50,21 @@ export default function Contact() {
               LET'S LIGHT UP <br />
               <span className="text-gray-500 italic">The Future Together</span>
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="text-xl text-gray-400 font-light leading-relaxed"
             >
-              Whether you're a wholesaler, distributor, or working on a lighting project — 
-              our team is here to support you with custom solutions and partnership opportunities.
+              Whether you're a wholesaler, distributor, or working on a lighting
+              project — our team is here to support you with custom solutions
+              and partnership opportunities.
             </motion.p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            {/* Contact Info & Socials */}
-            <motion.div 
+            {/* info and socials */}
+            <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -66,7 +77,9 @@ export default function Contact() {
                       <item.icon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-bold">{item.title}</h3>
+                      <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2 font-bold">
+                        {item.title}
+                      </h3>
                       <p className="text-lg text-white group-hover:text-gray-300 transition-colors leading-relaxed">
                         {item.details}
                       </p>
@@ -76,61 +89,106 @@ export default function Contact() {
               </div>
 
               <div className="pt-12 border-t border-white/10">
-                <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6 font-bold">Follow Our Journey</h3>
-                <div className="flex gap-4">
-                  {[Globe, MessageSquare, Send].map((Icon, i) => (
-                    <a key={i} href="#" className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-                      <Icon className="w-4 h-4" />
+                <h3 className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6 font-bold">
+                  Follow Our Journey
+                </h3>
+                <div className="flex flex-wrap gap-4">
+                  {socials.map((social, i) => (
+                    <a
+                      key={i}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all"
+                    >
+                      <social.icon className="w-4 h-4" />
                     </a>
                   ))}
                 </div>
               </div>
             </motion.div>
 
-            {/* Contact Form */}
-            <motion.div 
+            {/* form */}
+            <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
               className="bg-zinc-950 border border-white/10 p-8 md:p-12 relative"
             >
               <div className="absolute top-0 right-0 w-24 h-24 border-t border-r border-white/20 -mt-2 -mr-2 pointer-events-none" />
-              <h2 className="text-3xl font-display font-bold mb-8 uppercase tracking-tighter">Visit Us</h2>
-              
+              <h2 className="text-3xl font-display font-bold mb-8 uppercase tracking-tighter">
+                Visit Us
+              </h2>
+
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-500">Name *</label>
-                    <input type="text" className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors" required />
+                    <label className="text-xs uppercase tracking-widest text-gray-500">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-500">Email *</label>
-                    <input type="email" className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors" required />
+                    <label className="text-xs uppercase tracking-widest text-gray-500">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                      required
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-500">Whatsapp</label>
-                    <input type="text" className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors" />
+                    <label className="text-xs uppercase tracking-widest text-gray-500">
+                      Whatsapp
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-gray-500">Phone</label>
-                    <input type="text" className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors" />
+                    <label className="text-xs uppercase tracking-widest text-gray-500">
+                      Phone
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-gray-500">Address</label>
-                  <input type="text" className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors" />
+                  <label className="text-xs uppercase tracking-widest text-gray-500">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-gray-500">Message</label>
-                  <textarea rows={4} className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors resize-none"></textarea>
+                  <label className="text-xs uppercase tracking-widest text-gray-500">
+                    Message
+                  </label>
+                  <textarea
+                    rows={4}
+                    className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors resize-none"
+                  ></textarea>
                 </div>
 
-                <button type="submit" className="w-full py-4 bg-white text-black font-bold uppercase tracking-[0.3em] text-xs hover:bg-gray-200 transition-colors">
+                <button
+                  type="submit"
+                  className="w-full py-4 bg-white text-black font-bold uppercase tracking-[0.3em] text-xs hover:bg-gray-200 transition-colors"
+                >
                   Submit Inquiry
                 </button>
               </form>
@@ -139,17 +197,17 @@ export default function Contact() {
         </div>
       </main>
 
-      {/* Google Maps Embed */}
+      {/* maps embed*/}
       <section className="h-[500px] w-full border-y border-white/10 grayscale">
-         <iframe 
-           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3681.3320625624775!2d113.123456!3d22.56789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDM0JzA0LjQiTiAxMTPCsDA3JzI0LjQiRQ!5e0!3m2!1sen!2s!4v1612345678901!5m2!1sen!2s" 
-           width="100%" 
-           height="100%" 
-           style={{ border: 0 }} 
-           allowFullScreen={true} 
-           loading="lazy" 
-           referrerPolicy="no-referrer-when-downgrade"
-         ></iframe>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3681.3320625624775!2d113.123456!3d22.56789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDM0JzA0LjQiTiAxMTPCsDA3JzI0LjQiRQ!5e0!3m2!1sen!2s!4v1612345678901!5m2!1sen!2s"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen={true}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
       </section>
 
       <Footer />
