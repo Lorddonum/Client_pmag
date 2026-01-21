@@ -33,7 +33,7 @@ const CONTROL_ICONS = [
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeBrand, setActiveBrand] = useState<string>("All");
+  const [activeBrand, setActiveBrand] = useState<string>("Paralight");
 
   useEffect(() => {
     const stored = localStorage.getItem("paralight_products");
@@ -44,9 +44,7 @@ export default function Products() {
     }
   }, []);
 
-  const filteredProducts = activeBrand === "All" 
-    ? products 
-    : products.filter(p => p.brand === activeBrand);
+  const filteredProducts = products.filter(p => p.brand === activeBrand);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
@@ -75,7 +73,7 @@ export default function Products() {
 
           {/* Filter Bar */}
           <div className="flex gap-8 mb-20 border-b border-white/10 pb-6">
-            {["All", "Paralight", "Maglinear"].map(brand => (
+            {["Paralight", "Maglinear"].map(brand => (
               <button
                 key={brand}
                 onClick={() => setActiveBrand(brand)}
