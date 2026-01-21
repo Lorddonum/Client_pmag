@@ -18,6 +18,7 @@ interface Product {
   cri: string;
   cct: string;
   beamAngle: string;
+  image?: string;
 }
 
 const CONTROL_ICONS = [
@@ -100,7 +101,11 @@ export default function Products() {
                   <div className="aspect-[4/5] bg-zinc-950 border border-white/10 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-20 h-20 text-white/5" />
+                      {product.image ? (
+                        <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                      ) : (
+                        <Package className="w-20 h-20 text-white/5" />
+                      )}
                     </div>
                     <div className="absolute top-6 left-6 z-20 flex gap-2">
                       <span className="bg-white text-black px-3 py-1 text-[10px] font-bold uppercase tracking-widest">{product.brand}</span>

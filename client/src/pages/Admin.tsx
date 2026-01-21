@@ -1,9 +1,9 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useLocation } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon } from "lucide-react";
 
 interface Product {
   id: number;
@@ -19,9 +19,9 @@ interface Product {
   cri: string;
   cct: string;
   beamAngle: string;
+  image?: string;
 }
 
-// Mock database in localStorage for prototype persistence
 const STORAGE_KEY = "paralight_products";
 
 const getProducts = (): Product[] => {
@@ -29,9 +29,14 @@ const getProducts = (): Product[] => {
   return stored ? JSON.parse(stored) : [];
 };
 
-const saveProduct = (product: Omit<Product, 'id'>): Product[] => {
+const saveProduct = (product: Product | Omit<Product, 'id'>): Product[] => {
   const products = getProducts();
-  const updated = [...products, { ...product, id: Date.now() }];
+  let updated;
+  if ('id' in product) {
+    updated = products.map(p => p.id === product.id ? product as Product : p);
+  } else {
+    updated = [...products, { ...product, id: Date.now() }];
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   return updated;
 };
@@ -48,9 +53,9 @@ export default function Admin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [, setLocation] = useLocation();
 
-  // Form state
   const [formData, setFormData] = useState({
     name: "",
     modelNumber: "",
@@ -63,7 +68,8 @@ export default function Admin() {
     color: "",
     cri: "",
     cct: "",
-    beamAngle: ""
+    beamAngle: "",
+    image: ""
   });
 
   useEffect(() => {
@@ -91,10 +97,28 @@ export default function Admin() {
     setLocation("/");
   };
 
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const updated = saveProduct(formData);
+    const productData = editingId ? { ...formData, id: editingId } : formData;
+    const updated = saveProduct(productData);
     setProducts(updated);
+    resetForm();
+    alert(editingId ? "Product updated successfully!" : "Product added successfully!");
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
     setFormData({
       name: "",
       modelNumber: "",
@@ -107,15 +131,36 @@ export default function Admin() {
       color: "",
       cri: "",
       cct: "",
-      beamAngle: ""
+      beamAngle: "",
+      image: ""
     });
-    alert("Product added successfully!");
+  };
+
+  const handleEdit = (product: Product) => {
+    setEditingId(product.id);
+    setFormData({
+      name: product.name,
+      modelNumber: product.modelNumber,
+      description: product.description,
+      series: product.series,
+      brand: product.brand,
+      wattage: product.wattage,
+      dimensions: product.dimensions,
+      voltage: product.voltage,
+      color: product.color,
+      cri: product.cri,
+      cct: product.cct,
+      beamAngle: product.beamAngle,
+      image: product.image || ""
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = (id: number) => {
     if (confirm("Are you sure you want to delete this product?")) {
       const updated = deleteProduct(id);
       setProducts(updated);
+      if (editingId === id) resetForm();
     }
   };
 
@@ -173,14 +218,14 @@ export default function Admin() {
                 <p className="text-xs text-gray-500 uppercase tracking-widest">Management Dashboard</p>
               </div>
               <div className="space-y-2">
-                <button className="w-full flex items-center justify-between p-4 bg-white text-black text-[10px] font-bold uppercase tracking-widest group">
-                  Add Product <ChevronRight className="w-4 h-4" />
+                <button 
+                  onClick={resetForm}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all ${!editingId ? 'bg-white text-black' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}
+                >
+                  Add Product <Plus className="w-4 h-4" />
                 </button>
                 <button className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
                   Product List <Package className="w-4 h-4 text-gray-500" />
-                </button>
-                <button className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
-                  Settings <Settings className="w-4 h-4 text-gray-500" />
                 </button>
                 <button 
                   onClick={handleLogout}
@@ -193,9 +238,17 @@ export default function Admin() {
             <div className="flex-1 space-y-12">
               <section className="bg-zinc-950 border border-white/10 p-8 md:p-12 relative">
                 <div className="absolute top-0 right-0 w-24 h-24 border-t border-r border-white/20 -mt-2 -mr-2 pointer-events-none" />
-                <h3 className="text-xl font-display font-bold mb-8 uppercase tracking-widest flex items-center gap-4">
-                  <Plus className="w-5 h-5 text-white" /> Add New Lighting System
-                </h3>
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-xl font-display font-bold uppercase tracking-widest flex items-center gap-4">
+                    {editingId ? <Edit2 className="w-5 h-5 text-white" /> : <Plus className="w-5 h-5 text-white" />}
+                    {editingId ? "Edit Lighting System" : "Add New Lighting System"}
+                  </h3>
+                  {editingId && (
+                    <button onClick={resetForm} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-white flex items-center gap-2">
+                      <X className="w-3 h-3" /> Cancel Edit
+                    </button>
+                  )}
+                </div>
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
@@ -229,7 +282,6 @@ export default function Admin() {
                         value={formData.series}
                         onChange={(e) => setFormData({...formData, series: e.target.value})}
                         className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
-                        placeholder="e.g. Magnetic Track"
                       />
                     </div>
                     <div className="space-y-2">
@@ -243,6 +295,32 @@ export default function Admin() {
                         <option value="Paralight">Paralight</option>
                         <option value="Maglinear">Maglinear</option>
                       </select>
+                    </div>
+                  </div>
+
+                  {/* Image Upload Area */}
+                  <div className="space-y-2 pt-6 border-t border-white/10">
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image</label>
+                    <div className="relative group">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                      />
+                      <div className={`border-2 border-dashed border-white/10 p-8 text-center transition-colors ${formData.image ? 'bg-white/5' : 'hover:border-white/20'}`}>
+                        {formData.image ? (
+                          <div className="flex flex-col items-center gap-4">
+                            <img src={formData.image} alt="Preview" className="w-32 h-32 object-contain border border-white/10" />
+                            <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click or drag to replace</p>
+                          </div>
+                        ) : (
+                          <>
+                            <ImageIcon className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
+                            <p className="text-xs text-gray-500 uppercase tracking-widest">Click or drag product picture</p>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -289,18 +367,11 @@ export default function Admin() {
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-2 pt-6 border-t border-white/10">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Catalogue PDF</label>
-                    <div className="border-2 border-dashed border-white/10 p-8 text-center hover:border-white/20 transition-colors cursor-pointer group">
-                      <Upload className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
-                      <p className="text-xs text-gray-500 uppercase tracking-widest">Click to upload product catalogue</p>
-                    </div>
-                  </div>
                   <button 
                     type="submit"
                     className="w-full py-5 bg-white text-black font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-gray-200 transition-colors shadow-2xl"
                   >
-                    Publish Product
+                    {editingId ? "Update Product" : "Publish Product"}
                   </button>
                 </form>
               </section>
@@ -312,8 +383,12 @@ export default function Admin() {
                   {products.map((product) => (
                     <div key={product.id} className="bg-zinc-950 border border-white/10 p-6 flex justify-between items-center group hover:border-white/30 transition-all">
                       <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-white/5 flex items-center justify-center border border-white/10">
-                          <Package className="w-5 h-5 text-gray-500" />
+                        <div className="w-12 h-12 bg-white/5 flex items-center justify-center border border-white/10 overflow-hidden">
+                          {product.image ? (
+                            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <Package className="w-5 h-5 text-gray-500" />
+                          )}
                         </div>
                         <div>
                           <h4 className="text-sm font-bold uppercase tracking-widest">{product.name}</h4>
@@ -323,7 +398,13 @@ export default function Admin() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => handleEdit(product)}
+                          className="p-3 text-gray-500 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
                         <button 
                           onClick={() => handleDelete(product.id)}
                           className="p-3 text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
@@ -333,11 +414,6 @@ export default function Admin() {
                       </div>
                     </div>
                   ))}
-                  {products.length === 0 && (
-                    <div className="text-center py-12 border border-white/5 bg-white/[0.02]">
-                      <p className="text-xs text-gray-500 uppercase tracking-widest">No products in database</p>
-                    </div>
-                  )}
                 </div>
               </section>
             </div>
