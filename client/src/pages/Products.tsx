@@ -39,26 +39,6 @@ export default function Products() {
     const stored = localStorage.getItem("paralight_products");
     if (stored) {
       setProducts(JSON.parse(stored));
-    } else {
-      const initial: Product[] = [
-        {
-          id: 1,
-          name: "MAGNETIC DOT LIGHT",
-          modelNumber: "MAG-05/10-ML-D80",
-          description: "Precision engineered accent lighting system for architectural magnetic tracks.",
-          series: "Magnetic Track",
-          brand: "Paralight",
-          wattage: "5W",
-          dimensions: "D60",
-          voltage: "DC24V",
-          color: "Sand White/Sand Black",
-          cri: "Ra≥90",
-          cct: "3000K/4000K/6500K",
-          beamAngle: "270°"
-        }
-      ];
-      setProducts(initial);
-      localStorage.setItem("paralight_products", JSON.stringify(initial));
     }
   }, []);
 
@@ -193,6 +173,11 @@ export default function Products() {
                 </div>
               </motion.section>
             ))}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-40 border border-white/5 bg-white/[0.02]">
+                <p className="text-sm text-gray-500 uppercase tracking-[0.3em]">No products available in this category</p>
+              </div>
+            )}
           </div>
         </div>
       </main>
