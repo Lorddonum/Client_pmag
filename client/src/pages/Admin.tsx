@@ -12,6 +12,10 @@ interface Product {
   description: string;
   series: string;
   brand: "Paralight" | "Maglinear";
+  category: "Indoor" | "Outdoor" | "Commercial" | "Decorative";
+  application?: string;
+  finish?: string;
+  material?: string;
   wattage: string;
   dimensions: string;
   voltage: string;
@@ -63,6 +67,10 @@ export default function Admin() {
     description: "",
     series: "",
     brand: "Paralight" as const,
+    category: "Indoor" as const,
+    application: "",
+    finish: "",
+    material: "",
     wattage: "",
     dimensions: "",
     voltage: "",
@@ -127,6 +135,10 @@ export default function Admin() {
       description: "",
       series: "",
       brand: "Paralight" as "Paralight" | "Maglinear",
+      category: "Indoor" as "Indoor" | "Outdoor" | "Commercial" | "Decorative",
+      application: "",
+      finish: "",
+      material: "",
       wattage: "",
       dimensions: "",
       voltage: "",
@@ -147,6 +159,10 @@ export default function Admin() {
       description: product.description,
       series: product.series,
       brand: product.brand as "Paralight" | "Maglinear",
+      category: product.category as "Indoor" | "Outdoor" | "Commercial" | "Decorative" || "Indoor",
+      application: product.application || "",
+      finish: product.finish || "",
+      material: product.material || "",
       wattage: product.wattage,
       dimensions: product.dimensions,
       voltage: product.voltage,
@@ -289,6 +305,23 @@ export default function Admin() {
                       />
                     </div>
                     <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Category *</label>
+                      <select 
+                        required
+                        value={formData.category}
+                        onChange={(e) => setFormData({...formData, category: e.target.value as any})}
+                        className="w-full bg-zinc-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                      >
+                        <option value="Indoor">Indoor</option>
+                        <option value="Outdoor">Outdoor</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Decorative">Decorative</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
                       <select 
                         required
@@ -373,6 +406,18 @@ export default function Admin() {
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
                         <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. 5W" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
+                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Retail, Office" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
+                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
+                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Aluminum" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>

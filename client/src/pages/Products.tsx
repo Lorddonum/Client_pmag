@@ -12,6 +12,7 @@ interface Product {
   description: string;
   series: string;
   brand: "Paralight" | "Maglinear";
+  category: "Indoor" | "Outdoor" | "Commercial" | "Decorative";
   wattage: string;
   dimensions: string;
   voltage: string;
@@ -23,9 +24,12 @@ interface Product {
   catalogueUrl?: string;
 }
 
+const CATEGORIES = ["Indoor", "Outdoor", "Commercial", "Decorative"];
+
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeBrand, setActiveBrand] = useState<string>("Paralight");
+  const [activeCategory, setActiveCategory] = useState<string>("Indoor");
 
   useEffect(() => {
     const stored = localStorage.getItem("paralight_products");
@@ -36,7 +40,7 @@ export default function Products() {
     }
   }, []);
 
-  const filteredProducts = products.filter(p => p.brand === activeBrand);
+  const filteredProducts = products.filter(p => p.brand === activeBrand && (p.category === activeCategory || (!p.category && activeCategory === "Indoor")));
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
@@ -64,18 +68,40 @@ export default function Products() {
           </div>
 
           {/* Filter Bar */}
-          <div className="flex gap-8 mb-20 border-b border-white/10 pb-6">
-            {["Paralight", "Maglinear"].map(brand => (
-              <button
-                key={brand}
-                onClick={() => setActiveBrand(brand)}
-                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors ${
-                  activeBrand === brand ? "text-white" : "text-gray-500 hover:text-white"
-                }`}
-              >
-                {brand}
-              </button>
-            ))}
+          <div className="flex flex-col gap-8 mb-20 border-b border-white/10 pb-12">
+            <div className="flex gap-8">
+              {["Paralight", "Maglinear"].map(brand => (
+                <button
+                  key={brand}
+                  onClick={() => setActiveBrand(brand)}
+                  className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors ${
+                    activeBrand === brand ? "text-white" : "text-gray-500 hover:text-white"
+                  }`}
+                >
+                  {brand}
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex flex-wrap gap-4 sm:gap-12">
+              {CATEGORIES.map(category => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`text-[9px] font-medium uppercase tracking-[0.2em] transition-all relative py-2 ${
+                    activeCategory === category ? "text-white" : "text-gray-600 hover:text-white"
+                  }`}
+                >
+                  {category}
+                  {activeCategory === category && (
+                    <motion.div 
+                      layoutId="category-indicator"
+                      className="absolute -bottom-2 left-0 right-0 h-px bg-white"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
