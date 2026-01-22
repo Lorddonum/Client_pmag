@@ -24,12 +24,12 @@ interface Product {
   catalogueUrl?: string | null;
 }
 
-const CATEGORIES = ["Indoor", "Outdoor", "Commercial", "Decorative"];
+const CATEGORIES = ["All", "Indoor", "Outdoor", "Commercial", "Decorative"];
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeBrand, setActiveBrand] = useState<string>("Paralight");
-  const [activeCategory, setActiveCategory] = useState<string>("Indoor");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  const filteredProducts = products.filter(p => p.brand === activeBrand && (p.category === activeCategory || (!p.category && activeCategory === "Indoor")));
+  const filteredProducts = products.filter(p => p.brand === activeBrand && (activeCategory === "All" || p.category === activeCategory));
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
