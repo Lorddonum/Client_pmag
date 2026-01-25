@@ -37,7 +37,7 @@ export default function Navbar() {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link
           href="/"
-          className="flex items-center gap-1 hover:opacity-80 transition-opacity"
+          className="flex items-center -space-x-8 hover:opacity-80 transition-opacity"
         >
           <div className="h-16 overflow-hidden flex items-center">
             <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
