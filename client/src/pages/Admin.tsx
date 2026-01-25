@@ -208,7 +208,7 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#1a2332] flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -252,7 +252,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
+    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">

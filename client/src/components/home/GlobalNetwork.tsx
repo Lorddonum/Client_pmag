@@ -4,10 +4,10 @@ import { Globe, TrendingUp, Users } from "lucide-react";
 
 export default function GlobalNetwork() {
   return (
-    <section id="global" className="py-32 bg-[#1a2332] relative overflow-hidden">
+    <section id="global" className="py-32 bg-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-20">
         <img src={mapImg} alt="Global Map" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -17,7 +17,7 @@ export default function GlobalNetwork() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, amount: 0.3 }}
-              className="text-4xl md:text-5xl font-display font-bold text-white mb-8"
+              className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-8"
             >
               GLOBAL EXPORT <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8E8] to-[#ECAA00]">NETWORK</span>

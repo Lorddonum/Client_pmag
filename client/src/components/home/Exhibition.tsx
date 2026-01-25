@@ -9,10 +9,10 @@ export default function Exhibition() {
   ];
 
   return (
-    <section id="exhibitions" className="py-32 bg-[#141c28] border-t border-white/5">
+    <section id="exhibitions" className="py-32 bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">EXHIBITIONS</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">EXHIBITIONS</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             We take part in leading lighting exhibitions worldwide, showcasing our latest innovations 
             and strengthening connections with global partners.

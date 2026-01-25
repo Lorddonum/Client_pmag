@@ -64,7 +64,7 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#1a2332] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-gray-900 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-white/50" />
       </div>
     );
@@ -72,7 +72,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
+      <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
         <Navbar />
         <main className="pt-32 pb-20">
           <div className="container mx-auto px-6 text-center py-40">
@@ -90,12 +90,12 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
+    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <Link href="/products">
-            <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 text-gray-500 hover:text-white transition-colors group" data-testid="button-back">
+            <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 text-gray-500 hover:text-gray-900 transition-colors group" data-testid="button-back">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Catalog
             </button>
           </Link>

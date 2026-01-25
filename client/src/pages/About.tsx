@@ -27,7 +27,7 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black">
+    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white">
       <Navbar />
       
       {/* Hero Section */}

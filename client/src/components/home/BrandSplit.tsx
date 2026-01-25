@@ -5,10 +5,10 @@ import { ArrowRight } from "lucide-react";
 
 export default function BrandSplit() {
   return (
-    <section id="brands" className="py-32 bg-[#1a2332]">
+    <section id="brands" className="py-32 bg-gray-100">
       <div className="container mx-auto px-6">
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">OUR BRANDS</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">OUR BRANDS</h2>
           <div className="w-24 h-1 bg-gradient-to-r from-[#00A8E8] to-[#ECAA00] mx-auto" />
         </div>
 

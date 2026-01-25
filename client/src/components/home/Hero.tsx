@@ -3,10 +3,10 @@ import heroBg from "@assets/generated_images/abstract_architectural_lighting_des
 
 export default function Hero() {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#1a2332]">
+    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gray-50">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/60 to-white z-10" />
         <img
           src={heroBg}
           alt="Architectural Lighting Background"
@@ -31,7 +31,7 @@ export default function Hero() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="text-5xl md:text-8xl font-display font-bold text-white tracking-tight mb-8"
+          className="text-5xl md:text-8xl font-display font-bold text-gray-900 tracking-tight mb-8"
         >
           PRECISION IN <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8E8] via-[#00C4E8] to-[#ECAA00]">
@@ -44,7 +44,7 @@ export default function Hero() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.1 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="max-w-2xl mx-auto text-gray-400 text-lg mb-12 font-light leading-relaxed"
+          className="max-w-2xl mx-auto text-gray-600 text-lg mb-12 font-light leading-relaxed"
         >
           Defining modern spaces with high-quality aluminum profiles and
           advanced magnetic track lighting systems. Engineered for durability,
@@ -75,7 +75,7 @@ export default function Hero() {
         transition={{ delay: 1.5, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
-        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-white/50 to-transparent" />
+        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-gray-400 to-transparent" />
       </motion.div>
     </section>
   );
