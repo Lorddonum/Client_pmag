@@ -4,7 +4,7 @@ import { Globe, TrendingUp, Users } from "lucide-react";
 
 export default function GlobalNetwork() {
   return (
-    <section id="global" className="py-32 bg-black relative overflow-hidden">
+    <section id="global" className="py-32 bg-[#1a2332] relative overflow-hidden">
       <div className="absolute inset-0 opacity-20">
         <img src={mapImg} alt="Global Map" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />

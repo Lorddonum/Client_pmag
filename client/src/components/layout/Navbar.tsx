@@ -30,17 +30,17 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
         scrolled
-          ? "bg-black/80 backdrop-blur-md border-white/10 py-4"
+          ? "bg-[#1a2332]/90 backdrop-blur-md border-white/10 py-4"
           : "bg-transparent py-6",
       )}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link
           href="/"
-          className="flex flex-col items-start hover:opacity-80 transition-opacity"
+          className="flex items-center gap-4 hover:opacity-80 transition-opacity"
         >
           <img src={paralightLogo} alt="Paralight" className="h-8 object-contain" />
-          <img src={maglinearLogo} alt="Maglinear Lighting" className="h-5 object-contain mt-0.5" />
+          <img src={maglinearLogo} alt="Maglinear Lighting" className="h-8 object-contain" />
         </Link>
 
         {/* Desktop Nav */}
@@ -75,7 +75,7 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-b border-white/10 py-8 px-6 flex flex-col space-y-4">
+        <div className="md:hidden absolute top-full left-0 w-full bg-[#1a2332]/95 backdrop-blur-xl border-b border-white/10 py-8 px-6 flex flex-col space-y-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}

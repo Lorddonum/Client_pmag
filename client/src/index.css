@@ -47,14 +47,14 @@
   --brand-cyan: 195 100% 45%; /* #00A8E8 - Cyan/Blue from Maglinear logo */
   --brand-blue: 200 100% 40%; /* #0080CC - Deeper blue accent */
   
-  /* Dark, Architectural Theme */
-  --background: 0 0% 0%; /* Pure black */
+  /* Dark Blue Professional Theme */
+  --background: 215 25% 12%; /* Dark blue-gray */
   --foreground: 0 0% 98%;
 
-  --card: 0 0% 5%;
+  --card: 215 25% 15%;
   --card-foreground: 0 0% 98%;
 
-  --popover: 0 0% 5%;
+  --popover: 215 25% 15%;
   --popover-foreground: 0 0% 98%;
 
   --primary: 195 100% 45%; /* Cyan blue as primary */
@@ -63,8 +63,8 @@
   --secondary: 42 89% 50%; /* Gold as secondary */
   --secondary-foreground: 0 0% 0%;
 
-  --muted: 0 0% 12%;
-  --muted-foreground: 0 0% 60%;
+  --muted: 215 20% 18%;
+  --muted-foreground: 210 10% 60%;
 
   --accent: 195 100% 45%; /* Cyan accent */
   --accent-foreground: 0 0% 0%;
@@ -72,8 +72,8 @@
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 0 0% 15%;
-  --input: 0 0% 12%;
+  --border: 215 20% 20%;
+  --input: 215 20% 18%;
   --ring: 195 100% 45%;
 
   --radius: 0rem; /* Sharp edges for architectural feel */

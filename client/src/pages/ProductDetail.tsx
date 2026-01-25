@@ -64,7 +64,7 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a2332] text-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-white/50" />
       </div>
     );
@@ -72,7 +72,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+      <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
         <Navbar />
         <main className="pt-32 pb-20">
           <div className="container mx-auto px-6 text-center py-40">
@@ -90,7 +90,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">

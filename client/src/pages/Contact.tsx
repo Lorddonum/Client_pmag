@@ -36,7 +36,7 @@ export default function Contact() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black">
       <Navbar />
 
       <main className="pt-32 pb-20">

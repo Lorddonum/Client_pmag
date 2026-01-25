@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText } from "lucide-react";
 
+const THEME_BG = "bg-[#1a2332]";
+
 interface Product {
   id: number;
   name: string;
@@ -206,7 +208,7 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-[#1a2332] flex items-center justify-center p-6 font-sans">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -239,7 +241,7 @@ export default function Admin() {
             <button 
               type="submit"
               data-testid="button-login"
-              className="w-full py-4 bg-white text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:bg-gray-200 transition-colors"
+              className="w-full py-4 bg-[#00A8E8] text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:bg-[#00C4E8] transition-colors"
             >
               Enter Dashboard
             </button>
@@ -250,7 +252,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">

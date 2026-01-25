@@ -9,7 +9,7 @@ export default function Exhibition() {
   ];
 
   return (
-    <section id="exhibitions" className="py-32 bg-zinc-950 border-t border-white/5">
+    <section id="exhibitions" className="py-32 bg-[#141c28] border-t border-white/5">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">EXHIBITIONS</h2>

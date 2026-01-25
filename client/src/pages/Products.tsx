@@ -52,7 +52,7 @@ export default function Products() {
   const filteredProducts = products.filter(p => p.brand === activeBrand && (activeCategory === "All" || p.category === activeCategory));
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+    <div className="min-h-screen bg-[#1a2332] text-white selection:bg-[#00A8E8] selection:text-black font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
