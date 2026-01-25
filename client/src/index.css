@@ -42,34 +42,39 @@
 }
 
 :root {
+  /* Brand Colors from Logo */
+  --brand-gold: 42 89% 50%; /* #ECAA00 - Yellow/Gold from Maglinear logo */
+  --brand-cyan: 195 100% 45%; /* #00A8E8 - Cyan/Blue from Maglinear logo */
+  --brand-blue: 200 100% 40%; /* #0080CC - Deeper blue accent */
+  
   /* Dark, Architectural Theme */
-  --background: 240 10% 3.9%; /* Very dark grey/black */
+  --background: 0 0% 0%; /* Pure black */
   --foreground: 0 0% 98%;
 
-  --card: 240 10% 3.9%;
+  --card: 0 0% 5%;
   --card-foreground: 0 0% 98%;
 
-  --popover: 240 10% 3.9%;
+  --popover: 0 0% 5%;
   --popover-foreground: 0 0% 98%;
 
-  --primary: 0 0% 98%; /* White for primary actions/text */
-  --primary-foreground: 240 5.9% 10%;
+  --primary: 195 100% 45%; /* Cyan blue as primary */
+  --primary-foreground: 0 0% 0%;
 
-  --secondary: 240 3.7% 15.9%; /* Dark grey for secondary areas */
-  --secondary-foreground: 0 0% 98%;
+  --secondary: 42 89% 50%; /* Gold as secondary */
+  --secondary-foreground: 0 0% 0%;
 
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 60%;
 
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
+  --accent: 195 100% 45%; /* Cyan accent */
+  --accent-foreground: 0 0% 0%;
 
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
+  --border: 0 0% 15%;
+  --input: 0 0% 12%;
+  --ring: 195 100% 45%;
 
   --radius: 0rem; /* Sharp edges for architectural feel */
 }
@@ -93,6 +98,38 @@
   }
   
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] to-[#F2D06B];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ECAA00] to-[#FFD54F];
+  }
+  
+  .text-brand-cyan {
+    color: #00A8E8;
+  }
+  
+  .text-brand-gold {
+    color: #ECAA00;
+  }
+  
+  .bg-brand-cyan {
+    background-color: #00A8E8;
+  }
+  
+  .bg-brand-gold {
+    background-color: #ECAA00;
+  }
+  
+  .border-brand-cyan {
+    border-color: #00A8E8;
+  }
+  
+  .border-brand-gold {
+    border-color: #ECAA00;
+  }
+  
+  .hover\:bg-brand-cyan:hover {
+    background-color: #00A8E8;
+  }
+  
+  .hover\:bg-brand-gold:hover {
+    background-color: #ECAA00;
   }
 }

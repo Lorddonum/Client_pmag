@@ -2,6 +2,8 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import paralightLogo from "@/assets/paralight-logo.png";
+import maglinearLogo from "@/assets/maglinear-logo.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -35,9 +37,10 @@ export default function Navbar() {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link
           href="/"
-          className="text-2xl font-display font-bold tracking-tighter text-white hover:opacity-80 transition-opacity"
+          className="flex flex-col items-start hover:opacity-80 transition-opacity"
         >
-          PARALIGHT
+          <img src={paralightLogo} alt="Paralight" className="h-8 object-contain" />
+          <img src={maglinearLogo} alt="Maglinear Lighting" className="h-5 object-contain mt-0.5" />
         </Link>
 
         {/* Desktop Nav */}
