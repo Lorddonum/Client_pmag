@@ -39,8 +39,12 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-4 hover:opacity-80 transition-opacity"
         >
-          <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
-          <img src={maglinearLogo} alt="Maglinear Lighting" className="h-40 max-w-[360px] object-cover object-center" />
+          <div className="h-16 overflow-hidden flex items-center">
+            <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
+          </div>
+          <div className="h-16 overflow-hidden flex items-center">
+            <img src={maglinearLogo} alt="Maglinear Lighting" className="h-40 max-w-[360px] object-cover object-center" />
+          </div>
         </Link>
 
         {/* Desktop Nav */}
