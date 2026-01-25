@@ -18,9 +18,13 @@ export default function Footer() {
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-1">
-            <div className="mb-6">
-              <img src={paralightLogo} alt="Paralight" className="h-10 object-contain mb-1" />
-              <img src={maglinearLogo} alt="Maglinear Lighting" className="h-6 object-contain" />
+            <div className="mb-6 flex items-center -space-x-6">
+              <div className="h-12 overflow-hidden flex items-center">
+                <img src={paralightLogo} alt="Paralight" className="h-32 max-w-[280px] object-cover object-center" />
+              </div>
+              <div className="h-12 overflow-hidden flex items-center">
+                <img src={maglinearLogo} alt="Maglinear Lighting" className="h-32 max-w-[280px] object-cover object-center" />
+              </div>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-8">
               Precision engineered aluminum profiles and advanced magnetic lighting systems for modern architectural spaces.
