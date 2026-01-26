@@ -28,17 +28,19 @@ export default function BrandSplit() {
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             
-            <div className="absolute bottom-0 left-0 p-10 z-20 max-w-lg">
-              <h3 className="text-3xl font-display font-bold text-white mb-4 flex items-center gap-4">
-                PARALIGHT <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-              </h3>
-              <p className="text-gray-300 mb-6 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity">
-                Specializing in high-quality aluminum profiles offering over 300 customizable models. 
-                Premium finishes including matte black, sandy white, grey, gold, and anti-oxidation coatings.
-              </p>
-              <span className="text-[#00A8E8] border-b border-[#00A8E8] pb-1 text-sm uppercase tracking-widest">
-                View Collection
-              </span>
+            <div className="absolute bottom-0 left-0 right-0 p-10 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent">
+              <div className="max-w-lg">
+                <h3 className="text-3xl font-display font-bold text-white mb-4 flex items-center gap-4">
+                  PARALIGHT <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                </h3>
+                <p className="text-gray-200 mb-6 leading-relaxed">
+                  Specializing in high-quality aluminum profiles offering over 300 customizable models. 
+                  Premium finishes including matte black, sandy white, grey, gold, and anti-oxidation coatings.
+                </p>
+                <span className="text-[#00A8E8] border-b border-[#00A8E8] pb-1 text-sm uppercase tracking-widest">
+                  View Collection
+                </span>
+              </div>
             </div>
           </motion.div>
 
