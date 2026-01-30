@@ -38,8 +38,9 @@ export default function Products() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch(`/api/products?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           setProducts(data);
