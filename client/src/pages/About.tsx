@@ -8,7 +8,8 @@ import salesTeamImg from "@/assets/sales-team.png";
 import logisticsTeamImg from "@/assets/logistics-team.png";
 import rdTeamImg from "@/assets/rd-team.png";
 import productionTeamImg from "@/assets/production-team.png";
-import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe } from "lucide-react";
+import coreTeamImg from "@/assets/core-team.png";
+import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe, Heart } from "lucide-react";
 
 export default function About() {
   const stats = [
@@ -255,7 +256,74 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team Sections */}
+      {/* Core Team Section - Featured prominently */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-[#00A8E8] rounded-full blur-[100px]" />
+          <div className="absolute bottom-10 right-10 w-80 h-80 bg-[#ECAA00] rounded-full blur-[120px]" />
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#00A8E8]/10 to-[#ECAA00]/10 rounded-full mb-6 border border-[#00A8E8]/20">
+                <Heart className="w-6 h-6 text-[#00A8E8]" />
+                <span className="font-bold text-lg bg-gradient-to-r from-[#00A8E8] to-[#ECAA00] bg-clip-text text-transparent">Core Team</span>
+              </div>
+              <h2 className="text-4xl md:text-6xl font-display font-bold mb-6">Client-Centric Philosophy</h2>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative mb-12"
+            >
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#00A8E8] via-[#ECAA00] to-[#00A8E8] rounded-3xl opacity-20 blur-xl" />
+              <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+                <img 
+                  src={coreTeamImg} 
+                  alt="Paralight Core Team"
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                  <p className="text-2xl md:text-3xl font-display font-bold">The Heart of Paralight Group</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="relative"
+            >
+              <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+                <Quote className="w-16 h-16 text-[#00A8E8] opacity-20 absolute top-6 left-6" />
+                <div className="relative z-10">
+                  <p className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8 font-light">
+                    At Paralight Group, our culture is defined by a <span className="font-semibold text-[#00A8E8]">"Client-Centric"</span> philosophy, brought to life through a seamless integration of manufacturing and trade. Led by visionary leadership, our teams leverage specialized expertise and intuitive collaboration to ensure that <span className="font-semibold text-[#ECAA00]">"Client Satisfaction"</span> is the heartbeat of every stage in our partnership.
+                  </p>
+                  <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+                    This closed-loop system—from responsive demand to collaborative support and full-chain satisfaction—represents the <span className="font-semibold">core competitive advantage</span> of Paralight Group and is the foundation of the trust we have built with global partners.
+                  </p>
+                </div>
+                <Quote className="w-16 h-16 text-[#ECAA00] opacity-20 absolute bottom-6 right-6 rotate-180" />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Other Team Sections */}
       {teams.map((team, i) => (
         <section key={i} className={`py-20 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
           <div className="container mx-auto px-6">
