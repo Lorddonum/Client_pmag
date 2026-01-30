@@ -527,43 +527,43 @@ export default function Admin() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                        <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. 5W" />
+                        <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 5W" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
-                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Retail, Office" />
+                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Retail, Office" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
-                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
-                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Aluminum" />
+                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Aluminum" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
-                        <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. D60" />
+                        <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. D60" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                        <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. DC24V" />
+                        <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. DC24V" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
-                        <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                        <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. Ra≥90" />
+                        <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Ra≥90" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                        <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. 3000K" />
+                        <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 3000K" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
-                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm focus:outline-none focus:border-white/40" placeholder="e.g. 270°" />
+                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 270°" />
                       </div>
                     </div>
                   </div>
