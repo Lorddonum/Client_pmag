@@ -5,6 +5,7 @@ import aboutVideo from "@assets/abutus_1768691137923.mp4";
 import chairmanImg from "@/assets/chairman-situ.png";
 import ceoImg from "@/assets/ceo-michelle.png";
 import salesTeamImg from "@/assets/sales-team.png";
+import logisticsTeamImg from "@/assets/logistics-team.png";
 import { Award, ShieldCheck, Factory, Truck, Users, Star, Quote } from "lucide-react";
 
 export default function About() {
@@ -209,6 +210,37 @@ export default function About() {
             <img 
               src={salesTeamImg} 
               alt="Paralight Sales Team" 
+              className="w-full h-auto object-cover"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Logistics Team */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold mb-4">Logistics Team</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Integrating resources across the entire chain, accurately transmitting customer needs to all departments, and coordinating resources such as design and logistics to ensure customized service delivery. Progress is updated to customers in real time, making collaboration transparent and manageable — minimizing information gaps and reducing customer waiting costs.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative overflow-hidden rounded-xl shadow-lg"
+          >
+            <img 
+              src={logisticsTeamImg} 
+              alt="Paralight Logistics Team" 
               className="w-full h-auto object-cover"
             />
           </motion.div>
