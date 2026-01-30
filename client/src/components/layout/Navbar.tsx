@@ -56,9 +56,9 @@ export default function Navbar() {
           </div>
         </div>
         
-        {/* Nav section with gradient background */}
+        {/* Nav section with dark background and gradient transition from white */}
         <div className={cn(
-          "bg-gradient-to-r from-[#00A8E8] via-[#ECAA00] to-[#F5D88A] flex-grow flex items-center justify-end px-6 transition-all duration-300",
+          "bg-gradient-to-r from-white via-gray-400 via-5% to-gray-900 to-15% flex-grow flex items-center justify-end px-6 transition-all duration-300",
           scrolled ? "py-2" : "py-3"
         )}>
 
@@ -71,21 +71,21 @@ export default function Navbar() {
               className={cn(
                 "text-sm font-medium transition-colors tracking-wide",
                 location === link.href
-                  ? "text-gray-900 underline underline-offset-8"
-                  : "text-gray-800 hover:text-gray-900",
+                  ? "text-[#00A8E8] underline underline-offset-8"
+                  : "text-gray-300 hover:text-white",
               )}
             >
               {link.name}
             </Link>
           ))}
-          <button className="px-5 py-2 text-xs font-bold tracking-widest uppercase border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 rounded-none cursor-pointer">
+          <button className="px-5 py-2 text-xs font-bold tracking-widest uppercase border border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white transition-all duration-300 rounded-none cursor-pointer">
             Contact
           </button>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-gray-900"
+          className="md:hidden text-white"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X /> : <Menu />}
