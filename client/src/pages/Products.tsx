@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Package, MoveRight, Loader2 } from "lucide-react";
+import { Package, Loader2, X, SlidersHorizontal } from "lucide-react";
 import { Link } from "wouter";
 
 interface Product {
@@ -31,6 +31,7 @@ export default function Products() {
   const [activeBrand, setActiveBrand] = useState<string>("Paralight");
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -51,124 +52,167 @@ export default function Products() {
 
   const filteredProducts = products.filter(p => p.brand === activeBrand && (activeCategory === "All" || p.category === activeCategory));
 
+  const seriesList = [...new Set(products.filter(p => p.brand === activeBrand).map(p => p.series))];
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
       <Navbar />
-      <main className="pt-32 pb-20">
+      <main className="pt-28 pb-20">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mb-12">
-            <motion.h1 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-6xl md:text-8xl font-display font-bold mb-8 uppercase tracking-tighter text-gray-900"
-            >
-              Lighting <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8E8] to-[#ECAA00] italic">Systems</span>
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-gray-600 font-light leading-relaxed max-w-2xl"
-            >
-              Discover our comprehensive range of architectural lighting solutions. 
-              From precision aluminum profiles to advanced magnetic track systems.
-            </motion.p>
-          </div>
+          <div className="flex flex-col lg:flex-row gap-12">
+            <aside className="lg:w-64 shrink-0">
+              <div className="sticky top-32">
+                <div className="flex items-center justify-between mb-8 lg:hidden">
+                  <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center gap-2 text-sm font-medium"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    Filters
+                  </button>
+                </div>
 
-          <div className="flex flex-col gap-8 mb-20 border-b border-gray-200 pb-12">
-            <div className="flex gap-8">
-              {["Paralight", "Maglinear"].map(brand => (
-                <button
-                  key={brand}
-                  onClick={() => setActiveBrand(brand)}
-                  data-testid={`filter-brand-${brand.toLowerCase()}`}
-                  className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors ${
-                    activeBrand === brand 
-                      ? brand === "Paralight" ? "text-[#00A8E8]" : "text-[#ECAA00]"
-                      : "text-gray-500 hover:text-gray-900"
-                  }`}
-                >
-                  {brand}
-                </button>
-              ))}
-            </div>
-            
-            <div className="flex flex-wrap gap-4 sm:gap-12">
-              {CATEGORIES.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  data-testid={`filter-category-${category.toLowerCase()}`}
-                  className={`text-[9px] font-medium uppercase tracking-[0.2em] transition-all relative py-2 ${
-                    activeCategory === category ? "text-gray-900" : "text-gray-500 hover:text-gray-900"
-                  }`}
-                >
-                  {category}
-                  {activeCategory === category && (
-                    <motion.div 
-                      layoutId="category-indicator"
-                      className={`absolute -bottom-2 left-0 right-0 h-px ${activeBrand === "Paralight" ? "bg-[#00A8E8]" : "bg-[#ECAA00]"}`}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div className="flex justify-center py-40">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-              {filteredProducts.map((product, index) => (
-                <motion.div 
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group"
-                  data-testid={`product-card-${product.id}`}
-                >
-                  <Link href={`/products/${product.id}`}>
-                    <div className="space-y-6 cursor-pointer">
-                      <div className="aspect-[4/5] bg-gray-100 border border-gray-200 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
-                          <span className="bg-[#00A8E8] text-black px-6 py-3 text-[10px] font-bold uppercase tracking-[0.3em] transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                            View Details
-                          </span>
-                        </div>
-                        <div className="w-full h-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                          {product.image ? (
-                            <img src={product.image} alt={product.name} className="w-full h-full object-contain p-8" />
-                          ) : (
-                            <Package className="w-16 h-16 text-gray-300" />
-                          )}
-                        </div>
-                        <div className="absolute top-4 left-4 z-20 flex gap-2">
-                          <span className="bg-gray-800 text-white px-3 py-1 text-[8px] font-bold uppercase tracking-widest">{product.series}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-start">
-                          <h2 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900 group-hover:text-[#00A8E8] transition-colors">{product.name}</h2>
-                          <MoveRight className="w-5 h-5 text-gray-500 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
-                        </div>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
-                      </div>
+                <div className={`space-y-8 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+                  <div>
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Brand</h3>
+                    <div className="space-y-2">
+                      {["Paralight", "Maglinear"].map(brand => (
+                        <button
+                          key={brand}
+                          onClick={() => setActiveBrand(brand)}
+                          data-testid={`filter-brand-${brand.toLowerCase()}`}
+                          className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                            activeBrand === brand 
+                              ? brand === "Paralight" 
+                                ? "bg-[#00A8E8]/10 text-[#00A8E8] font-medium" 
+                                : "bg-[#ECAA00]/10 text-[#ECAA00] font-medium"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          {brand}
+                        </button>
+                      ))}
                     </div>
-                  </Link>
-                </motion.div>
-              ))}
-              {filteredProducts.length === 0 && !isLoading && (
-                <div className="col-span-full text-center py-40 border border-gray-200 bg-gray-50">
-                  <p className="text-sm text-gray-500 uppercase tracking-[0.3em]">No products available in this category</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Category</h3>
+                    <div className="space-y-1">
+                      {CATEGORIES.map(category => (
+                        <button
+                          key={category}
+                          onClick={() => setActiveCategory(category)}
+                          data-testid={`filter-category-${category.toLowerCase()}`}
+                          className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                            activeCategory === category 
+                              ? "bg-gray-900 text-white font-medium"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Series</h3>
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {seriesList.map(series => (
+                        <div key={series} className="text-sm text-gray-500 px-3 py-1">
+                          {series}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
+                <div>
+                  <h1 className="text-2xl font-display font-bold text-gray-900">
+                    {activeBrand} Products
+                  </h1>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {activeBrand === "Paralight" ? "LED Aluminum Profiles" : "Magnetic Track Lighting"}
+                  </p>
+                </div>
+                <div className="text-sm text-gray-400">
+                  <span className="font-medium text-gray-900">{filteredProducts.length}</span> Results
+                </div>
+              </div>
+
+              {activeCategory !== "All" && (
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-xs text-gray-500">Active filters:</span>
+                  <button 
+                    onClick={() => setActiveCategory("All")}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded hover:bg-gray-200 transition-colors"
+                  >
+                    {activeCategory}
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+              {isLoading ? (
+                <div className="flex justify-center py-40">
+                  <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map((product, index) => (
+                    <motion.div 
+                      key={product.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className="group"
+                      data-testid={`product-card-${product.id}`}
+                    >
+                      <Link href={`/products/${product.id}`}>
+                        <div className="cursor-pointer">
+                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-4 rounded-lg">
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
+                            <div className="w-full h-full flex items-center justify-center p-6 group-hover:scale-105 transition-transform duration-500">
+                              {product.image ? (
+                                <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                              ) : (
+                                <Package className="w-12 h-12 text-gray-200" />
+                              )}
+                            </div>
+                            <div className="absolute top-3 left-3 z-20 flex gap-1">
+                              <span className={`px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider rounded ${
+                                product.brand === "Paralight" 
+                                  ? "bg-[#00A8E8] text-white" 
+                                  : "bg-[#ECAA00] text-white"
+                              }`}>
+                                {product.series}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <h2 className="text-sm font-medium text-gray-900 group-hover:text-[#00A8E8] transition-colors line-clamp-1">
+                              {product.name}
+                            </h2>
+                            <p className="text-xs text-gray-400 mt-0.5">{product.modelNumber}</p>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                  {filteredProducts.length === 0 && !isLoading && (
+                    <div className="col-span-full text-center py-20">
+                      <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                      <p className="text-sm text-gray-400">No products found in this category</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       </main>
       <Footer />
