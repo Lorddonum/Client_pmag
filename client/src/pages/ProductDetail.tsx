@@ -50,6 +50,7 @@ interface Product {
   beamAngle: string | null;
   image?: string | null;
   catalogueUrl?: string | null;
+  technicalDrawingUrl?: string | null;
 }
 
 const CONTROL_ICONS = [
@@ -286,23 +287,20 @@ export default function ProductDetail() {
                   </div>
                   <div className="p-6 bg-gray-50">
                     <div className="flex items-center justify-center">
-                      <img 
-                        src="https://paralight1.ybbis.com/wp-content/uploads/2024/01/technical-drawing-maglinear.png" 
-                        alt="Technical Drawing"
-                        className="max-w-full h-auto"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="text-center py-8">
-                              <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
-                              </svg>
-                              <p class="text-xs text-gray-400 uppercase tracking-widest">Technical drawing available upon request</p>
-                            </div>
-                          `;
-                        }}
-                      />
+                      {product.technicalDrawingUrl ? (
+                        <img 
+                          src={product.technicalDrawingUrl} 
+                          alt="Technical Drawing"
+                          className="max-w-full h-auto"
+                        />
+                      ) : (
+                        <div className="text-center py-8">
+                          <svg className="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                          </svg>
+                          <p className="text-xs text-gray-400 uppercase tracking-widest">Technical drawing available upon request</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

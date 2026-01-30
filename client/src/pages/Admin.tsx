@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler } from "lucide-react";
 
 const THEME_BG = "bg-[#1a2332]";
 
@@ -27,6 +27,7 @@ interface Product {
   beamAngle: string | null;
   image?: string | null;
   catalogueUrl?: string | null;
+  technicalDrawingUrl?: string | null;
 }
 
 export default function Admin() {
@@ -56,7 +57,8 @@ export default function Admin() {
     cct: "",
     beamAngle: "",
     image: "",
-    catalogueUrl: ""
+    catalogueUrl: "",
+    technicalDrawingUrl: ""
   });
 
   const fetchProducts = async () => {
@@ -96,7 +98,7 @@ export default function Admin() {
     setLocation("/");
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, field: 'image' | 'catalogueUrl') => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, field: 'image' | 'catalogueUrl' | 'technicalDrawingUrl') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -162,7 +164,8 @@ export default function Admin() {
       cct: "",
       beamAngle: "",
       image: "",
-      catalogueUrl: ""
+      catalogueUrl: "",
+      technicalDrawingUrl: ""
     });
   };
 
@@ -186,7 +189,8 @@ export default function Admin() {
       cct: product.cct || "",
       beamAngle: product.beamAngle || "",
       image: product.image || "",
-      catalogueUrl: product.catalogueUrl || ""
+      catalogueUrl: product.catalogueUrl || "",
+      technicalDrawingUrl: product.technicalDrawingUrl || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -413,6 +417,33 @@ export default function Admin() {
                             <>
                               <Upload className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
                               <p className="text-xs text-gray-500 uppercase tracking-widest">Catalogue PDF</p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawing (Maglinear)</label>
+                      <div className="relative group">
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, 'technicalDrawingUrl')}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                        />
+                        <div className={`border-2 border-dashed border-white/10 p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.technicalDrawingUrl ? 'bg-amber-500/5 border-amber-500/20' : 'hover:border-white/20'}`}>
+                          {formData.technicalDrawingUrl ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <img src={formData.technicalDrawingUrl} alt="Technical Drawing Preview" className="w-24 h-24 object-contain border border-white/10" />
+                              <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace drawing</p>
+                            </div>
+                          ) : (
+                            <>
+                              <Ruler className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
+                              <p className="text-xs text-gray-500 uppercase tracking-widest">Technical Drawing</p>
                             </>
                           )}
                         </div>
