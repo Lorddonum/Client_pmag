@@ -556,7 +556,7 @@ export default function ProductDetail() {
                         <img
                           src={relatedProduct.image}
                           alt={relatedProduct.name}
-                          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                          className="w-full h-full object-contain transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-500 ease-out"
                         />
                       ) : (
                         <Package className="w-12 h-12 text-gray-300" />

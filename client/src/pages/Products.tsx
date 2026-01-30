@@ -357,13 +357,17 @@ export default function Products() {
                     >
                       <Link href={`/products/${product.id}`}>
                         <div className="cursor-pointer">
-                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-4 rounded-lg">
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
-                            <div className="w-full h-full flex items-center justify-center p-6 group-hover:scale-105 transition-transform duration-500">
+                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-4 rounded-lg group-hover:shadow-xl group-hover:shadow-black/10 transition-shadow duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                            <div className="w-full h-full flex items-center justify-center p-6">
                               {product.image ? (
-                                <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name} 
+                                  className="w-full h-full object-contain transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-500 ease-out" 
+                                />
                               ) : (
-                                <Package className="w-12 h-12 text-gray-200" />
+                                <Package className="w-12 h-12 text-gray-200 group-hover:scale-110 transition-transform duration-300" />
                               )}
                             </div>
                             <div className="absolute top-3 left-3 z-20 flex gap-1">
