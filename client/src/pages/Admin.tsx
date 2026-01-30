@@ -248,9 +248,9 @@ export default function Admin() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md bg-zinc-950 border border-white/10 p-8"
+          className="w-full max-w-md bg-white border border-gray-200 rounded-xl p-8 shadow-sm"
         >
-          <h1 className="text-3xl font-display font-bold text-white mb-8 tracking-tighter uppercase">Admin Login</h1>
+          <h1 className="text-3xl font-display font-bold text-gray-900 mb-8 tracking-tighter uppercase">Admin Login</h1>
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Username</label>
@@ -259,7 +259,7 @@ export default function Admin() {
                 data-testid="input-username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                 required
               />
             </div>
@@ -270,7 +270,7 @@ export default function Admin() {
                 data-testid="input-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                 required
               />
             </div>
@@ -288,46 +288,46 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white selection:bg-[#00A8E8] selection:text-white font-sans">
+    <div className="min-h-screen bg-gray-50 text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
             <div className="w-full lg:w-64 space-y-8">
               <div>
-                <h2 className="text-2xl font-display font-bold mb-2 uppercase tracking-tighter text-white">Control</h2>
-                <p className="text-xs text-gray-400 uppercase tracking-widest">Management Dashboard</p>
+                <h2 className="text-2xl font-display font-bold mb-2 uppercase tracking-tighter text-gray-900">Control</h2>
+                <p className="text-xs text-gray-500 uppercase tracking-widest">Management Dashboard</p>
               </div>
               <div className="space-y-2">
                 <button 
                   onClick={resetForm}
                   data-testid="button-add-product"
-                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all ${!editingId ? 'bg-[#00A8E8] text-white' : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'}`}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${!editingId ? 'bg-gradient-to-r from-[#00A8E8] to-[#0090C8] text-white shadow-lg shadow-[#00A8E8]/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-[#00A8E8] hover:text-[#00A8E8]'}`}
                 >
                   Add Product <Plus className="w-4 h-4" />
                 </button>
-                <button className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
-                  Product List <Package className="w-4 h-4 text-gray-400" />
+                <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-[#ECAA00] hover:text-[#ECAA00] transition-colors rounded-lg">
+                  Product List <Package className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={handleLogout}
                   data-testid="button-logout"
-                  className="w-full flex items-center justify-between p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/20 transition-colors"
+                  className="w-full flex items-center justify-between p-4 bg-white border border-red-200 text-red-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-50 hover:border-red-300 transition-colors rounded-lg"
                 >
                   Logout <LogOut className="w-4 h-4" />
                 </button>
               </div>
             </div>
             <div className="flex-1 space-y-12">
-              <section className="bg-zinc-950 border border-white/10 p-8 md:p-12 relative">
-                <div className="absolute top-0 right-0 w-24 h-24 border-t border-r border-white/20 -mt-2 -mr-2 pointer-events-none" />
+              <section className="bg-white border border-gray-200 rounded-xl p-8 md:p-12 relative shadow-sm">
+                <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-[#00A8E8]/20 -mt-2 -mr-2 pointer-events-none rounded-tr-xl" />
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-xl font-display font-bold uppercase tracking-widest flex items-center gap-4">
-                    {editingId ? <Edit2 className="w-5 h-5 text-white" /> : <Plus className="w-5 h-5 text-white" />}
+                  <h3 className="text-xl font-display font-bold uppercase tracking-widest flex items-center gap-4 text-gray-900">
+                    {editingId ? <Edit2 className="w-5 h-5 text-[#ECAA00]" /> : <Plus className="w-5 h-5 text-[#00A8E8]" />}
                     {editingId ? "Edit Lighting System" : "Add New Lighting System"}
                   </h3>
                   {editingId && (
-                    <button onClick={resetForm} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-white flex items-center gap-2">
+                    <button onClick={resetForm} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#00A8E8] flex items-center gap-2">
                       <X className="w-3 h-3" /> Cancel Edit
                     </button>
                   )}
@@ -342,7 +342,7 @@ export default function Admin() {
                         data-testid="input-name"
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
                     <div className="space-y-2">
@@ -353,7 +353,7 @@ export default function Admin() {
                         data-testid="input-model"
                         value={formData.modelNumber}
                         onChange={(e) => setFormData({...formData, modelNumber: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
                   </div>
@@ -367,7 +367,7 @@ export default function Admin() {
                         data-testid="input-series"
                         value={formData.series}
                         onChange={(e) => setFormData({...formData, series: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
                     <div className="space-y-2">
@@ -377,7 +377,7 @@ export default function Admin() {
                         data-testid="select-category"
                         value={formData.category}
                         onChange={(e) => setFormData({...formData, category: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       >
                         <option value="Indoor">Indoor</option>
                         <option value="Outdoor">Outdoor</option>
@@ -395,7 +395,7 @@ export default function Admin() {
                         data-testid="select-brand"
                         value={formData.brand}
                         onChange={(e) => setFormData({...formData, brand: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       >
                         <option value="Paralight">Paralight</option>
                         <option value="Maglinear">Maglinear</option>
@@ -403,7 +403,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-white/10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image</label>
                       <div className="relative group">
@@ -413,10 +413,10 @@ export default function Admin() {
                           onChange={(e) => handleFileChange(e, 'image')}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                         />
-                        <div className={`border-2 border-dashed border-white/10 p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.image ? 'bg-white/5' : 'hover:border-white/20'}`}>
+                        <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.image ? 'bg-[#00A8E8]/5 border-[#00A8E8]/30' : 'border-gray-300 hover:border-[#00A8E8]'}`}>
                           {formData.image ? (
                             <div className="flex flex-col items-center gap-2">
-                              <img src={formData.image} alt="Preview" className="w-24 h-24 object-contain border border-white/10" />
+                              <img src={formData.image} alt="Preview" className="w-24 h-24 object-contain border border-gray-200 rounded-lg" />
                               <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace image</p>
                             </div>
                           ) : (
@@ -438,7 +438,7 @@ export default function Admin() {
                           onChange={(e) => handleFileChange(e, 'catalogueUrl')}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                         />
-                        <div className={`border-2 border-dashed border-white/10 p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.catalogueUrl ? 'bg-blue-500/5 border-blue-500/20' : 'hover:border-white/20'}`}>
+                        <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.catalogueUrl ? 'bg-[#ECAA00]/5 border-[#ECAA00]/30' : 'border-gray-300 hover:border-[#ECAA00]'}`}>
                           {formData.catalogueUrl ? (
                             <div className="flex flex-col items-center gap-2 text-blue-400">
                               <FileText className="w-8 h-8 mx-auto mb-2" />
@@ -460,7 +460,7 @@ export default function Admin() {
                     <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Additional Product Images</label>
                     <div className="flex flex-wrap gap-3">
                       {formData.images.map((img, index) => (
-                        <div key={index} className="relative w-20 h-20 border border-white/10 group">
+                        <div key={index} className="relative w-20 h-20 border border-gray-200 rounded-lg group">
                           <img src={img} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
                           <button
                             type="button"
@@ -471,7 +471,7 @@ export default function Admin() {
                           </button>
                         </div>
                       ))}
-                      <div className="relative w-20 h-20 border-2 border-dashed border-white/10 hover:border-white/30 transition-colors flex items-center justify-center cursor-pointer">
+                      <div className="relative w-20 h-20 border-2 border-dashed border-gray-300 hover:border-[#00A8E8] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
                         <input
                           type="file"
                           accept="image/*"
@@ -499,7 +499,7 @@ export default function Admin() {
                           </button>
                         </div>
                       ))}
-                      <div className="relative w-24 h-24 border-2 border-dashed border-white/10 hover:border-amber-500/30 transition-colors flex items-center justify-center cursor-pointer">
+                      <div className="relative w-24 h-24 border-2 border-dashed border-gray-300 hover:border-[#ECAA00] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
                         <input
                           type="file"
                           accept="image/*"
@@ -520,51 +520,51 @@ export default function Admin() {
                       data-testid="input-description"
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-white/40 transition-colors resize-none"
+                      className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors resize-none"
                     />
                   </div>
-                  <div className="space-y-6 pt-6 border-t border-white/10">
-                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-white font-bold">Technical Specifications</h4>
+                  <div className="space-y-6 pt-6 border-t border-gray-200">
+                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                        <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 5W" />
+                        <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
-                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Retail, Office" />
+                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
-                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
-                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Aluminum" />
+                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
-                        <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. D60" />
+                        <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                        <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. DC24V" />
+                        <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
-                        <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                        <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. Ra≥90" />
+                        <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                        <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 3000K" />
+                        <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
-                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-white focus:outline-none focus:border-white/40" placeholder="e.g. 270°" />
+                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
                       </div>
                     </div>
                   </div>
@@ -580,7 +580,7 @@ export default function Admin() {
               </section>
               <section className="space-y-6">
                 <div className="flex justify-between items-center gap-4">
-                  <h3 className="text-xl font-display font-bold uppercase tracking-widest text-white">Live Products ({products.length})</h3>
+                  <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">Live Products ({products.length})</h3>
                   <div className="relative flex-1 max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input
@@ -588,7 +588,7 @@ export default function Admin() {
                       placeholder="Search products..."
                       value={adminSearchQuery}
                       onChange={(e) => setAdminSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 text-sm bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
+                      className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
                     />
                   </div>
                 </div>
@@ -605,21 +605,21 @@ export default function Admin() {
                       );
                     })
                     .map((product) => (
-                    <div key={product.id} data-testid={`product-item-${product.id}`} className="bg-zinc-950 border border-white/10 p-6 flex justify-between items-center group hover:border-white/30 transition-all">
+                    <div key={product.id} data-testid={`product-item-${product.id}`} className="bg-white border border-gray-200 rounded-xl p-6 flex justify-between items-center group hover:border-[#00A8E8]/50 hover:shadow-md transition-all">
                       <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 bg-zinc-900 border border-white/10 flex items-center justify-center">
+                        <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
                           {product.image ? (
                             <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
                           ) : (
-                            <Package className="w-6 h-6 text-white/20" />
+                            <Package className="w-6 h-6 text-gray-300" />
                           )}
                         </div>
                         <div>
                           <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
                           <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
                           <div className="flex gap-2 mt-2">
-                            <span className="text-[8px] bg-white/5 px-2 py-1 uppercase tracking-widest">{product.brand}</span>
-                            <span className="text-[8px] bg-white/5 px-2 py-1 uppercase tracking-widest">{product.category}</span>
+                            <span className="text-[8px] bg-[#00A8E8]/10 text-[#00A8E8] px-2 py-1 uppercase tracking-widest rounded-full">{product.brand}</span>
+                            <span className="text-[8px] bg-[#ECAA00]/10 text-[#ECAA00] px-2 py-1 uppercase tracking-widest rounded-full">{product.category}</span>
                           </div>
                         </div>
                       </div>
@@ -627,7 +627,7 @@ export default function Admin() {
                         <button 
                           onClick={() => handleEdit(product)}
                           data-testid={`button-edit-${product.id}`}
-                          className="p-3 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                          className="p-3 bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8] transition-colors rounded-lg"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -642,8 +642,8 @@ export default function Admin() {
                     </div>
                   ))}
                   {products.length === 0 && (
-                    <div className="text-center py-20 border border-white/5 bg-white/[0.02]">
-                      <Package className="w-12 h-12 text-white/10 mx-auto mb-4" />
+                    <div className="text-center py-20 border border-gray-200 bg-gray-50/50 rounded-xl">
+                      <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                       <p className="text-sm text-gray-500 uppercase tracking-[0.3em]">No products yet</p>
                     </div>
                   )}
