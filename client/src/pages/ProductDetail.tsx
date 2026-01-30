@@ -100,12 +100,19 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+    setProduct(null);
+    setRelatedProducts([]);
+    setSelectedImageIndex(0);
+    setShowDrawingLightbox(false);
+    setLightboxDrawingIndex(0);
+    
     const fetchProduct = async () => {
       if (!params?.id) return;
       try {
         const [productRes, allProductsRes] = await Promise.all([
-          fetch(`/api/products/${params.id}`),
-          fetch('/api/products')
+          fetch(`/api/products/${params.id}`, { cache: 'no-store' }),
+          fetch('/api/products', { cache: 'no-store' })
         ]);
         
         if (productRes.ok) {
