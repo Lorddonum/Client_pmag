@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Link } from "wouter";
+import controlIntegrationImg from "@/assets/control-integration.png";
 
 const COLOR_MAP: Record<string, string> = {
   white: "#FFFFFF",
@@ -61,41 +62,6 @@ interface Product {
   technicalDrawingUrl?: string | null;
   technicalDrawings?: string[] | null;
 }
-
-const CONTROL_ICONS = [
-  {
-    label: "ON-OFF",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/on-off.png",
-  },
-  {
-    label: "Bluetooth",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/bluetooth.png",
-  },
-  {
-    label: "Tuya Dim",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/tuya.png",
-  },
-  {
-    label: "2.4Network",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/2.4g.png",
-  },
-  {
-    label: "ZigBee",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/zigbee.png",
-  },
-  {
-    label: "DALI Dim",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/dali.png",
-  },
-  {
-    label: "0-10V Dim",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/0-10v.png",
-  },
-  {
-    label: "CCT control",
-    img: "https://paralight1.ybbis.com/wp-content/uploads/2023/06/cct.png",
-  },
-];
 
 const ZOOM_LEVEL = 2; // Adjustable zoom percentage (2 = 200%)
 
@@ -368,25 +334,14 @@ export default function ProductDetail() {
 
             <div className="space-y-8">
               <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
-                <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-6 text-center">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-4 text-center">
                   Control Integration
                 </h3>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {CONTROL_ICONS.map((icon, i) => (
-                    <div key={i} className="text-center w-16">
-                      <div className="aspect-square bg-white border border-gray-100 rounded p-2 mb-2 flex items-center justify-center">
-                        <img
-                          src={icon.img}
-                          alt={icon.label}
-                          className="w-8 h-8 object-contain"
-                        />
-                      </div>
-                      <p className="text-[8px] uppercase tracking-tight text-gray-400">
-                        {icon.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <img 
+                  src={controlIntegrationImg} 
+                  alt="Control Integration - ON-OFF, Bluetooth, Tuya Smart, 2.4GHz Wi-Fi, Zigbee, DALI Dimm, CCT Control" 
+                  className="w-full max-w-xl mx-auto object-contain"
+                />
               </div>
 
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
