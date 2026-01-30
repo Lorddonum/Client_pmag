@@ -115,7 +115,7 @@ export default function About() {
             <div className="container mx-auto px-6">
               <div className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch min-h-[500px] ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
                 {/* Text Content */}
-                <div className={`flex flex-col justify-center py-16 lg:py-20 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                <div className={`flex flex-col justify-center py-16 lg:py-20 lg:pl-12 ${i % 2 === 1 ? 'lg:order-2 lg:pl-0 lg:pr-12' : ''}`}>
                   <motion.div
                     initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
