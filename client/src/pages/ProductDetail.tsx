@@ -277,6 +277,37 @@ export default function ProductDetail() {
                 </div>
               </div>
 
+              {product.brand === "Maglinear" && (
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="p-4 border-b border-gray-100">
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+                      Technical Drawings
+                    </h3>
+                  </div>
+                  <div className="p-6 bg-gray-50">
+                    <div className="flex items-center justify-center">
+                      <img 
+                        src="https://paralight1.ybbis.com/wp-content/uploads/2024/01/technical-drawing-maglinear.png" 
+                        alt="Technical Drawing"
+                        className="max-w-full h-auto"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="text-center py-8">
+                              <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                              </svg>
+                              <p class="text-xs text-gray-400 uppercase tracking-widest">Technical drawing available upon request</p>
+                            </div>
+                          `;
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div 
                 className="p-5 rounded-lg flex items-center justify-between"
                 style={{ backgroundColor: `${brandColor}15` }}
