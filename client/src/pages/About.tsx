@@ -7,6 +7,7 @@ import ceoImg from "@/assets/ceo-michelle.png";
 import salesTeamImg from "@/assets/sales-team.png";
 import logisticsTeamImg from "@/assets/logistics-team.png";
 import rdTeamImg from "@/assets/rd-team.png";
+import productionTeamImg from "@/assets/production-team.png";
 import { Award, ShieldCheck, Factory, Truck, Users, Star, Quote } from "lucide-react";
 
 export default function About() {
@@ -273,6 +274,37 @@ export default function About() {
             <img 
               src={rdTeamImg} 
               alt="Paralight R&D Team" 
+              className="w-full h-auto object-cover"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Production Team */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold mb-4">Production Team</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Our entire production workflow is managed by experienced technical experts. We adapt flexibly to client specifications, conducting thorough inspections from raw materials to final products, complemented by professional brand packaging—all to guarantee flawless delivery and ensure every item fulfills customer expectations.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative overflow-hidden rounded-xl shadow-lg"
+          >
+            <img 
+              src={productionTeamImg} 
+              alt="Paralight Production Team" 
               className="w-full h-auto object-cover"
             />
           </motion.div>
