@@ -89,105 +89,146 @@ export default function ProductDetail() {
     );
   }
 
+  const brandColor = product.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
+
+  const specs = [
+    { label: "Model", value: product.modelNumber },
+    { label: "Wattage", value: product.wattage },
+    { label: "Material", value: product.material },
+    { label: "Finish", value: product.finish },
+    { label: "Dimensions", value: product.dimensions },
+    { label: "Voltage", value: product.voltage },
+    { label: "Color", value: product.color },
+    { label: "CRI", value: product.cri },
+    { label: "CCT", value: product.cct },
+    { label: "Beam Angle", value: product.beamAngle },
+  ].filter(spec => spec.value);
+
   return (
     <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
-      <main className="pt-32 pb-20">
+      <main className="pt-28 pb-20">
         <div className="container mx-auto px-6">
-          <Link href="/products">
-            <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 text-gray-500 hover:text-gray-900 transition-colors group" data-testid="button-back">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Catalog
-            </button>
-          </Link>
+          <div className="flex items-center gap-3 mb-8">
+            <span 
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white"
+              style={{ backgroundColor: brandColor }}
+              data-testid="text-brand"
+            >
+              {product.brand}
+            </span>
+            <span className="bg-gray-800 text-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest" data-testid="text-series">
+              {product.series}
+            </span>
+          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            <div className="lg:col-span-5 space-y-8">
-              <div className="aspect-[4/5] bg-gray-100 border border-gray-200 relative overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-6">
+              <div className="aspect-[4/3] bg-gray-50 border border-gray-100 relative overflow-hidden rounded-lg">
+                <div className="w-full h-full flex items-center justify-center p-8">
                   {product.image ? (
-                    <img src={product.image} alt={product.name} className="w-full h-full object-contain" data-testid="product-image" />
+                    <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" data-testid="product-image" />
                   ) : (
-                    <Package className="w-20 h-20 text-gray-300" />
+                    <Package className="w-24 h-24 text-gray-200" />
                   )}
                 </div>
-                <div className="absolute top-6 left-6 z-20 flex gap-2">
-                  <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${product.brand === "Paralight" ? "bg-[#00A8E8] text-black" : "bg-[#ECAA00] text-black"}`} data-testid="text-brand">{product.brand}</span>
-                  <span className="bg-gray-700 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest" data-testid="text-series">{product.series}</span>
+              </div>
+
+              <div className="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100">
+                <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">Certifications</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-lg font-bold text-gray-700">⑧</span>
+                  <span className="text-sm font-bold text-gray-700">RoHS</span>
+                  <span className="text-lg font-bold text-gray-700">CE</span>
+                  <span className="text-lg font-bold text-gray-700">CB</span>
                 </div>
               </div>
-              <div>
-                <h2 className="text-4xl font-display font-bold uppercase tracking-widest mb-4 text-gray-900" data-testid="text-name">{product.name}</h2>
-                <p className="text-xs text-gray-500 uppercase tracking-widest mb-6" data-testid="text-model">{product.modelNumber}</p>
-                <p className="text-gray-600 leading-relaxed text-sm mb-8" data-testid="text-description">{product.description}</p>
+
+              <div className="pt-2">
+                <h1 className="text-3xl font-display font-bold text-gray-900 mb-2" data-testid="text-name">
+                  {product.name}
+                </h1>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-4" data-testid="text-model">
+                  {product.modelNumber}
+                </p>
+                <p className="text-gray-600 leading-relaxed text-sm mb-6" data-testid="text-description">
+                  {product.description}
+                </p>
                 <a 
                   href={product.catalogueUrl || undefined} 
                   download={`${product.name}-Catalogue.pdf`}
                   data-testid="link-catalogue"
-                  className={`flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.3em] group transition-all ${!product.catalogueUrl ? 'opacity-30 cursor-not-allowed' : ''}`}
+                  className={`inline-flex items-center gap-3 text-xs uppercase tracking-widest transition-all ${
+                    !product.catalogueUrl 
+                      ? 'text-gray-300 cursor-not-allowed' 
+                      : 'text-gray-500 hover:text-gray-900'
+                  }`}
                   onClick={(e) => !product.catalogueUrl && e.preventDefault()}
                 >
-                  <span className="w-12 h-12 rounded-full border border-[#00A8E8]/30 flex items-center justify-center group-hover:bg-[#00A8E8] group-hover:text-black transition-all">
-                    <FileText className="w-4 h-4" />
-                  </span>
+                  <FileText className="w-4 h-4" />
                   {product.catalogueUrl ? "Download Catalogue" : "Catalogue Not Available"}
                 </a>
               </div>
             </div>
-            <div className="lg:col-span-7 space-y-12">
-              <div className="bg-gray-50 border border-gray-200 p-8">
-                <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-8">Control Integration</h3>
-                <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
+
+            <div className="space-y-8">
+              <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-6 text-center">
+                  Control Integration
+                </h3>
+                <div className="flex flex-wrap justify-center gap-4">
                   {CONTROL_ICONS.map((icon, i) => (
-                    <div key={i} className="text-center group">
-                      <div className="aspect-square bg-white border border-transparent p-2 mb-2 group-hover:scale-105 transition-transform flex items-center justify-center">
-                        <img src={icon.img} alt={icon.label} className="w-full h-auto" />
+                    <div key={i} className="text-center w-16">
+                      <div className="aspect-square bg-white border border-gray-100 rounded p-2 mb-2 flex items-center justify-center">
+                        <img src={icon.img} alt={icon.label} className="w-8 h-8 object-contain" />
                       </div>
-                      <p className="text-[8px] uppercase tracking-tighter text-gray-500 whitespace-nowrap">{icon.label}</p>
+                      <p className="text-[8px] uppercase tracking-tight text-gray-400">{icon.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse" data-testid="specs-table">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Mod</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Wattage</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Material</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Finish</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Dimensions</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Voltage</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Color</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">CRI</th>
-                      <th className="py-4 pr-6 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">CCT</th>
-                      <th className="py-4 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold whitespace-nowrap">Beam Angle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="py-6 pr-6 text-[10px] uppercase font-medium text-gray-900 whitespace-nowrap">{product.modelNumber}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.wattage || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.material || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.finish || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.dimensions || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.voltage || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.color || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.cri || '-'}</td>
-                      <td className="py-6 pr-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.cct || '-'}</td>
-                      <td className="py-6 text-[10px] uppercase text-gray-600 whitespace-nowrap">{product.beamAngle || '-'}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="pt-12 flex items-center justify-between border-t border-gray-200">
-                <div className="flex items-center gap-4">
-                  <Zap className="w-5 h-5 text-[#ECAA00]" />
-                  <p className="text-xs text-gray-600 uppercase tracking-widest">Custom solutions available for this system</p>
+
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {specs.map((spec, i) => (
+                    <div 
+                      key={spec.label} 
+                      className={`p-4 ${i < specs.length - (specs.length % 5 || 5) ? 'border-b' : ''} ${(i + 1) % 5 !== 0 ? 'border-r' : ''} border-gray-100`}
+                    >
+                      <p className="text-[9px] uppercase tracking-widest text-gray-400 mb-1">{spec.label}</p>
+                      <p className="text-xs font-medium text-gray-900 break-words">{spec.value}</p>
+                    </div>
+                  ))}
                 </div>
-                <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#00A8E8] hover:text-[#00C4E8] transition-colors group" data-testid="button-inquire">
-                  Inquire System <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
               </div>
+
+              <div 
+                className="p-5 rounded-lg flex items-center justify-between"
+                style={{ backgroundColor: `${brandColor}15` }}
+              >
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5" style={{ color: brandColor }} />
+                  <p className="text-xs text-gray-700 uppercase tracking-widest font-medium">
+                    Custom solutions available for this system
+                  </p>
+                </div>
+                <Link href="/contact">
+                  <button 
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors group"
+                    style={{ color: brandColor }}
+                    data-testid="button-inquire"
+                  >
+                    Inquire System <MoveRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
+              </div>
+
+              <Link href="/products">
+                <button className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-900 transition-colors group" data-testid="button-back">
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+                  Back to Catalog
+                </button>
+              </Link>
             </div>
           </div>
         </div>
