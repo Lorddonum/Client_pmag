@@ -29,24 +29,38 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent bg-gray-900",
+        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
         scrolled
-          ? "py-4 shadow-lg"
-          : "py-6",
+          ? "shadow-lg"
+          : "",
       )}
     >
-      <div className="container mx-auto px-6 flex justify-between items-center">
-        <Link
-          href="/"
-          className="flex items-center -space-x-8 hover:opacity-80 transition-opacity"
-        >
-          <div className="h-16 overflow-hidden flex items-center">
-            <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
+      <div className="flex items-stretch">
+        {/* Logo section with white background extending to left edge */}
+        <div className="bg-white flex-shrink-0">
+          <div className={cn(
+            "pl-6 pr-8 flex items-center transition-all duration-300",
+            scrolled ? "py-2" : "py-3"
+          )}>
+            <Link
+              href="/"
+              className="flex items-center -space-x-8 hover:opacity-80 transition-opacity"
+            >
+              <div className="h-16 overflow-hidden flex items-center">
+                <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
+              </div>
+              <div className="h-16 overflow-hidden flex items-center">
+                <img src={maglinearLogo} alt="Maglinear Lighting" className="h-28 max-w-[280px] object-cover object-center" />
+              </div>
+            </Link>
           </div>
-          <div className="h-16 overflow-hidden flex items-center">
-            <img src={maglinearLogo} alt="Maglinear Lighting" className="h-28 max-w-[280px] object-cover object-center" />
-          </div>
-        </Link>
+        </div>
+        
+        {/* Nav section with dark background */}
+        <div className={cn(
+          "bg-gray-900 flex-grow flex items-center justify-end px-6 transition-all duration-300",
+          scrolled ? "py-2" : "py-3"
+        )}>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
@@ -76,6 +90,7 @@ export default function Navbar() {
         >
           {isOpen ? <X /> : <Menu />}
         </button>
+        </div>
       </div>
 
       {/* Mobile Nav */}
