@@ -29,10 +29,10 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
+        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent bg-gray-900",
         scrolled
-          ? "bg-white/90 backdrop-blur-md border-gray-200 py-4 shadow-sm"
-          : "bg-transparent py-6",
+          ? "py-4 shadow-lg"
+          : "py-6",
       )}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
@@ -58,13 +58,13 @@ export default function Navbar() {
                 "text-sm font-medium transition-colors tracking-wide",
                 location === link.href
                   ? "text-[#00A8E8] underline underline-offset-8"
-                  : "text-gray-600 hover:text-gray-900",
+                  : "text-gray-300 hover:text-white",
               )}
             >
               {link.name}
             </Link>
           ))}
-          <button className="px-5 py-2 text-xs font-bold tracking-widest uppercase border border-[#00A8E8]/50 text-[#00A8E8] hover:bg-[#00A8E8] hover:text-black transition-all duration-300 rounded-none cursor-pointer">
+          <button className="px-5 py-2 text-xs font-bold tracking-widest uppercase border border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white transition-all duration-300 rounded-none cursor-pointer">
             Contact
           </button>
         </div>
@@ -80,7 +80,7 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-b border-gray-200 py-8 px-6 flex flex-col space-y-4">
+        <div className="md:hidden absolute top-full left-0 w-full bg-gray-900/95 backdrop-blur-xl border-b border-gray-700 py-8 px-6 flex flex-col space-y-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -89,7 +89,7 @@ export default function Navbar() {
                 "text-lg font-display transition-colors",
                 location === link.href
                   ? "text-[#00A8E8]"
-                  : "text-gray-700 hover:text-gray-900",
+                  : "text-gray-300 hover:text-white",
               )}
               onClick={() => setIsOpen(false)}
             >
