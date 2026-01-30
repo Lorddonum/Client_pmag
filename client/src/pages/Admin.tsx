@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search } from "lucide-react";
 
 const THEME_BG = "bg-[#1a2332]";
 
@@ -39,6 +39,7 @@ export default function Admin() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [, setLocation] = useLocation();
 
   const [formData, setFormData] = useState({
@@ -578,11 +579,32 @@ export default function Admin() {
                 </form>
               </section>
               <section className="space-y-6">
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-center gap-4">
                   <h3 className="text-xl font-display font-bold uppercase tracking-widest">Live Products ({products.length})</h3>
+                  <div className="relative flex-1 max-w-xs">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={adminSearchQuery}
+                      onChange={(e) => setAdminSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 text-sm bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
-                  {products.map((product) => (
+                  {products
+                    .filter(product => {
+                      if (!adminSearchQuery.trim()) return true;
+                      const query = adminSearchQuery.toLowerCase();
+                      return (
+                        product.name.toLowerCase().includes(query) ||
+                        product.modelNumber.toLowerCase().includes(query) ||
+                        product.brand.toLowerCase().includes(query) ||
+                        product.series.toLowerCase().includes(query)
+                      );
+                    })
+                    .map((product) => (
                     <div key={product.id} data-testid={`product-item-${product.id}`} className="bg-zinc-950 border border-white/10 p-6 flex justify-between items-center group hover:border-white/30 transition-all">
                       <div className="flex items-center gap-6">
                         <div className="w-16 h-16 bg-zinc-900 border border-white/10 flex items-center justify-center">
