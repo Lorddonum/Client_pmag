@@ -2,7 +2,9 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import aboutVideo from "@assets/abutus_1768691137923.mp4";
-import { Award, ShieldCheck, Factory, Truck, Users, Star } from "lucide-react";
+import chairmanImg from "@/assets/chairman-situ.png";
+import ceoImg from "@/assets/ceo-michelle.png";
+import { Award, ShieldCheck, Factory, Truck, Users, Star, Quote } from "lucide-react";
 
 export default function About() {
   const stats = [
@@ -12,11 +14,30 @@ export default function About() {
     { label: "Years Experience", value: "10+" },
   ];
 
+  const executives = [
+    {
+      name: "Situ Yonghong",
+      role: "Chairman",
+      tagline: "Anchoring quality with craftsmanship while embracing industry responsibility.",
+      subtitle: "Identifying quality at his fingertips, an industry leader building soul through precision.",
+      bio: "As a product structural engineer and a recognized hands-on leader in the lighting industry, Chairman Situ Yonghong also serves as the Vice President of the Zhongshan Kaiping Chamber of Commerce; while deeply cultivating corporate growth, he actively integrates industry resources and promotes industrial upgrades, using his dual role as an \"industry participant and promoter\" to empower the standardized development of linear lighting, embedding the philosophies \"details cast light\" and \"details are the rhythm of light\" into the brand DNA to ensure that \"true light stands the test of time.\"",
+      image: chairmanImg,
+      color: "#ECAA00"
+    },
+    {
+      name: "Michelle",
+      role: "CEO",
+      tagline: "A Force in Global Trade Illuminating the World Through Execution",
+      subtitle: "Connecting Continents, Weaving a Warm Bridge of Global Commerce",
+      bio: "With 18 years of experience in international trade resources, Michelle serves as the \"customized lighthouse\" of Paralight Group across the globe. Leveraging outstanding industry standards and strategic thinking, she has cultivated deep expertise in the foreign trade sector, helping local enterprises \"go global\" — an effort highly recognized across cyclical industries. Through her impressive professional competence and market achievements, she exemplifies meticulous dedication within the linear lighting industry.",
+      image: ceoImg,
+      color: "#00A8E8"
+    }
+  ];
+
   const team = [
-    { name: "Si Tu Yonghong", role: "Chairman", quote: "Details shape brilliance" },
-    { name: "Michelle", role: "CEO", desc: "15 years of lighting export experience" },
-    { name: "Taha", role: "International Comms & Marketing" },
-    { name: "Helen", role: "International Sales Manager" },
+    { name: "Taha", role: "International Comms & Marketing", desc: "Bridging cultures through strategic communication" },
+    { name: "Helen", role: "International Sales Manager", desc: "Building lasting client relationships worldwide" },
   ];
 
   const certifications = [
@@ -86,24 +107,101 @@ export default function About() {
         </div>
       </section>
 
-      {/* Leadership */}
-      <section className="py-20">
+      {/* Executive Leadership */}
+      {executives.map((exec, i) => (
+        <section key={i} className="relative overflow-hidden">
+          {/* Hero Banner */}
+          <div className="bg-[#f5e6d3]">
+            <div className="container mx-auto px-6">
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch min-h-[500px] ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                {/* Text Content */}
+                <div className={`flex flex-col justify-center py-16 lg:py-20 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                  <motion.div
+                    initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
+                      <span className="text-gray-800">{exec.role}: </span>
+                      <span style={{ color: exec.color }}>{exec.name}</span>
+                    </h2>
+                    <p className="text-xl md:text-2xl text-gray-700 font-light leading-relaxed max-w-lg">
+                      {exec.tagline}
+                    </p>
+                  </motion.div>
+                </div>
+                
+                {/* Image */}
+                <div className={`relative ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="h-full"
+                  >
+                    <img 
+                      src={exec.image} 
+                      alt={exec.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bio Section */}
+          <div className="bg-white py-16">
+            <div className="container mx-auto px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="max-w-4xl mx-auto"
+              >
+                <div className="flex items-start gap-4 mb-6">
+                  <Quote className="w-8 h-8 flex-shrink-0" style={{ color: exec.color }} />
+                </div>
+                <h3 className="text-2xl font-display font-bold mb-2" style={{ color: exec.color }}>
+                  {exec.name}:
+                </h3>
+                <p className="text-lg text-gray-700 font-medium mb-6">
+                  {exec.subtitle}
+                </p>
+                <p className="text-gray-600 leading-relaxed text-base columns-1 md:columns-2 gap-8">
+                  {exec.bio}
+                </p>
+                <div className="flex justify-end mt-6">
+                  <Quote className="w-8 h-8 transform rotate-180" style={{ color: exec.color }} />
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      {/* Team Members */}
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-display font-bold mb-16 text-center underline underline-offset-8">THE TEAM</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <h2 className="text-3xl font-display font-bold mb-12 text-center">Our Team</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
             {team.map((member, i) => (
               <motion.div 
                 key={i}
                 whileInView={{ opacity: 1, y: 0 }}
                 initial={{ opacity: 0, y: 20 }}
-                viewport={{ once: false }}
-                className="group border border-gray-200 p-8 bg-white hover:bg-gray-50 transition-all duration-500 shadow-sm"
+                viewport={{ once: true }}
+                className="group border border-gray-200 p-8 bg-white hover:shadow-lg transition-all duration-300 rounded-lg"
               >
-                <div className="w-12 h-[1px] bg-current mb-6" />
-                <h3 className="text-xl font-display font-bold mb-2">{member.name}</h3>
-                <p className="text-sm uppercase tracking-widest opacity-60 mb-4">{member.role}</p>
-                {member.quote && <p className="italic text-sm">"{member.quote}"</p>}
-                {member.desc && <p className="text-sm">{member.desc}</p>}
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A8E8] to-[#ECAA00] flex items-center justify-center text-white font-bold text-lg mb-4">
+                  {member.name[0]}
+                </div>
+                <h3 className="text-xl font-display font-bold mb-1">{member.name}</h3>
+                <p className="text-sm uppercase tracking-widest text-gray-500 mb-3">{member.role}</p>
+                {member.desc && <p className="text-sm text-gray-600">{member.desc}</p>}
               </motion.div>
             ))}
           </div>
