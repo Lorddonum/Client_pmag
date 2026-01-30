@@ -366,7 +366,7 @@ export default function ProductDetail() {
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                   <div className="p-4 border-b border-gray-100">
                     <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
-                      Technical Drawings
+                      Technical Drawing
                     </h3>
                   </div>
                   <div className="p-4 bg-gray-50">

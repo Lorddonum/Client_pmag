@@ -463,7 +463,7 @@ export default function Admin() {
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawings (Multiple)</label>
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawing (Multiple)</label>
                     <div className="flex flex-wrap gap-3">
                       {formData.technicalDrawings.map((drawing, index) => (
                         <div key={index} className="relative w-24 h-24 border border-amber-500/20 bg-amber-500/5 group">
