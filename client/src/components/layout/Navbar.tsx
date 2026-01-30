@@ -35,9 +35,15 @@ export default function Navbar() {
           : "",
       )}
     >
-      <div className="flex items-stretch">
+      <div className={cn(
+        "flex items-stretch transition-all duration-500",
+        scrolled ? "opacity-100" : "opacity-100"
+      )}>
         {/* Logo section with white background extending to left edge */}
-        <div className="bg-white flex-shrink-0">
+        <div className={cn(
+          "flex-shrink-0 transition-all duration-500",
+          scrolled ? "bg-white" : "bg-transparent"
+        )}>
           <div className={cn(
             "pl-6 pr-8 flex items-center transition-all duration-300",
             scrolled ? "py-2" : "py-3"
@@ -58,8 +64,10 @@ export default function Navbar() {
         
         {/* Nav section with dark background and gradient transition from white */}
         <div className={cn(
-          "bg-gradient-to-r from-white via-gray-400 via-5% to-gray-900 to-15% flex-grow flex items-center justify-end px-6 transition-all duration-300",
-          scrolled ? "py-2" : "py-3"
+          "flex-grow flex items-center justify-end px-6 transition-all duration-500",
+          scrolled 
+            ? "bg-gradient-to-r from-white via-gray-400 via-5% to-gray-900 to-15% py-2" 
+            : "bg-transparent py-3"
         )}>
 
         {/* Desktop Nav */}
@@ -69,23 +77,33 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors tracking-wide",
+                "text-sm font-medium transition-all duration-500 tracking-wide",
                 location === link.href
                   ? "text-[#00A8E8] underline underline-offset-8"
-                  : "text-gray-300 hover:text-white",
+                  : scrolled 
+                    ? "text-gray-300 hover:text-white" 
+                    : "text-white hover:text-[#00A8E8] drop-shadow-md",
               )}
             >
               {link.name}
             </Link>
           ))}
-          <button className="px-5 py-2 text-xs font-bold tracking-widest uppercase border border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white transition-all duration-300 rounded-none cursor-pointer">
+          <button className={cn(
+            "px-5 py-2 text-xs font-bold tracking-widest uppercase border transition-all duration-500 rounded-none cursor-pointer",
+            scrolled
+              ? "border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white"
+              : "border-white text-white hover:bg-white hover:text-gray-900 drop-shadow-md"
+          )}>
             Contact
           </button>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white"
+          className={cn(
+            "md:hidden transition-all duration-500",
+            scrolled ? "text-white" : "text-white drop-shadow-md"
+          )}
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X /> : <Menu />}
