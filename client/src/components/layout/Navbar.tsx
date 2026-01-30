@@ -35,16 +35,18 @@ export default function Navbar() {
           : "",
       )}
     >
-      <div className={cn(
-        "flex items-center justify-between px-6 transition-all duration-700 ease-in-out",
-        scrolled 
-          ? "bg-gradient-to-r from-white via-gray-300 via-20% to-gray-900 to-40% py-2" 
-          : "bg-transparent py-4"
-      )}>
+      <div className="relative flex items-center justify-between px-6 transition-all duration-700 ease-in-out py-4">
+        {/* Animated gradient background */}
+        <div 
+          className={cn(
+            "absolute inset-0 bg-gradient-to-r from-white via-gray-300 via-20% to-gray-900 to-40% transition-opacity duration-700 ease-in-out",
+            scrolled ? "opacity-100" : "opacity-0"
+          )}
+        />
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center -space-x-8 hover:opacity-80 transition-opacity"
+          className="relative z-10 flex items-center -space-x-8 hover:opacity-80 transition-opacity"
         >
           <div className="h-16 overflow-hidden flex items-center">
             <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
@@ -55,7 +57,7 @@ export default function Navbar() {
         </Link>
         
         {/* Nav Links */}
-        <div className="flex items-center">
+        <div className="relative z-10 flex items-center">
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
