@@ -56,8 +56,10 @@ interface Product {
   cct: string | null;
   beamAngle: string | null;
   image?: string | null;
+  images?: string[] | null;
   catalogueUrl?: string | null;
   technicalDrawingUrl?: string | null;
+  technicalDrawings?: string[] | null;
 }
 
 const CONTROL_ICONS = [
@@ -118,6 +120,8 @@ export default function ProductDetail() {
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [showDrawingLightbox, setShowDrawingLightbox] = useState(false);
+  const [lightboxDrawingIndex, setLightboxDrawingIndex] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -213,48 +217,82 @@ export default function ProductDetail() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="space-y-6">
-              <div
-                ref={imageContainerRef}
-                className="aspect-[4/3] bg-gray-50 border border-gray-100 relative overflow-hidden rounded-lg cursor-zoom-in"
-                onMouseEnter={() => setIsZooming(true)}
-                onMouseLeave={() => setIsZooming(false)}
-                onMouseMove={handleMouseMove}
-              >
-                <div
-                  className="w-full h-full flex items-center justify-center p-8 transition-transform duration-100"
-                  style={
-                    isZooming && product.image
-                      ? {
-                          transform: `scale(${ZOOM_LEVEL})`,
-                          transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        }
-                      : undefined
-                  }
-                >
-                  {product.image ? (
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="max-w-full max-h-full object-contain"
-                      data-testid="product-image"
-                    />
-                  ) : (
-                    <Package className="w-24 h-24 text-gray-200" />
-                  )}
-                </div>
-                {getColorFromText(product.color).length > 0 && (
-                  <div className="absolute bottom-4 right-4 flex gap-2 z-10">
-                    {getColorFromText(product.color).map((color, i) => (
+              {(() => {
+                const allImages = [
+                  product.image,
+                  ...(product.images || [])
+                ].filter(Boolean) as string[];
+                const currentImage = allImages[selectedImageIndex] || product.image;
+                
+                return (
+                  <>
+                    <div
+                      ref={imageContainerRef}
+                      className="aspect-[4/3] bg-gray-50 border border-gray-100 relative overflow-hidden rounded-lg cursor-zoom-in"
+                      onMouseEnter={() => setIsZooming(true)}
+                      onMouseLeave={() => setIsZooming(false)}
+                      onMouseMove={handleMouseMove}
+                    >
                       <div
-                        key={i}
-                        className="w-6 h-6 rounded-full border-2 border-white shadow-md"
-                        style={{ backgroundColor: color }}
-                        title={product.color || ""}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+                        className="w-full h-full flex items-center justify-center p-8 transition-transform duration-100"
+                        style={
+                          isZooming && currentImage
+                            ? {
+                                transform: `scale(${ZOOM_LEVEL})`,
+                                transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                              }
+                            : undefined
+                        }
+                      >
+                        {currentImage ? (
+                          <img
+                            src={currentImage}
+                            alt={product.name}
+                            className="max-w-full max-h-full object-contain"
+                            data-testid="product-image"
+                          />
+                        ) : (
+                          <Package className="w-24 h-24 text-gray-200" />
+                        )}
+                      </div>
+                      {getColorFromText(product.color).length > 0 && (
+                        <div className="absolute bottom-4 right-4 flex gap-2 z-10">
+                          {getColorFromText(product.color).map((color, i) => (
+                            <div
+                              key={i}
+                              className="w-6 h-6 rounded-full border-2 border-white shadow-md"
+                              style={{ backgroundColor: color }}
+                              title={product.color || ""}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {allImages.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto pb-2">
+                        {allImages.map((img, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedImageIndex(index)}
+                            className={`flex-shrink-0 w-16 h-16 border-2 rounded overflow-hidden transition-all ${
+                              selectedImageIndex === index 
+                                ? 'border-gray-900' 
+                                : 'border-gray-200 hover:border-gray-400'
+                            }`}
+                          >
+                            <img 
+                              src={img} 
+                              alt={`${product.name} ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               <div className="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100">
                 <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
@@ -351,40 +389,63 @@ export default function ProductDetail() {
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                   <div className="p-4 border-b border-gray-100">
                     <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
-                      Technical Drawing
+                      Technical Drawings
                     </h3>
                   </div>
                   <div className="p-4 bg-gray-50">
-                    <div className="flex items-center justify-center h-44">
-                      {product.technicalDrawingUrl ? (
-                        <img
-                          src={product.technicalDrawingUrl}
-                          alt="Technical Drawing"
-                          className="max-w-full max-h-full object-contain cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => setShowDrawingLightbox(true)}
-                          title="Click to view full size"
-                        />
-                      ) : (
-                        <div className="text-center">
-                          <svg
-                            className="w-10 h-10 text-gray-300 mx-auto mb-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="1"
-                              d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
-                            ></path>
-                          </svg>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-                            Technical drawing available upon request
-                          </p>
+                    {(() => {
+                      const allDrawings = [
+                        product.technicalDrawingUrl,
+                        ...(product.technicalDrawings || [])
+                      ].filter(Boolean) as string[];
+                      
+                      if (allDrawings.length === 0) {
+                        return (
+                          <div className="flex items-center justify-center h-44">
+                            <div className="text-center">
+                              <svg
+                                className="w-10 h-10 text-gray-300 mx-auto mb-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="1"
+                                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                                ></path>
+                              </svg>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                                Technical drawing available upon request
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className={`grid gap-3 ${allDrawings.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                          {allDrawings.map((drawing, index) => (
+                            <div 
+                              key={index}
+                              className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2 cursor-pointer hover:border-gray-300 transition-colors"
+                              onClick={() => {
+                                setLightboxDrawingIndex(index);
+                                setShowDrawingLightbox(true);
+                              }}
+                              title="Click to view full size"
+                            >
+                              <img
+                                src={drawing}
+                                alt={`Technical Drawing ${index + 1}`}
+                                className="max-w-full max-h-full object-contain hover:opacity-80 transition-opacity"
+                              />
+                            </div>
+                          ))}
                         </div>
-                      )}
-                    </div>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
@@ -425,26 +486,70 @@ export default function ProductDetail() {
         </div>
       </main>
 
-      {showDrawingLightbox && product?.technicalDrawingUrl && (
-        <div 
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8 cursor-pointer"
-          onClick={() => setShowDrawingLightbox(false)}
-        >
-          <button 
-            className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
-            onClick={() => setShowDrawingLightbox(false)}
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <img
-            src={product.technicalDrawingUrl}
-            alt="Technical Drawing - Full Size"
-            className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+      {showDrawingLightbox && product && (
+        (() => {
+          const allDrawings = [
+            product.technicalDrawingUrl,
+            ...(product.technicalDrawings || [])
+          ].filter(Boolean) as string[];
+          
+          if (allDrawings.length === 0) return null;
+          
+          const currentDrawing = allDrawings[lightboxDrawingIndex];
+          
+          return (
+            <div 
+              className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-8 cursor-pointer"
+              onClick={() => setShowDrawingLightbox(false)}
+            >
+              <button 
+                className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
+                onClick={() => setShowDrawingLightbox(false)}
+              >
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              {allDrawings.length > 1 && (
+                <>
+                  <button
+                    className="absolute left-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxDrawingIndex((prev) => (prev - 1 + allDrawings.length) % allDrawings.length);
+                    }}
+                  >
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxDrawingIndex((prev) => (prev + 1) % allDrawings.length);
+                    }}
+                  >
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm">
+                    {lightboxDrawingIndex + 1} / {allDrawings.length}
+                  </div>
+                </>
+              )}
+              
+              <img
+                src={currentDrawing}
+                alt={`Technical Drawing ${lightboxDrawingIndex + 1} - Full Size`}
+                className="max-w-full max-h-full object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          );
+        })()
       )}
 
       <Footer />

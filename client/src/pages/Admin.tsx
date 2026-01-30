@@ -26,8 +26,10 @@ interface Product {
   cct: string | null;
   beamAngle: string | null;
   image?: string | null;
+  images?: string[] | null;
   catalogueUrl?: string | null;
   technicalDrawingUrl?: string | null;
+  technicalDrawings?: string[] | null;
 }
 
 export default function Admin() {
@@ -57,8 +59,10 @@ export default function Admin() {
     cct: "",
     beamAngle: "",
     image: "",
+    images: [] as string[],
     catalogueUrl: "",
-    technicalDrawingUrl: ""
+    technicalDrawingUrl: "",
+    technicalDrawings: [] as string[]
   });
 
   const fetchProducts = async () => {
@@ -107,6 +111,29 @@ export default function Admin() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleMultipleFileChange = (e: ChangeEvent<HTMLInputElement>, field: 'images' | 'technicalDrawings') => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const promises = Array.from(files).map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+      });
+      Promise.all(promises).then(results => {
+        setFormData(prev => ({ ...prev, [field]: [...prev[field], ...results] }));
+      });
+    }
+  };
+
+  const removeFromArray = (field: 'images' | 'technicalDrawings', index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index)
+    }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -164,8 +191,10 @@ export default function Admin() {
       cct: "",
       beamAngle: "",
       image: "",
+      images: [],
       catalogueUrl: "",
-      technicalDrawingUrl: ""
+      technicalDrawingUrl: "",
+      technicalDrawings: []
     });
   };
 
@@ -189,8 +218,10 @@ export default function Admin() {
       cct: product.cct || "",
       beamAngle: product.beamAngle || "",
       image: product.image || "",
+      images: product.images || [],
       catalogueUrl: product.catalogueUrl || "",
-      technicalDrawingUrl: product.technicalDrawingUrl || ""
+      technicalDrawingUrl: product.technicalDrawingUrl || "",
+      technicalDrawings: product.technicalDrawings || []
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -424,29 +455,58 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawing (Maglinear)</label>
-                      <div className="relative group">
-                        <input 
-                          type="file" 
-                          accept="image/*"
-                          onChange={(e) => handleFileChange(e, 'technicalDrawingUrl')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                        />
-                        <div className={`border-2 border-dashed border-white/10 p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.technicalDrawingUrl ? 'bg-amber-500/5 border-amber-500/20' : 'hover:border-white/20'}`}>
-                          {formData.technicalDrawingUrl ? (
-                            <div className="flex flex-col items-center gap-2">
-                              <img src={formData.technicalDrawingUrl} alt="Technical Drawing Preview" className="w-24 h-24 object-contain border border-white/10" />
-                              <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace drawing</p>
-                            </div>
-                          ) : (
-                            <>
-                              <Ruler className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
-                              <p className="text-xs text-gray-500 uppercase tracking-widest">Technical Drawing</p>
-                            </>
-                          )}
+                  <div className="space-y-4">
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Additional Product Images</label>
+                    <div className="flex flex-wrap gap-3">
+                      {formData.images.map((img, index) => (
+                        <div key={index} className="relative w-20 h-20 border border-white/10 group">
+                          <img src={img} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeFromArray('images', index)}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </div>
+                      ))}
+                      <div className="relative w-20 h-20 border-2 border-dashed border-white/10 hover:border-white/30 transition-colors flex items-center justify-center cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) => handleMultipleFileChange(e, 'images')}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <Plus className="w-6 h-6 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawings (Multiple)</label>
+                    <div className="flex flex-wrap gap-3">
+                      {formData.technicalDrawings.map((drawing, index) => (
+                        <div key={index} className="relative w-24 h-24 border border-amber-500/20 bg-amber-500/5 group">
+                          <img src={drawing} alt={`Drawing ${index + 1}`} className="w-full h-full object-contain p-1" />
+                          <button
+                            type="button"
+                            onClick={() => removeFromArray('technicalDrawings', index)}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      <div className="relative w-24 h-24 border-2 border-dashed border-white/10 hover:border-amber-500/30 transition-colors flex items-center justify-center cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(e) => handleMultipleFileChange(e, 'technicalDrawings')}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <Ruler className="w-6 h-6 text-gray-500" />
                       </div>
                     </div>
                   </div>

@@ -28,8 +28,10 @@ export const products = pgTable("products", {
   cct: text("cct"),
   beamAngle: text("beam_angle"),
   image: text("image"),
+  images: text("images").array(),
   catalogueUrl: text("catalogue_url"),
   technicalDrawingUrl: text("technical_drawing_url"),
+  technicalDrawings: text("technical_drawings").array(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
