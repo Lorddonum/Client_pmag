@@ -288,26 +288,26 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
+    <div className="min-h-screen bg-zinc-900 text-white selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
             <div className="w-full lg:w-64 space-y-8">
               <div>
-                <h2 className="text-2xl font-display font-bold mb-2 uppercase tracking-tighter">Control</h2>
-                <p className="text-xs text-gray-500 uppercase tracking-widest">Management Dashboard</p>
+                <h2 className="text-2xl font-display font-bold mb-2 uppercase tracking-tighter text-white">Control</h2>
+                <p className="text-xs text-gray-400 uppercase tracking-widest">Management Dashboard</p>
               </div>
               <div className="space-y-2">
                 <button 
                   onClick={resetForm}
                   data-testid="button-add-product"
-                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all ${!editingId ? 'bg-white text-black' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all ${!editingId ? 'bg-[#00A8E8] text-white' : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'}`}
                 >
                   Add Product <Plus className="w-4 h-4" />
                 </button>
-                <button className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
-                  Product List <Package className="w-4 h-4 text-gray-500" />
+                <button className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                  Product List <Package className="w-4 h-4 text-gray-400" />
                 </button>
                 <button 
                   onClick={handleLogout}
@@ -580,7 +580,7 @@ export default function Admin() {
               </section>
               <section className="space-y-6">
                 <div className="flex justify-between items-center gap-4">
-                  <h3 className="text-xl font-display font-bold uppercase tracking-widest">Live Products ({products.length})</h3>
+                  <h3 className="text-xl font-display font-bold uppercase tracking-widest text-white">Live Products ({products.length})</h3>
                   <div className="relative flex-1 max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input
