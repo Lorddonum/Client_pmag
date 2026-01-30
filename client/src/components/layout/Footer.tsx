@@ -16,7 +16,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="bg-[#ECAA00] py-8">
+      <div className="bg-gradient-to-r from-[#F5D88A] via-[#ECAA00] to-[#00A8E8] py-8">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center -space-x-8">
