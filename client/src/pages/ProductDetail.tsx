@@ -116,6 +116,7 @@ const getColorFromText = (colorText: string | null): string[] => {
 export default function ProductDetail() {
   const [, params] = useRoute("/products/:id");
   const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
@@ -136,10 +137,28 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       if (!params?.id) return;
       try {
-        const res = await fetch(`/api/products/${params.id}`);
-        if (res.ok) {
-          const data = await res.json();
+        const [productRes, allProductsRes] = await Promise.all([
+          fetch(`/api/products/${params.id}`),
+          fetch('/api/products')
+        ]);
+        
+        if (productRes.ok) {
+          const data = await productRes.json();
           setProduct(data);
+          
+          if (allProductsRes.ok) {
+            const allProducts: Product[] = await allProductsRes.json();
+            const related = allProducts
+              .filter(p => p.id !== data.id)
+              .filter(p => p.series === data.series || p.brand === data.brand)
+              .sort((a, b) => {
+                const aScore = (a.series === data.series ? 2 : 0) + (a.brand === data.brand ? 1 : 0);
+                const bScore = (b.series === data.series ? 2 : 0) + (b.brand === data.brand ? 1 : 0);
+                return bScore - aScore;
+              })
+              .slice(0, 4);
+            setRelatedProducts(related);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch product:", error);
@@ -553,6 +572,58 @@ export default function ProductDetail() {
             </div>
           );
         })()
+      )}
+
+      {relatedProducts.length > 0 && (
+        <section className="container mx-auto px-6 py-16 border-t border-gray-100">
+          <h2 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900 mb-8">
+            Related Products
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((relatedProduct) => {
+              const relatedBrandColor = relatedProduct.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
+              return (
+                <Link key={relatedProduct.id} href={`/products/${relatedProduct.id}`}>
+                  <motion.div
+                    className="group bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                    whileHover={{ y: -4 }}
+                  >
+                    <div className="aspect-square bg-gray-50 flex items-center justify-center p-4">
+                      {relatedProduct.image ? (
+                        <img
+                          src={relatedProduct.image}
+                          alt={relatedProduct.name}
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <Package className="w-12 h-12 text-gray-300" />
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span
+                          className="px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white rounded"
+                          style={{ backgroundColor: relatedBrandColor }}
+                        >
+                          {relatedProduct.brand}
+                        </span>
+                        <span className="text-[8px] text-gray-400 uppercase tracking-widest">
+                          {relatedProduct.series}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-sm text-gray-900 group-hover:text-[#00A8E8] transition-colors line-clamp-2">
+                        {relatedProduct.name}
+                      </h3>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">
+                        {relatedProduct.modelNumber}
+                      </p>
+                    </div>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       <Footer />
