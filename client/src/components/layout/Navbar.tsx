@@ -29,17 +29,17 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
+        "fixed top-0 w-full z-50 transition-all duration-700 ease-in-out border-b border-transparent",
         scrolled
           ? "shadow-lg"
           : "",
       )}
     >
       <div className={cn(
-        "flex items-center justify-between px-6 transition-all duration-500",
+        "flex items-center justify-between px-6 transition-all duration-700 ease-in-out",
         scrolled 
           ? "bg-gradient-to-r from-white via-gray-300 via-20% to-gray-900 to-40% py-2" 
-          : "bg-transparent py-3"
+          : "bg-transparent py-4"
       )}>
         {/* Logo */}
         <Link
@@ -64,7 +64,7 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-all duration-500 tracking-wide",
+                "text-sm font-medium transition-all duration-700 ease-in-out tracking-wide",
                 location === link.href
                   ? "text-[#00A8E8] underline underline-offset-8"
                   : scrolled 
@@ -76,7 +76,7 @@ export default function Navbar() {
             </Link>
           ))}
           <button className={cn(
-            "px-5 py-2 text-xs font-bold tracking-widest uppercase border transition-all duration-500 rounded-none cursor-pointer",
+            "px-5 py-2 text-xs font-bold tracking-widest uppercase border transition-all duration-700 ease-in-out rounded-none cursor-pointer",
             scrolled
               ? "border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white"
               : "border-white text-white hover:bg-white hover:text-gray-900 drop-shadow-md"
@@ -88,7 +88,7 @@ export default function Navbar() {
         {/* Mobile Toggle */}
         <button
           className={cn(
-            "md:hidden transition-all duration-500",
+            "md:hidden transition-all duration-700 ease-in-out",
             scrolled ? "text-white" : "text-white drop-shadow-md"
           )}
           onClick={() => setIsOpen(!isOpen)}
