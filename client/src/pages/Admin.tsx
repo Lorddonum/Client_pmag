@@ -14,7 +14,6 @@ interface Product {
   description: string;
   series: string;
   brand: string;
-  category: string;
   application?: string | null;
   finish?: string | null;
   material?: string | null;
@@ -48,7 +47,6 @@ export default function Admin() {
     description: "",
     series: "",
     brand: "Paralight",
-    category: "Indoor",
     application: "",
     finish: "",
     material: "",
@@ -180,7 +178,6 @@ export default function Admin() {
       description: "",
       series: "",
       brand: "Paralight",
-      category: "Indoor",
       application: "",
       finish: "",
       material: "",
@@ -207,7 +204,6 @@ export default function Admin() {
       description: product.description,
       series: product.series,
       brand: product.brand,
-      category: product.category || "Indoor",
       application: product.application || "",
       finish: product.finish || "",
       material: product.material || "",
@@ -370,24 +366,6 @@ export default function Admin() {
                         className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Category *</label>
-                      <select 
-                        required
-                        data-testid="select-category"
-                        value={formData.category}
-                        onChange={(e) => setFormData({...formData, category: e.target.value})}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                      >
-                        <option value="Indoor">Indoor</option>
-                        <option value="Outdoor">Outdoor</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Decorative">Decorative</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
                       <select 
@@ -618,8 +596,8 @@ export default function Admin() {
                           <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
                           <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
                           <div className="flex gap-2 mt-2">
-                            <span className="text-[8px] bg-[#00A8E8]/10 text-[#00A8E8] px-2 py-1 uppercase tracking-widest rounded-full">{product.brand}</span>
-                            <span className="text-[8px] bg-[#ECAA00]/10 text-[#ECAA00] px-2 py-1 uppercase tracking-widest rounded-full">{product.category}</span>
+                            <span className={`text-[8px] px-2 py-1 uppercase tracking-widest rounded-full ${product.brand === 'Paralight' ? 'bg-[#00A8E8]/10 text-[#00A8E8]' : 'bg-[#ECAA00]/10 text-[#ECAA00]'}`}>{product.brand}</span>
+                            <span className="text-[8px] bg-gray-100 text-gray-600 px-2 py-1 uppercase tracking-widest rounded-full">{product.series}</span>
                           </div>
                         </div>
                       </div>

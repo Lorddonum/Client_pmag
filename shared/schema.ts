@@ -16,7 +16,6 @@ export const products = pgTable("products", {
   description: text("description").notNull(),
   series: text("series").notNull(),
   brand: text("brand").notNull(),
-  category: text("category").notNull(),
   application: text("application"),
   finish: text("finish"),
   material: text("material"),
