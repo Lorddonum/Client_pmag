@@ -15,7 +15,7 @@ export default function BrandSplit() {
       link: "/products?brand=Paralight"
     },
     {
-      name: "Maglinear",
+      name: "Maglinear Lighting",
       subtitle: "Magnetic Track Systems",
       description: "Advanced magnetic track lighting and commercial lighting solutions. Panels, downlights, and pendant systems designed for modern architectural spaces.",
       image: maglinearImg,
@@ -80,7 +80,9 @@ export default function BrandSplit() {
                       {brand.subtitle}
                     </span>
                     
-                    <h3 className="font-display text-4xl lg:text-5xl text-white font-medium mb-4 flex items-center gap-4">
+                    <h3 className={`font-display text-4xl lg:text-5xl font-medium mb-4 flex items-center gap-4 ${
+                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    }`}>
                       {brand.name}
                       <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                     </h3>
