@@ -20,6 +20,9 @@ import milestone2021jan_2 from "@/assets/milestone-2021jan-2.png";
 import milestone2021jan_3 from "@/assets/milestone-2021jan-3.png";
 import milestone2021sep_1 from "@/assets/milestone-2021sep-1.png";
 import milestone2021sep_2 from "@/assets/milestone-2021sep-2.png";
+import milestone2022dec_1 from "@/assets/milestone-2022dec-1.png";
+import milestone2022dec_2 from "@/assets/milestone-2022dec-2.png";
+import milestone2022dec_3 from "@/assets/milestone-2022dec-3.png";
 import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe, Heart, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -121,7 +124,7 @@ export default function About() {
       month: "December",
       title: "Establishment of Jiangmen Tianmai Trading Co., Ltd.",
       description: "Professional integration of the Polycarbonate (PC) resin raw material supply chain — Establishing an industrial centralized procurement system to ensure stable supply and quality control of premium PC resin. This secures product consistency from the very start of the raw material stage and solidifies our core advantage: a fully controllable supply chain.",
-      images: []
+      images: [milestone2022dec_1, milestone2022dec_2, milestone2022dec_3]
     },
     {
       year: "2023",
