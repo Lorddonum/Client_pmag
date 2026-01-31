@@ -54,29 +54,27 @@ export default function Contact() {
     <div className={`min-h-screen transition-colors duration-1000 ${isLit ? 'bg-white' : 'bg-gray-950'} ${!isLit ? 'overflow-hidden h-screen' : ''}`}>
       <Navbar />
 
-      {/* Hero Section - Always visible */}
-      <section className={`relative flex items-center justify-center transition-all duration-1000 ${isLit ? 'min-h-[50vh] pt-32 pb-16' : 'min-h-screen'}`}>
-        {/* Animated gradient orbs - only visible when dark */}
-        <AnimatePresence>
-          {!isLit && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-                className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-cyan/20 rounded-full blur-[120px]"
-              />
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.3 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1, delay: 0.5 }}
-                className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-brand-gold/15 rounded-full blur-[150px]"
-              />
-            </>
-          )}
-        </AnimatePresence>
+      {/* Hero Section - Animates away when lit */}
+      <AnimatePresence>
+      {!isLit && (
+      <motion.section
+        initial={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -200 }}
+        transition={{ duration: 0.8 }}
+        className="relative flex items-center justify-center min-h-screen"
+      >
+        {/* Animated gradient orbs */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-cyan/20 rounded-full blur-[120px]"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.3 }}
+          transition={{ delay: 0.5 }}
+          className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-brand-gold/15 rounded-full blur-[150px]"
+        />
 
         {/* Content */}
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
@@ -90,35 +88,16 @@ export default function Contact() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 transition-colors duration-1000 ${
-                isLit ? 'bg-gray-100 border border-gray-200' : 'bg-white/5 border border-white/10'
-              }`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 bg-white/5 border border-white/10"
             >
-              <motion.div
-                animate={isLit ? { rotate: [0, 10, -10, 0] } : {}}
-                transition={{ duration: 0.5 }}
-              >
-                {isLit ? (
-                  <Lightbulb className="w-4 h-4 text-brand-gold" />
-                ) : (
-                  <LightbulbOff className="w-4 h-4 text-gray-500" />
-                )}
-              </motion.div>
-              <span className={`text-[11px] font-medium tracking-[0.2em] uppercase transition-colors duration-1000 ${
-                isLit ? 'text-gray-600' : 'text-gray-300'
-              }`}>Let's Connect</span>
+              <LightbulbOff className="w-4 h-4 text-gray-500" />
+              <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-300">Let's Connect</span>
             </motion.div>
             
-            <h1 className={`font-display text-5xl md:text-7xl lg:text-8xl font-medium mb-6 leading-[0.95] transition-colors duration-1000 ${
-              isLit ? 'text-gray-900' : 'text-white'
-            }`}>
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-medium mb-6 leading-[0.95] text-white">
               Light Up The
               <br />
-              <span className={`italic font-normal ${
-                isLit 
-                  ? 'text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-gold' 
-                  : 'text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold'
-              }`}>
+              <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold">
                 Future Together
               </span>
             </h1>
@@ -127,38 +106,36 @@ export default function Contact() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className={`text-lg md:text-xl max-w-2xl mx-auto mb-10 transition-colors duration-1000 ${
-                isLit ? 'text-gray-600' : 'text-gray-400'
-              }`}
+              className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-gray-400"
             >
               Whether you're a wholesaler, distributor, or working on a lighting project — 
               our team is here to support you.
             </motion.p>
 
-            {!isLit && (
-              <motion.button
-                onClick={handleLightUp}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-brand-gold text-gray-900 font-medium rounded-full hover:bg-brand-gold/90 transition-all duration-300 group"
+            <motion.button
+              onClick={handleLightUp}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-brand-gold text-gray-900 font-medium rounded-full hover:bg-brand-gold/90 transition-all duration-300 group"
+            >
+              <span>Send an Inquiry</span>
+              <motion.div
+                animate={{ 
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
               >
-                <span>Send an Inquiry</span>
-                <motion.div
-                  animate={{ 
-                    opacity: [0.5, 1, 0.5],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <LightbulbOff className="w-5 h-5" />
-                </motion.div>
-              </motion.button>
-            )}
+                <LightbulbOff className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
           </motion.div>
         </div>
-      </section>
+      </motion.section>
+      )}
+      </AnimatePresence>
 
       {/* Content that appears after lighting up */}
       <AnimatePresence>
