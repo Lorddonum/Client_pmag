@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import paralightImg from "@/assets/paralight-brand.png";
-import maglinearImg from "@assets/generated_images/modern_magnetic_track_lighting_system_interior.png";
+import paralightImg from "@/assets/paralight-profiles.png";
+import maglinearImg from "@/assets/paralight-brand.png";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 
