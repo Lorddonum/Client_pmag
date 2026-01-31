@@ -216,20 +216,35 @@ export default function ProductDetail() {
     // Maglinear-specific specs
     ...(product.brand === "Maglinear" ? [
       { label: "Mounting Track", value: product.mountingTrack },
-    ] : []),
-    // Custom technical specs from JSON
-    ...(product.technicalSpecs ? (() => {
-      try {
-        const customSpecs = JSON.parse(product.technicalSpecs);
-        return customSpecs.map((spec: { label: string; value: string }) => ({
-          label: spec.label,
-          value: spec.value
-        }));
-      } catch {
-        return [];
-      }
-    })() : [])
+    ] : [])
   ].filter((spec) => spec.value && spec.value.trim() !== "");
+
+  // Parse additional specification rows
+  const additionalSpecRows: Array<{ wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string }> = product.technicalSpecs ? (() => {
+    try {
+      return JSON.parse(product.technicalSpecs);
+    } catch {
+      return [];
+    }
+  })() : [];
+
+  // Convert additional rows to displayable specs
+  const getAdditionalRowSpecs = (row: typeof additionalSpecRows[0]) => {
+    const rowSpecs = [
+      { label: "Wattage", value: row.wattage },
+      { label: "Application", value: row.application },
+      { label: "Finish", value: row.finish },
+      { label: "Material", value: row.material },
+      { label: "Dimensions", value: row.dimensions },
+      { label: "Voltage", value: row.voltage },
+      { label: "Color", value: row.color },
+      { label: "CRI", value: row.cri },
+      { label: "CCT", value: row.cct },
+      { label: "Beam Angle", value: row.beamAngle },
+      { label: "Mounting Track", value: row.mountingTrack },
+    ];
+    return rowSpecs.filter((spec) => spec.value && spec.value.trim() !== "");
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -422,6 +437,31 @@ export default function ProductDetail() {
                     </div>
                   ))}
                 </div>
+
+                {/* Additional Specification Rows */}
+                {additionalSpecRows.map((row, rowIndex) => {
+                  const rowSpecs = getAdditionalRowSpecs(row);
+                  if (rowSpecs.length === 0) return null;
+                  return (
+                    <div key={rowIndex} className="border-t border-gray-100">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                        {rowSpecs.map((spec, i) => (
+                          <div
+                            key={`${rowIndex}-${spec.label}`}
+                            className={`p-4 ${i < rowSpecs.length - (rowSpecs.length % 5 || 5) ? "border-b" : ""} ${(i + 1) % 5 !== 0 ? "border-r" : ""} border-gray-100`}
+                          >
+                            <p className="text-[9px] uppercase tracking-widest text-gray-400 mb-1">
+                              {spec.label}
+                            </p>
+                            <p className="text-xs font-medium text-gray-900 break-words">
+                              {spec.value}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Technical Drawing */}

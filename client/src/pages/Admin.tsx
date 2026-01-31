@@ -703,70 +703,143 @@ export default function Admin() {
                       )}
                     </div>
 
-                    {/* Custom Technical Specifications Table */}
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                      <div className="flex items-center justify-between mb-4">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Additional Specifications</label>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const currentSpec = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
-                            const newSpec = [...currentSpec, { label: '', value: '' }];
-                            setFormData({...formData, technicalSpecs: JSON.stringify(newSpec)});
-                          }}
-                          className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-white bg-[#00A8E8] hover:bg-[#0090c8] rounded transition-colors"
-                        >
-                          <Plus className="w-3 h-3" /> Add Spec
-                        </button>
-                      </div>
-                      
-                      {(!formData.technicalSpecs || JSON.parse(formData.technicalSpecs || '[]').length === 0) ? (
-                        <div className="p-6 border-2 border-dashed border-gray-200 rounded-lg text-center">
-                          <p className="text-[10px] uppercase tracking-widest text-gray-400">No additional specifications</p>
-                          <p className="text-[10px] text-gray-400 mt-1">Click "Add Spec" to add custom specifications</p>
+                  </div>
+
+                  {/* Additional Specification Rows */}
+                  {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string }, rowIndex: number) => (
+                      <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs.splice(rowIndex, 1);
+                              setFormData({...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : ''});
+                            }}
+                            className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-red-500 hover:bg-red-50 rounded transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" /> Remove Row
+                          </button>
                         </div>
-                      ) : (
-                        <div className="space-y-2">
-                          {JSON.parse(formData.technicalSpecs || '[]').map((spec: { label: string; value: string }, index: number) => (
-                            <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                              <input
-                                type="text"
-                                value={spec.label}
-                                onChange={(e) => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[index].label = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
-                                }}
-                                className="flex-1 bg-white border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                placeholder="Label (e.g. IP Rating)"
-                              />
-                              <input
-                                type="text"
-                                value={spec.value}
-                                onChange={(e) => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[index].value = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
-                                }}
-                                className="flex-1 bg-white border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                placeholder="Value (e.g. IP65)"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs.splice(index, 1);
-                                  setFormData({...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : ''});
-                                }}
-                                className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                          {formData.brand !== "Paralight" && (
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
+                              <input type="text" value={specRow.wattage || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].wattage = e.target.value;
+                                setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
                             </div>
-                          ))}
+                          )}
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
+                            <input type="text" value={specRow.application || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].application = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
+                            <input type="text" value={specRow.finish || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].finish = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
+                            <input type="text" value={specRow.material || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].material = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
+                            <input type="text" value={specRow.dimensions || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].dimensions = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
+                          </div>
+                          {formData.brand !== "Paralight" && (
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
+                              <input type="text" value={specRow.voltage || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].voltage = e.target.value;
+                                setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
+                            </div>
+                          )}
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
+                            <input type="text" value={specRow.color || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].color = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                          </div>
+                          {formData.brand !== "Paralight" && (
+                            <>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
+                                <input type="text" value={specRow.cri || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].cri = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
+                                <input type="text" value={specRow.cct || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].cct = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
+                                <input type="text" value={specRow.beamAngle || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].beamAngle = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
+                              </div>
+                            </>
+                          )}
+                          {formData.brand === "Maglinear" && (
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
+                              <input type="text" value={specRow.mountingTrack || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].mountingTrack = e.target.value;
+                                setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track" />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ))
+                  )}
+
+                  {/* Add Specification Row Button */}
+                  <div className="pt-4 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
+                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '' };
+                        setFormData({...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow])});
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-4 h-4" /> Add Another Specification Row
+                    </button>
                   </div>
 
                   {formData.brand === "Paralight" && (
