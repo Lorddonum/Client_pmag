@@ -707,7 +707,7 @@ export default function Admin() {
 
                   {/* Additional Specification Rows */}
                   {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string }, rowIndex: number) => (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string }, rowIndex: number) => (
                       <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
@@ -724,6 +724,14 @@ export default function Admin() {
                           </button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model</label>
+                            <input type="text" value={specRow.model || ''} onChange={e => {
+                              const specs = JSON.parse(formData.technicalSpecs || '[]');
+                              specs[rowIndex].model = e.target.value;
+                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] font-medium" placeholder="e.g. PL-D60-001" />
+                          </div>
                           {formData.brand !== "Paralight" && (
                             <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>

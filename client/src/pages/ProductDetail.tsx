@@ -220,7 +220,7 @@ export default function ProductDetail() {
   ].filter((spec) => spec.value && spec.value.trim() !== "");
 
   // Parse additional specification rows
-  const additionalSpecRows: Array<{ wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string }> = product.technicalSpecs ? (() => {
+  const additionalSpecRows: Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string }> = product.technicalSpecs ? (() => {
     try {
       return JSON.parse(product.technicalSpecs);
     } catch {
@@ -231,6 +231,7 @@ export default function ProductDetail() {
   // Convert additional rows to displayable specs
   const getAdditionalRowSpecs = (row: typeof additionalSpecRows[0]) => {
     const rowSpecs = [
+      { label: "Model", value: row.model },
       { label: "Wattage", value: row.wattage },
       { label: "Application", value: row.application },
       { label: "Finish", value: row.finish },
