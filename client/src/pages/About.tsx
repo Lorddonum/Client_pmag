@@ -12,6 +12,9 @@ import coreTeamImg from "@/assets/core-team.png";
 import milestone2016_1 from "@/assets/milestone-2016-1.png";
 import milestone2016_2 from "@/assets/milestone-2016-2.png";
 import milestone2016_3 from "@/assets/milestone-2016-3.png";
+import milestone2019_1 from "@/assets/milestone-2019-1.png";
+import milestone2019_2 from "@/assets/milestone-2019-2.png";
+import milestone2019_3 from "@/assets/milestone-2019-3.png";
 import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe, Heart, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -90,7 +93,7 @@ export default function About() {
       month: "December",
       title: "Establishment of Zhongshan Paralight Lighting Technology Co., Ltd.",
       description: "Transitioning from \"component sales\" to a dual-track \"manufacturing + sales\" model, we deepened our R&D and production capabilities for core products, further solidifying our manufacturing edge in the linear lighting sector.",
-      images: []
+      images: [milestone2019_1, milestone2019_2, milestone2019_3]
     },
     {
       year: "2021",
@@ -156,7 +159,7 @@ export default function About() {
     if (currentImages.length > 1) {
       const interval = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % currentImages.length);
-      }, 2000);
+      }, 4000);
       return () => clearInterval(interval);
     }
   }, [currentMilestone]);
@@ -327,9 +330,10 @@ export default function About() {
                     {milestones[currentMilestone].images.length > 1 && (
                       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
                         {milestones[currentMilestone].images.map((_, idx) => (
-                          <div
+                          <button
                             key={idx}
-                            className={`w-2 h-2 rounded-full transition-all ${
+                            onClick={() => setCurrentImageIndex(idx)}
+                            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer hover:scale-125 ${
                               idx === currentImageIndex ? 'bg-white' : 'bg-white/50'
                             }`}
                           />
