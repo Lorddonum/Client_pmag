@@ -27,6 +27,11 @@ import honor2 from "@/assets/honor-2.png";
 import honor3 from "@/assets/honor-3.png";
 import honor4 from "@/assets/honor-4.png";
 import honor5 from "@/assets/honor-5.png";
+import honor6 from "@/assets/honor-6.jpg";
+import honor7 from "@/assets/honor-7.jpg";
+import honor8 from "@/assets/honor-8.jpg";
+import honor9 from "@/assets/honor-9.jpg";
+import honor10 from "@/assets/honor-10.jpg";
 import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe, Heart, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -37,6 +42,11 @@ function HonorsSlideshow() {
     { image: honor3, title: "Trademark Registration - Paralight", year: "2022" },
     { image: honor4, title: "Trademark Registration - Class 35", year: "2024" },
     { image: honor5, title: "Trademark Registration - PXG", year: "2024" },
+    { image: honor6, title: "JMELIA Association Council Member", year: "2023" },
+    { image: honor7, title: "High-Tech Enterprise Plaque", year: "2023" },
+    { image: honor8, title: "Middle East Lighting Expo Award", year: "2023" },
+    { image: honor9, title: "High-Tech Enterprise Recognition", year: "2023" },
+    { image: honor10, title: "Corporate Legal Advisor Unit", year: "2023" },
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
