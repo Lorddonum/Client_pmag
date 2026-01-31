@@ -471,85 +471,12 @@ export default function ProductDetail() {
               {/* Packaging Method - Paralight Only */}
               {product.brand === "Paralight" && (
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
-                      Packaging Method
-                    </h3>
-                  </div>
-                  <div className="p-6 space-y-8">
-                    {/* Shipping Mark & Front Mark */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="text-center">
-                        <p className="text-xs font-semibold text-gray-700 mb-3">Shipping Mark</p>
-                        <div className="bg-[#ECAA00] w-40 h-28 mx-auto flex items-center justify-center rounded">
-                          <span className="text-2xl font-bold text-white">LOGO</span>
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs font-semibold text-gray-700 mb-3">Front Mark</p>
-                        <div className="border-2 border-gray-800 px-6 py-4 mx-auto max-w-[200px] text-left text-xs space-y-1">
-                          <p>ITEM NO: QTY: * PCS</p>
-                          <p>LENGTH: MPCS</p>
-                          <p>G.W.: KG</p>
-                          <p>MEAS: ** CM</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Method A */}
-                    <div>
-                      <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method A</p>
-                      <div className="max-w-md mx-auto">
-                        <div className="border border-gray-300 rounded-lg overflow-hidden">
-                          <div className="bg-gray-100">
-                            <div className="flex">
-                              <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
-                                <span className="text-[10px] font-medium text-gray-600">Standard<br/>Packing</span>
-                              </div>
-                              <div className="flex-1">
-                                {(product.packagingMethodADesc || "Clips+End Caps,PC Cover,Aluminum Profile").split(',').map((item, i) => (
-                                  <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
-                                    {item.trim()}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {product.packagingMethodASpec && (
-                          <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodASpec}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Method B */}
-                    <div>
-                      <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method B (Additional Fees)</p>
-                      <div className="max-w-md mx-auto">
-                        <div className="border border-gray-300 rounded-lg overflow-hidden">
-                          <div className="bg-gray-100">
-                            <div className="flex">
-                              <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
-                                <span className="text-[10px] font-medium text-gray-600">Single<br/>Item</span>
-                              </div>
-                              <div className="flex-1">
-                                <div className="p-2 text-xs text-center text-gray-700 font-medium border-b border-gray-200">
-                                  Single Item
-                                </div>
-                                {(product.packagingMethodBDesc || "Aluminum Profile+ PC Cover + Clips + End Caps,Aluminum Profile+ PC Cover + Clips + End Caps,Aluminum Profile+ PC Cover + Clips + End Caps").split(',').map((item, i) => (
-                                  <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
-                                    {item.trim()}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {product.packagingMethodBSpec && (
-                          <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodBSpec}</p>
-                        )}
-                      </div>
-                    </div>
+                  <div className="p-6">
+                    <img 
+                      src="/attached_assets/image_1769845890077.png" 
+                      alt="Packaging Method"
+                      className="w-full max-w-2xl mx-auto"
+                    />
                   </div>
                 </div>
               )}
