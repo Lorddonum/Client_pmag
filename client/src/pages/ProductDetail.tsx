@@ -74,6 +74,8 @@ interface Product {
   packagingMethodBDesc?: string | null;
   packagingMethodBSpec?: string | null;
   accessoriesSpec?: string | null;
+  // Maglinear-specific fields
+  mountingTrack?: string | null;
 }
 
 const ZOOM_LEVEL = 2; // Adjustable zoom percentage (2 = 200%)
@@ -208,6 +210,10 @@ export default function ProductDetail() {
       { label: "Accessories", value: product.accessories },
       { label: "LED Strip Size", value: product.ledStripSize },
       { label: "Installation Method", value: product.installationMethod },
+    ] : []),
+    // Maglinear-specific specs
+    ...(product.brand === "Maglinear" ? [
+      { label: "Mounting Track", value: product.mountingTrack },
     ] : [])
   ].filter((spec) => spec.value && spec.value.trim() !== "");
 

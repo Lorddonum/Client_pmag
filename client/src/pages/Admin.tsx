@@ -42,6 +42,8 @@ interface Product {
   packagingMethodBSpec?: string | null;
   accessoriesSpec?: string | null;
   diffuserMaterial?: string | null;
+  // Maglinear-specific fields
+  mountingTrack?: string | null;
 }
 
 export default function Admin() {
@@ -89,7 +91,8 @@ export default function Admin() {
     packagingMethodBDesc: "",
     packagingMethodBSpec: "",
     accessoriesSpec: "",
-    diffuserMaterial: ""
+    diffuserMaterial: "",
+    mountingTrack: ""
   });
 
   const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
@@ -237,7 +240,8 @@ export default function Admin() {
       packagingMethodASpec: "",
       packagingMethodBDesc: "",
       packagingMethodBSpec: "",
-      accessoriesSpec: ""
+      accessoriesSpec: "",
+      mountingTrack: ""
     });
   };
 
@@ -275,7 +279,8 @@ export default function Admin() {
       packagingMethodASpec: product.packagingMethodASpec || "",
       packagingMethodBDesc: product.packagingMethodBDesc || "",
       packagingMethodBSpec: product.packagingMethodBSpec || "",
-      accessoriesSpec: product.accessoriesSpec || ""
+      accessoriesSpec: product.accessoriesSpec || "",
+      mountingTrack: product.mountingTrack || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -684,6 +689,12 @@ export default function Admin() {
                             <input type="text" value={formData.installationMethod} onChange={e => setFormData({...formData, installationMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
                           </div>
                         </>
+                      )}
+                      {formData.brand === "Maglinear" && (
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
+                          <input type="text" value={formData.mountingTrack} onChange={e => setFormData({...formData, mountingTrack: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
+                        </div>
                       )}
                     </div>
                   </div>
