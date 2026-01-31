@@ -62,6 +62,7 @@ interface Product {
   technicalDrawingUrl?: string | null;
   technicalDrawings?: string[] | null;
   // Paralight-specific fields
+  subSeries?: string | null;
   standardLength?: string | null;
   diffuserFinish?: string | null;
   diffuserMaterial?: string | null;
@@ -200,6 +201,7 @@ export default function ProductDetail() {
     { label: "Beam Angle", value: product.beamAngle },
     // Paralight-specific specs
     ...(product.brand === "Paralight" ? [
+      { label: "Sub Series", value: product.subSeries },
       { label: "Standard Length", value: product.standardLength },
       { label: "Diffuser Finish", value: product.diffuserFinish },
       { label: "Diffuser Material", value: product.diffuserMaterial },

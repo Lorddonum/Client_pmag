@@ -32,6 +32,7 @@ export const products = pgTable("products", {
   technicalDrawingUrl: text("technical_drawing_url"),
   technicalDrawings: text("technical_drawings").array(),
   // Paralight-specific fields
+  subSeries: text("sub_series"),
   standardLength: text("standard_length"),
   diffuserFinish: text("diffuser_finish"),
   diffuserMaterial: text("diffuser_material"),

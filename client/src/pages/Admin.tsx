@@ -30,6 +30,7 @@ interface Product {
   technicalDrawingUrl?: string | null;
   technicalDrawings?: string[] | null;
   // Paralight-specific fields
+  subSeries?: string | null;
   standardLength?: string | null;
   diffuserFinish?: string | null;
   accessories?: string | null;
@@ -77,6 +78,7 @@ export default function Admin() {
     technicalDrawingUrl: "",
     technicalDrawings: [] as string[],
     // Paralight-specific fields
+    subSeries: "",
     standardLength: "",
     diffuserFinish: "",
     accessories: "",
@@ -224,6 +226,7 @@ export default function Admin() {
       catalogueUrl: "",
       technicalDrawingUrl: "",
       technicalDrawings: [],
+      subSeries: "",
       standardLength: "",
       diffuserFinish: "",
       diffuserMaterial: "",
@@ -261,6 +264,7 @@ export default function Admin() {
       catalogueUrl: product.catalogueUrl || "",
       technicalDrawingUrl: product.technicalDrawingUrl || "",
       technicalDrawings: product.technicalDrawings || [],
+      subSeries: product.subSeries || "",
       standardLength: product.standardLength || "",
       diffuserFinish: product.diffuserFinish || "",
       diffuserMaterial: product.diffuserMaterial || "",
@@ -644,6 +648,10 @@ export default function Admin() {
                       </div>
                       {formData.brand === "Paralight" && (
                         <>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series</label>
+                            <input type="text" value={formData.subSeries} onChange={e => setFormData({...formData, subSeries: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Premium, Standard" />
+                          </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
                             <input type="text" value={formData.standardLength} onChange={e => setFormData({...formData, standardLength: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
