@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search, ChevronDown, Check } from "lucide-react";
 
 const THEME_BG = "bg-[#1a2332]";
 
@@ -40,6 +40,13 @@ export default function Admin() {
   const [isLoading, setIsLoading] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
   const [, setLocation] = useLocation();
+  const [showSeriesDropdown, setShowSeriesDropdown] = useState(false);
+  const [seriesFilter, setSeriesFilter] = useState("");
+
+  const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
+  const filteredSeries = existingSeries.filter(s => 
+    s.toLowerCase().includes((seriesFilter || formData.series).toLowerCase())
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -357,14 +364,49 @@ export default function Admin() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series *</label>
-                      <input 
-                        type="text" 
-                        required
-                        data-testid="input-series"
-                        value={formData.series}
-                        onChange={(e) => setFormData({...formData, series: e.target.value})}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                      />
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          required
+                          data-testid="input-series"
+                          value={formData.series}
+                          onChange={(e) => {
+                            setFormData({...formData, series: e.target.value});
+                            setSeriesFilter(e.target.value);
+                            setShowSeriesDropdown(true);
+                          }}
+                          onFocus={() => setShowSeriesDropdown(true)}
+                          onBlur={() => setTimeout(() => setShowSeriesDropdown(false), 200)}
+                          placeholder="Type or select a series..."
+                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowSeriesDropdown(!showSeriesDropdown)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
+                        </button>
+                        {showSeriesDropdown && filteredSeries.length > 0 && (
+                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            {filteredSeries.map((series) => (
+                              <button
+                                key={series}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({...formData, series});
+                                  setShowSeriesDropdown(false);
+                                  setSeriesFilter("");
+                                }}
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#00A8E8]/10 hover:text-[#00A8E8] flex items-center justify-between transition-colors"
+                              >
+                                <span>{series}</span>
+                                {formData.series === series && <Check className="w-4 h-4 text-[#00A8E8]" />}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
