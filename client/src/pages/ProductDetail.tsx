@@ -210,37 +210,38 @@ export default function ProductDetail() {
   ].filter((spec) => spec.value && spec.value.trim() !== "");
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="pt-28 pb-20">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-3 mb-8">
+      <main className="pt-32 pb-24">
+        <div className="container mx-auto px-8 lg:px-12">
+          {/* Breadcrumb-style tags */}
+          <div className="flex items-center gap-3 mb-10">
             <span
-              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white"
+              className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase text-white"
               style={{ backgroundColor: brandColor }}
               data-testid="text-brand"
             >
               {product.brand}
             </span>
             <span
-              className="bg-gray-800 text-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest"
+              className="bg-gray-900 text-white px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase"
               data-testid="text-series"
             >
               {product.series}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div className="space-y-6">
               <div>
                 <h1
-                  className="text-2xl font-display font-bold text-gray-900 mb-1"
+                  className="font-display text-3xl md:text-4xl text-gray-900 font-medium mb-2"
                   data-testid="text-name"
                 >
                   {product.name}
                 </h1>
                 <p
-                  className="text-xs text-gray-400 uppercase tracking-widest"
+                  className="text-sm text-gray-400 tracking-wide"
                   data-testid="text-model"
                 >
                   {product.modelNumber}

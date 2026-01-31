@@ -76,7 +76,6 @@ export default function Products() {
     setActiveSeries("All");
   }, [activeBrand]);
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
@@ -87,13 +86,11 @@ export default function Products() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Generate suggestions based on search query
   const getSuggestions = () => {
     if (!searchQuery.trim() || searchQuery.length < 2) return [];
     const query = searchQuery.toLowerCase();
     const suggestions: { type: 'product' | 'series' | 'brand'; label: string; sublabel?: string; id?: number }[] = [];
     
-    // Add matching products (limit to 5)
     const matchingProducts = products
       .filter(p => 
         p.name.toLowerCase().includes(query) || 
@@ -110,7 +107,6 @@ export default function Products() {
       });
     });
     
-    // Add matching series
     const matchingSeries = Array.from(new Set(products.map(p => p.series)))
       .filter(s => s.toLowerCase().includes(query))
       .slice(0, 3);
@@ -157,36 +153,60 @@ export default function Products() {
 
   const getPageTitle = () => {
     if (activeBrand === "All") return "All Products";
-    return `${activeBrand} Products`;
+    return activeBrand;
   };
 
   const getPageSubtitle = () => {
     if (activeBrand === "All") return "LED Aluminum Profiles & Magnetic Track Lighting";
-    if (activeBrand === "Paralight") return "LED Aluminum Profiles";
-    return "Magnetic Track Lighting";
+    if (activeBrand === "Paralight") return "Premium LED Aluminum Profiles";
+    return "Magnetic Track Lighting Systems";
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="pt-28 pb-20">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row gap-12">
+      
+      {/* Hero section */}
+      <section className="pt-32 pb-16 bg-gray-50 border-b border-gray-100">
+        <div className="container mx-auto px-8 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto"
+          >
+            <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 mb-4">
+              Product Catalog
+            </span>
+            <h1 className="font-display text-4xl md:text-5xl text-gray-900 font-medium mb-4">
+              {getPageTitle()}
+            </h1>
+            <p className="text-gray-500 text-lg">
+              {getPageSubtitle()}
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <main className="py-16">
+        <div className="container mx-auto px-8 lg:px-12">
+          <div className="flex flex-col lg:flex-row gap-16">
+            {/* Sidebar */}
             <aside className="lg:w-64 shrink-0">
               <div className="sticky top-32">
-                <div className="flex items-center justify-between mb-8 lg:hidden">
-                  <button 
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center gap-2 text-sm font-medium"
-                  >
-                    <SlidersHorizontal className="w-4 h-4" />
-                    Filters
-                  </button>
-                </div>
+                {/* Mobile filter toggle */}
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="lg:hidden flex items-center gap-2 text-sm font-medium text-gray-700 mb-6"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  {showFilters ? 'Hide Filters' : 'Show Filters'}
+                </button>
 
-                <div className={`space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+                <div className={`space-y-8 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+                  {/* Search */}
                   <div className="relative" ref={searchContainerRef}>
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                     <input
                       type="text"
                       placeholder="Search products..."
@@ -199,50 +219,42 @@ export default function Products() {
                       onFocus={() => setShowSuggestions(true)}
                       onKeyDown={handleKeyDown}
                       data-testid="search-input"
-                      className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 transition-colors"
+                      className="w-full pl-11 pr-4 py-3 text-sm bg-gray-50 border-0 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all"
                     />
                     {showSuggestions && suggestions.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 shadow-xl z-50 overflow-hidden">
                         {suggestions.map((suggestion, index) => (
                           <button
                             key={`${suggestion.type}-${suggestion.label}-${index}`}
                             onClick={() => handleSuggestionClick(suggestion)}
                             className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${
-                              highlightedIndex === index ? 'bg-gray-100' : 'hover:bg-gray-50'
+                              highlightedIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
                             }`}
                             data-testid={`suggestion-${index}`}
                           >
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{suggestion.label}</p>
                               {suggestion.sublabel && (
-                                <p className="text-xs text-gray-500 truncate">{suggestion.sublabel}</p>
+                                <p className="text-xs text-gray-400 truncate">{suggestion.sublabel}</p>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded ${
-                                suggestion.type === 'product' 
-                                  ? 'bg-blue-50 text-blue-600' 
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}>
-                                {suggestion.type === 'product' ? 'Product' : 'Series'}
-                              </span>
-                              <ArrowRight className="w-3 h-3 text-gray-400" />
-                            </div>
+                            <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
 
+                  {/* Brand filter */}
                   <div>
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Brand</h3>
+                    <h3 className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400 mb-4">Brand</h3>
                     <div className="space-y-1">
                       <button
                         onClick={() => setActiveBrand("All")}
                         data-testid="filter-brand-all"
-                        className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                        className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
                           activeBrand === "All" 
-                            ? "bg-gray-900 text-white font-medium"
+                            ? "bg-gray-900 text-white"
                             : "text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -253,11 +265,9 @@ export default function Products() {
                           key={brand}
                           onClick={() => setActiveBrand(brand)}
                           data-testid={`filter-brand-${brand.toLowerCase()}`}
-                          className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                          className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
                             activeBrand === brand 
-                              ? brand === "Paralight" 
-                                ? "bg-[#00A8E8]/10 text-[#00A8E8] font-medium" 
-                                : "bg-[#ECAA00]/10 text-[#ECAA00] font-medium"
+                              ? "bg-gray-900 text-white"
                               : "text-gray-600 hover:bg-gray-50"
                           }`}
                         >
@@ -267,15 +277,16 @@ export default function Products() {
                     </div>
                   </div>
 
+                  {/* Series filter */}
                   <div>
-                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">Series</h3>
-                    <div className="space-y-1 max-h-64 overflow-y-auto">
+                    <h3 className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400 mb-4">Series</h3>
+                    <div className="space-y-1 max-h-72 overflow-y-auto">
                       <button
                         onClick={() => setActiveSeries("All")}
                         data-testid="filter-series-all"
-                        className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                        className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
                           activeSeries === "All" 
-                            ? "bg-gray-900 text-white font-medium"
+                            ? "bg-gray-900 text-white"
                             : "text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -286,9 +297,9 @@ export default function Products() {
                           key={series}
                           onClick={() => setActiveSeries(series)}
                           data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
-                          className={`block w-full text-left px-3 py-2 text-sm transition-all rounded ${
+                          className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
                             activeSeries === series 
-                              ? "bg-gray-900 text-white font-medium"
+                              ? "bg-gray-900 text-white"
                               : "text-gray-600 hover:bg-gray-50"
                           }`}
                         >
@@ -301,98 +312,93 @@ export default function Products() {
               </div>
             </aside>
 
+            {/* Product grid */}
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-                <div>
-                  <h1 className="text-2xl font-display font-bold text-gray-900">
-                    {getPageTitle()}
-                  </h1>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {getPageSubtitle()}
-                  </p>
-                </div>
-                <div className="text-sm text-gray-400">
-                  <span className="font-medium text-gray-900">{filteredProducts.length}</span> Results
-                </div>
+              {/* Results header */}
+              <div className="flex items-center justify-between mb-10 pb-6 border-b border-gray-100">
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
+                </p>
+                
+                {(activeSeries !== "All" || searchQuery) && (
+                  <div className="flex items-center gap-2">
+                    {activeSeries !== "All" && (
+                      <button 
+                        onClick={() => setActiveSeries("All")}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
+                      >
+                        {activeSeries}
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery("")}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
+                      >
+                        "{searchQuery}"
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-
-              {(activeSeries !== "All" || searchQuery) && (
-                <div className="flex items-center gap-2 mb-6 flex-wrap">
-                  <span className="text-xs text-gray-500">Active filters:</span>
-                  {activeSeries !== "All" && (
-                    <button 
-                      onClick={() => setActiveSeries("All")}
-                      className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded hover:bg-gray-200 transition-colors"
-                    >
-                      {activeSeries}
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                  {searchQuery && (
-                    <button 
-                      onClick={() => setSearchQuery("")}
-                      className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded hover:bg-gray-200 transition-colors"
-                    >
-                      "{searchQuery}"
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              )}
 
               {isLoading ? (
                 <div className="flex justify-center py-40">
-                  <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-300" />
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
                   {filteredProducts.map((product, index) => (
                     <motion.div 
                       key={product.id}
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
+                      transition={{ delay: index * 0.03, duration: 0.4 }}
                       className="group"
                       data-testid={`product-card-${product.id}`}
                     >
                       <Link href={`/products/${product.id}`}>
                         <div className="cursor-pointer">
-                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-4 rounded-lg group-hover:shadow-xl group-hover:shadow-black/10 transition-shadow duration-300">
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                            <div className="w-full h-full flex items-center justify-center p-6">
+                          {/* Image container */}
+                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-5 group-hover:bg-gray-100 transition-colors duration-500">
+                            <div className="w-full h-full flex items-center justify-center p-8">
                               {product.image ? (
                                 <img 
                                   src={product.image} 
                                   alt={product.name} 
                                   loading="lazy"
-                                  className="w-full h-full object-contain transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-500 ease-out" 
+                                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out" 
                                 />
                               ) : (
-                                <Package className="w-12 h-12 text-gray-200 group-hover:scale-110 transition-transform duration-300" />
+                                <Package className="w-12 h-12 text-gray-200" />
                               )}
                             </div>
-                            <div className="absolute top-3 left-3 z-20 flex gap-1">
-                              <span className={`px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider rounded ${
+                            {/* Brand tag */}
+                            <div className="absolute top-4 left-4">
+                              <span className={`px-2 py-1 text-[9px] font-medium tracking-wider uppercase ${
                                 product.brand === "Paralight" 
-                                  ? "bg-[#00A8E8] text-white" 
-                                  : "bg-[#ECAA00] text-white"
+                                  ? "bg-brand-cyan/10 text-brand-cyan" 
+                                  : "bg-brand-gold/10 text-brand-gold"
                               }`}>
                                 {product.series}
                               </span>
                             </div>
                           </div>
+                          {/* Product info */}
                           <div>
-                            <h2 className="text-sm font-medium text-gray-900 group-hover:text-[#00A8E8] transition-colors line-clamp-1">
+                            <h2 className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-1">
                               {product.name}
                             </h2>
-                            <p className="text-xs text-gray-400 mt-0.5">{product.modelNumber}</p>
+                            <p className="text-xs text-gray-400 mt-1">{product.modelNumber}</p>
                           </div>
                         </div>
                       </Link>
                     </motion.div>
                   ))}
                   {filteredProducts.length === 0 && !isLoading && (
-                    <div className="col-span-full text-center py-20">
+                    <div className="col-span-full text-center py-24">
                       <Package className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                       <p className="text-sm text-gray-400">No products found</p>
                     </div>

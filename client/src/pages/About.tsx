@@ -179,29 +179,30 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-56 h-56 bg-[#00A8E8] rounded-full blur-[100px]" />
-          <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#ECAA00] rounded-full blur-[120px]" />
+      <section className="relative pt-40 pb-24 overflow-hidden bg-gray-900">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-brand-cyan rounded-full blur-[150px]" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-brand-gold rounded-full blur-[150px]" />
         </div>
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-white">
-              PARALIGHT GROUP
+            <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-6">
+              About Us
+            </span>
+            <h1 className="font-display text-4xl md:text-6xl text-white font-medium mb-6">
+              Paralight <span className="italic font-normal">Group</span>
             </h1>
-            <p className="text-xl md:text-2xl font-light mb-6">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8E8] to-[#ECAA00]">
-                A Global Ecosystem of Light
-              </span>
+            <p className="text-xl text-gray-400 font-light">
+              A Global Ecosystem of Light
             </p>
             <p className="text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
               With nearly a decade of experience, Paralight Group has become a trusted name 
@@ -214,19 +215,16 @@ export default function About() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10 max-w-3xl mx-auto"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-4xl mx-auto"
           >
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="relative group"
+                className="bg-white/5 border border-white/10 p-6 text-center"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00A8E8]/20 to-[#ECAA00]/20 rounded-lg blur-sm group-hover:blur-md transition-all" />
-                <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 text-center hover:bg-white/15 transition-all">
-                  <stat.icon className="w-6 h-6 mx-auto mb-2 text-[#00A8E8]" />
-                  <div className="text-xl md:text-2xl font-display font-bold text-white">{stat.value}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">{stat.label}</div>
-                </div>
+                <stat.icon className="w-5 h-5 mx-auto mb-3 text-gray-500" />
+                <div className="font-display text-2xl md:text-3xl text-white font-medium">{stat.value}</div>
+                <div className="text-[10px] font-medium tracking-[0.15em] uppercase text-gray-500 mt-2">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -234,18 +232,18 @@ export default function About() {
       </section>
 
       {/* Video Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-8 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-8"
+            className="text-center mb-12"
           >
-            <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Manufacturing Excellence</span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold mt-2 mb-3">Inside Our Factory</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-base">
-              A deep dive into precision lighting manufacturing where craftsmanship meets high-tech automation.
+            <span className="text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 mb-4 block">Manufacturing Excellence</span>
+            <h2 className="font-display text-3xl md:text-5xl text-gray-900 font-medium mb-4">Inside Our <span className="italic font-normal">Factory</span></h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-lg">
+              A deep dive into precision lighting manufacturing where craftsmanship meets innovation.
             </p>
           </motion.div>
           <motion.div
