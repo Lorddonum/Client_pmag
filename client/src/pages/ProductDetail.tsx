@@ -469,7 +469,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Packaging Method - Paralight Only */}
-              {product.brand === "Paralight" && (product.packagingMethodADesc || product.packagingMethodBDesc) && (
+              {product.brand === "Paralight" && (
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                   <div className="p-4 border-b border-gray-100">
                     <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
@@ -497,63 +497,59 @@ export default function ProductDetail() {
                     </div>
 
                     {/* Method A */}
-                    {product.packagingMethodADesc && (
-                      <div>
-                        <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method A</p>
-                        <div className="max-w-md mx-auto">
-                          <div className="border border-gray-300 rounded-lg overflow-hidden" style={{ perspective: '500px' }}>
-                            <div className="bg-gray-100 border-b border-gray-300">
-                              <div className="flex">
-                                <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
-                                  <span className="text-[10px] font-medium text-gray-600">Standard<br/>Packing</span>
-                                </div>
-                                <div className="flex-1">
-                                  {product.packagingMethodADesc.split(',').map((item, i) => (
-                                    <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
-                                      {item.trim()}
-                                    </div>
-                                  ))}
-                                </div>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method A</p>
+                      <div className="max-w-md mx-auto">
+                        <div className="border border-gray-300 rounded-lg overflow-hidden">
+                          <div className="bg-gray-100">
+                            <div className="flex">
+                              <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
+                                <span className="text-[10px] font-medium text-gray-600">Standard<br/>Packing</span>
+                              </div>
+                              <div className="flex-1">
+                                {(product.packagingMethodADesc || "Clips+End Caps,PC Cover,Aluminum Profile").split(',').map((item, i) => (
+                                  <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
+                                    {item.trim()}
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           </div>
-                          {product.packagingMethodASpec && (
-                            <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodASpec}</p>
-                          )}
                         </div>
+                        {product.packagingMethodASpec && (
+                          <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodASpec}</p>
+                        )}
                       </div>
-                    )}
+                    </div>
 
                     {/* Method B */}
-                    {product.packagingMethodBDesc && (
-                      <div>
-                        <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method B (Additional Fees)</p>
-                        <div className="max-w-md mx-auto">
-                          <div className="border border-gray-300 rounded-lg overflow-hidden">
-                            <div className="bg-gray-100 border-b border-gray-300">
-                              <div className="flex">
-                                <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
-                                  <span className="text-[10px] font-medium text-gray-600">Single<br/>Item</span>
+                    <div>
+                      <p className="text-xs font-semibold text-gray-700 text-center mb-4">Method B (Additional Fees)</p>
+                      <div className="max-w-md mx-auto">
+                        <div className="border border-gray-300 rounded-lg overflow-hidden">
+                          <div className="bg-gray-100">
+                            <div className="flex">
+                              <div className="w-24 p-3 border-r border-gray-300 flex items-center justify-center">
+                                <span className="text-[10px] font-medium text-gray-600">Single<br/>Item</span>
+                              </div>
+                              <div className="flex-1">
+                                <div className="p-2 text-xs text-center text-gray-700 font-medium border-b border-gray-200">
+                                  Single Item
                                 </div>
-                                <div className="flex-1">
-                                  <div className="p-2 text-xs text-center text-gray-700 font-medium border-b border-gray-200">
-                                    Single Item
+                                {(product.packagingMethodBDesc || "Aluminum Profile+ PC Cover + Clips + End Caps,Aluminum Profile+ PC Cover + Clips + End Caps,Aluminum Profile+ PC Cover + Clips + End Caps").split(',').map((item, i) => (
+                                  <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
+                                    {item.trim()}
                                   </div>
-                                  {product.packagingMethodBDesc.split(',').map((item, i) => (
-                                    <div key={i} className={`p-2 text-xs text-center text-gray-700 ${i > 0 ? 'border-t border-gray-200' : ''}`}>
-                                      {item.trim()}
-                                    </div>
-                                  ))}
-                                </div>
+                                ))}
                               </div>
                             </div>
                           </div>
-                          {product.packagingMethodBSpec && (
-                            <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodBSpec}</p>
-                          )}
                         </div>
+                        {product.packagingMethodBSpec && (
+                          <p className="text-[10px] text-gray-500 text-center mt-2">{product.packagingMethodBSpec}</p>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               )}
