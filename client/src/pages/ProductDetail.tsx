@@ -61,6 +61,17 @@ interface Product {
   catalogueUrl?: string | null;
   technicalDrawingUrl?: string | null;
   technicalDrawings?: string[] | null;
+  // Paralight-specific fields
+  standardLength?: string | null;
+  diffuserFinish?: string | null;
+  accessories?: string | null;
+  ledStripSize?: string | null;
+  installationMethod?: string | null;
+  packagingMethodADesc?: string | null;
+  packagingMethodASpec?: string | null;
+  packagingMethodBDesc?: string | null;
+  packagingMethodBSpec?: string | null;
+  accessoriesSpec?: string | null;
 }
 
 const ZOOM_LEVEL = 2; // Adjustable zoom percentage (2 = 200%)
@@ -186,6 +197,14 @@ export default function ProductDetail() {
     { label: "CRI", value: product.cri },
     { label: "CCT", value: product.cct },
     { label: "Beam Angle", value: product.beamAngle },
+    // Paralight-specific specs
+    ...(product.brand === "Paralight" ? [
+      { label: "Standard Length", value: product.standardLength },
+      { label: "Diffuser Finish", value: product.diffuserFinish },
+      { label: "Accessories", value: product.accessories },
+      { label: "LED Strip Size", value: product.ledStripSize },
+      { label: "Installation Method", value: product.installationMethod },
+    ] : [])
   ].filter((spec) => spec.value && spec.value.trim() !== "");
 
   return (
@@ -369,6 +388,100 @@ export default function ProductDetail() {
                   ))}
                 </div>
               </div>
+
+              {/* Packaging Information - Paralight only */}
+              {product.brand === "Paralight" && (product.packagingMethodADesc || product.packagingMethodBDesc) && (
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="p-4 border-b border-gray-100">
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+                      Packaging Information
+                    </h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">Packaging Method</th>
+                          <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">Description</th>
+                          <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">Specifications</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {product.packagingMethodADesc && (
+                          <tr className="border-b border-gray-100">
+                            <td className="px-4 py-3 font-medium text-gray-900">Method A</td>
+                            <td className="px-4 py-3 text-gray-600">{product.packagingMethodADesc}</td>
+                            <td className="px-4 py-3 text-gray-600">{product.packagingMethodASpec || '-'}</td>
+                          </tr>
+                        )}
+                        {product.packagingMethodBDesc && (
+                          <tr>
+                            <td className="px-4 py-3 font-medium" style={{ color: brandColor }}>Method B<br/><span className="text-[10px] text-gray-400">(Additional Fee)</span></td>
+                            <td className="px-4 py-3 text-gray-600">{product.packagingMethodBDesc}</td>
+                            <td className="px-4 py-3 text-gray-600">{product.packagingMethodBSpec || '-'}</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Accessories Specification - Paralight only */}
+              {product.brand === "Paralight" && product.accessoriesSpec && (() => {
+                try {
+                  const accessoriesData = JSON.parse(product.accessoriesSpec);
+                  if (!Array.isArray(accessoriesData) || accessoriesData.length === 0) return null;
+                  
+                  // Find application row if exists
+                  const applicationRow = accessoriesData.find((item: { no?: string }) => 
+                    item.no?.toLowerCase() === 'application'
+                  );
+                  const regularRows = accessoriesData.filter((item: { no?: string }) => 
+                    item.no?.toLowerCase() !== 'application'
+                  );
+                  
+                  return (
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="p-4 border-b border-gray-100">
+                        <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+                          Accessories Specification
+                        </h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100 w-16">NO.</th>
+                              <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">Specification</th>
+                              <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100 w-20">QTY</th>
+                              <th className="px-4 py-3 text-center text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">Remarks</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {regularRows.map((item: { no?: string; specification?: string; qty?: string; remarks?: string }, index: number) => (
+                              <tr key={index} className="border-b border-gray-100">
+                                <td className="px-4 py-3 text-center font-medium" style={{ color: brandColor }}>{item.no || '-'}</td>
+                                <td className="px-4 py-3 text-center text-gray-600">{item.specification || '-'}</td>
+                                <td className="px-4 py-3 text-center text-gray-600">{item.qty || '-'}</td>
+                                <td className="px-4 py-3 text-center text-gray-600">{item.remarks || '-'}</td>
+                              </tr>
+                            ))}
+                            {applicationRow && (
+                              <tr className="bg-gray-50">
+                                <td className="px-4 py-3 font-medium text-gray-700">Application:</td>
+                                <td colSpan={3} className="px-4 py-3 text-gray-600">{applicationRow.specification || '-'}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                } catch {
+                  return null;
+                }
+              })()}
 
               {product.brand === "Maglinear" && (
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">

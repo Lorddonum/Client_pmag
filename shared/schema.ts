@@ -31,6 +31,19 @@ export const products = pgTable("products", {
   catalogueUrl: text("catalogue_url"),
   technicalDrawingUrl: text("technical_drawing_url"),
   technicalDrawings: text("technical_drawings").array(),
+  // Paralight-specific fields
+  standardLength: text("standard_length"),
+  diffuserFinish: text("diffuser_finish"),
+  accessories: text("accessories"),
+  ledStripSize: text("led_strip_size"),
+  installationMethod: text("installation_method"),
+  // Packaging Information
+  packagingMethodADesc: text("packaging_method_a_desc"),
+  packagingMethodASpec: text("packaging_method_a_spec"),
+  packagingMethodBDesc: text("packaging_method_b_desc"),
+  packagingMethodBSpec: text("packaging_method_b_spec"),
+  // Accessories Specification (JSON string for table data)
+  accessoriesSpec: text("accessories_spec"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

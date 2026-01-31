@@ -29,6 +29,17 @@ interface Product {
   catalogueUrl?: string | null;
   technicalDrawingUrl?: string | null;
   technicalDrawings?: string[] | null;
+  // Paralight-specific fields
+  standardLength?: string | null;
+  diffuserFinish?: string | null;
+  accessories?: string | null;
+  ledStripSize?: string | null;
+  installationMethod?: string | null;
+  packagingMethodADesc?: string | null;
+  packagingMethodASpec?: string | null;
+  packagingMethodBDesc?: string | null;
+  packagingMethodBSpec?: string | null;
+  accessoriesSpec?: string | null;
 }
 
 export default function Admin() {
@@ -63,7 +74,18 @@ export default function Admin() {
     images: [] as string[],
     catalogueUrl: "",
     technicalDrawingUrl: "",
-    technicalDrawings: [] as string[]
+    technicalDrawings: [] as string[],
+    // Paralight-specific fields
+    standardLength: "",
+    diffuserFinish: "",
+    accessories: "",
+    ledStripSize: "",
+    installationMethod: "",
+    packagingMethodADesc: "",
+    packagingMethodASpec: "",
+    packagingMethodBDesc: "",
+    packagingMethodBSpec: "",
+    accessoriesSpec: ""
   });
 
   const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
@@ -199,7 +221,17 @@ export default function Admin() {
       images: [],
       catalogueUrl: "",
       technicalDrawingUrl: "",
-      technicalDrawings: []
+      technicalDrawings: [],
+      standardLength: "",
+      diffuserFinish: "",
+      accessories: "",
+      ledStripSize: "",
+      installationMethod: "",
+      packagingMethodADesc: "",
+      packagingMethodASpec: "",
+      packagingMethodBDesc: "",
+      packagingMethodBSpec: "",
+      accessoriesSpec: ""
     });
   };
 
@@ -225,7 +257,17 @@ export default function Admin() {
       images: product.images || [],
       catalogueUrl: product.catalogueUrl || "",
       technicalDrawingUrl: product.technicalDrawingUrl || "",
-      technicalDrawings: product.technicalDrawings || []
+      technicalDrawings: product.technicalDrawings || [],
+      standardLength: product.standardLength || "",
+      diffuserFinish: product.diffuserFinish || "",
+      accessories: product.accessories || "",
+      ledStripSize: product.ledStripSize || "",
+      installationMethod: product.installationMethod || "",
+      packagingMethodADesc: product.packagingMethodADesc || "",
+      packagingMethodASpec: product.packagingMethodASpec || "",
+      packagingMethodBDesc: product.packagingMethodBDesc || "",
+      packagingMethodBSpec: product.packagingMethodBSpec || "",
+      accessoriesSpec: product.accessoriesSpec || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -586,8 +628,81 @@ export default function Admin() {
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
                         <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
                       </div>
+                      {formData.brand === "Paralight" && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
+                            <input type="text" value={formData.standardLength} onChange={e => setFormData({...formData, standardLength: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Finish</label>
+                            <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({...formData, diffuserFinish: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
+                            <input type="text" value={formData.accessories} onChange={e => setFormData({...formData, accessories: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End caps, Clips" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
+                            <input type="text" value={formData.ledStripSize} onChange={e => setFormData({...formData, ledStripSize: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 8mm/10mm" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
+                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({...formData, installationMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
+
+                  {formData.brand === "Paralight" && (
+                    <div className="space-y-6 pt-6 border-t border-gray-200">
+                      <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Packaging Information</h4>
+                      <div className="space-y-4">
+                        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
+                          <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method A</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
+                              <textarea rows={2} value={formData.packagingMethodADesc} onChange={e => setFormData({...formData, packagingMethodADesc: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are bulk packed together..." />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
+                              <input type="text" value={formData.packagingMethodASpec} onChange={e => setFormData({...formData, packagingMethodASpec: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 2050*190*90" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
+                          <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method B (Additional Fee)</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
+                              <textarea rows={2} value={formData.packagingMethodBDesc} onChange={e => setFormData({...formData, packagingMethodBDesc: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are packed together in individual bags..." />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
+                              <input type="text" value={formData.packagingMethodBSpec} onChange={e => setFormData({...formData, packagingMethodBSpec: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 3150*170*140" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.brand === "Paralight" && (
+                    <div className="space-y-6 pt-6 border-t border-gray-200">
+                      <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Accessories Specification</h4>
+                      <p className="text-[10px] text-gray-500">Enter JSON format: [{"{"}"no":"A","specification":"Profile","qty":"1","remarks":"2M/3M"{"}"}, ...]</p>
+                      <textarea 
+                        rows={4} 
+                        value={formData.accessoriesSpec} 
+                        onChange={e => setFormData({...formData, accessoriesSpec: e.target.value})} 
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] font-mono resize-none" 
+                        placeholder='[{"no":"A","specification":"Profile","qty":"1","remarks":"2M/3M"},{"no":"B","specification":"PC cover","qty":"1","remarks":"2M/3M"}]'
+                      />
+                    </div>
+                  )}
+
                   <button 
                     type="submit"
                     disabled={isLoading}
