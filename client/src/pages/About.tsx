@@ -226,9 +226,9 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="max-w-4xl mx-auto relative"
+                className="max-w-4xl mx-auto relative pl-8 md:pl-12"
               >
-                <Quote className="w-10 h-10 absolute -top-5 -left-5 opacity-20" style={{ color: exec.color }} />
+                <Quote className="w-10 h-10 absolute -top-5 left-0 opacity-20" style={{ color: exec.color }} />
                 <h3 className="text-lg font-semibold mb-3" style={{ color: exec.color }}>
                   {exec.subtitle}
                 </h3>
