@@ -43,11 +43,6 @@ export default function Admin() {
   const [showSeriesDropdown, setShowSeriesDropdown] = useState(false);
   const [seriesFilter, setSeriesFilter] = useState("");
 
-  const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
-  const filteredSeries = existingSeries.filter(s => 
-    s.toLowerCase().includes((seriesFilter || formData.series).toLowerCase())
-  );
-
   const [formData, setFormData] = useState({
     name: "",
     modelNumber: "",
@@ -70,6 +65,11 @@ export default function Admin() {
     technicalDrawingUrl: "",
     technicalDrawings: [] as string[]
   });
+
+  const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
+  const filteredSeries = existingSeries.filter(s => 
+    s.toLowerCase().includes((seriesFilter || formData.series).toLowerCase())
+  );
 
   const fetchProducts = async () => {
     try {
