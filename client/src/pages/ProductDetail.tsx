@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useRoute } from "wouter";
 import Navbar from "@/components/layout/Navbar";
@@ -759,17 +758,15 @@ export default function ProductDetail() {
               const relatedBrandColor = relatedProduct.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
               return (
                 <Link key={relatedProduct.id} href={`/products/${relatedProduct.id}`}>
-                  <motion.div
-                    className="group bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                    whileHover={{ y: -4 }}
-                  >
+                  <div className="group bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
                     <div className="aspect-square bg-gray-50 flex items-center justify-center p-4">
                       {relatedProduct.image ? (
                         <img
                           src={relatedProduct.image}
                           alt={relatedProduct.name}
                           loading="lazy"
-                          className="w-full h-full object-contain transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-500 ease-out"
+                          decoding="async"
+                          className="w-full h-full object-contain"
                         />
                       ) : (
                         <Package className="w-12 h-12 text-gray-300" />
@@ -794,7 +791,7 @@ export default function ProductDetail() {
                         {relatedProduct.modelNumber}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 </Link>
               );
             })}
