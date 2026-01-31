@@ -6,6 +6,7 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube, Twitter, M
 
 export default function Contact() {
   const [isLit, setIsLit] = useState(false);
+  const [isLightBursting, setIsLightBursting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -47,7 +48,11 @@ export default function Contact() {
   ];
 
   const handleLightUp = () => {
-    setIsLit(true);
+    setIsLightBursting(true);
+    // Delay the full transition to allow the light burst animation to play
+    setTimeout(() => {
+      setIsLit(true);
+    }, 1200);
   };
 
   return (
@@ -59,20 +64,43 @@ export default function Contact() {
       {!isLit && (
       <motion.section
         initial={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -200 }}
-        transition={{ duration: 0.8 }}
+        exit={{ opacity: 0, y: -100 }}
+        transition={{ duration: 0.6 }}
         className="relative flex items-center justify-center min-h-screen"
       >
+        {/* Light burst effect - expands from center */}
+        <AnimatePresence>
+          {isLightBursting && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ 
+                scale: [0, 1, 15],
+                opacity: [0, 1, 1]
+              }}
+              transition={{ 
+                duration: 1.2,
+                times: [0, 0.2, 1],
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-white rounded-full z-50"
+              style={{
+                boxShadow: '0 0 120px 60px rgba(255,255,255,0.8), 0 0 200px 100px rgba(255,255,255,0.5), 0 0 300px 150px rgba(255,255,255,0.3)'
+              }}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Animated gradient orbs */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
+          animate={{ opacity: isLightBursting ? 0 : 0.4 }}
+          transition={{ duration: 0.3 }}
           className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-cyan/20 rounded-full blur-[120px]"
         />
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.3 }}
-          transition={{ delay: 0.5 }}
+          animate={{ opacity: isLightBursting ? 0 : 0.3 }}
+          transition={{ delay: isLightBursting ? 0 : 0.5, duration: 0.3 }}
           className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-brand-gold/15 rounded-full blur-[150px]"
         />
 
@@ -80,8 +108,11 @@ export default function Contact() {
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            animate={{ 
+              opacity: isLightBursting ? 0 : 1, 
+              y: isLightBursting ? -80 : 0 
+            }}
+            transition={{ duration: isLightBursting ? 0.8 : 0.8, delay: isLightBursting ? 0.3 : 0 }}
             className="text-center max-w-3xl mx-auto"
           >
             <motion.div
@@ -94,18 +125,49 @@ export default function Contact() {
               <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-300">Let's Connect</span>
             </motion.div>
             
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-medium mb-6 leading-[0.95] text-white">
-              Light Up The
-              <br />
-              <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold">
-                Future Together
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-medium mb-6 leading-[0.95] text-white relative">
+              <motion.span
+                animate={{ 
+                  opacity: isLightBursting ? 0 : 1,
+                  y: isLightBursting ? -40 : 0
+                }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="block"
+              >
+                Light Up The
+              </motion.span>
+              <span className="relative inline-block">
+                <motion.span 
+                  animate={{ 
+                    opacity: isLightBursting ? 0 : 1,
+                    y: isLightBursting ? -60 : 0
+                  }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold"
+                >
+                  Future
+                </motion.span>
+                {/* Light origin point - between Future and Together */}
+                <motion.span 
+                  animate={{ 
+                    opacity: isLightBursting ? 0 : 1,
+                    y: isLightBursting ? -60 : 0
+                  }}
+                  transition={{ duration: 0.6, delay: 0.25 }}
+                  className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold"
+                >
+                  {" "}Together
+                </motion.span>
               </span>
             </h1>
             
             <motion.p
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              animate={{ 
+                opacity: isLightBursting ? 0 : 1,
+                y: isLightBursting ? -50 : 0
+              }}
+              transition={{ duration: isLightBursting ? 0.6 : 0.8, delay: isLightBursting ? 0.15 : 0.4 }}
               className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-gray-400"
             >
               Whether you're a wholesaler, distributor, or working on a lighting project — 
@@ -114,21 +176,27 @@ export default function Contact() {
 
             <motion.button
               onClick={handleLightUp}
+              disabled={isLightBursting}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-brand-gold text-gray-900 font-medium rounded-full hover:bg-brand-gold/90 transition-all duration-300 group"
+              animate={{ 
+                opacity: isLightBursting ? 0 : 1, 
+                y: isLightBursting ? -40 : 0,
+                scale: isLightBursting ? 1.2 : 1
+              }}
+              transition={{ duration: isLightBursting ? 0.5 : 0.6, delay: isLightBursting ? 0 : 0.6 }}
+              whileHover={{ scale: isLightBursting ? 1 : 1.05 }}
+              whileTap={{ scale: isLightBursting ? 1 : 0.95 }}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-brand-gold text-gray-900 font-medium rounded-full hover:bg-brand-gold/90 transition-all duration-300 group disabled:cursor-default"
             >
               <span>Send an Inquiry</span>
               <motion.div
                 animate={{ 
-                  opacity: [0.5, 1, 0.5],
+                  opacity: isLightBursting ? 1 : [0.5, 1, 0.5],
+                  scale: isLightBursting ? [1, 1.5, 1] : 1
                 }}
-                transition={{ duration: 2, repeat: Infinity }}
+                transition={{ duration: isLightBursting ? 0.3 : 2, repeat: isLightBursting ? 0 : Infinity }}
               >
-                <LightbulbOff className="w-5 h-5" />
+                {isLightBursting ? <Lightbulb className="w-5 h-5 text-yellow-500" /> : <LightbulbOff className="w-5 h-5" />}
               </motion.div>
             </motion.button>
           </motion.div>
