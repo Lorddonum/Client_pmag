@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight } from "lucide-react";
@@ -42,7 +42,7 @@ export default function Products() {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/products?t=${Date.now()}`);
+        const res = await fetch('/api/products');
         if (res.ok) {
           const data = await res.json();
           setProducts(data);
@@ -413,9 +413,9 @@ export default function Products() {
                   {filteredProducts.map((product, index) => (
                     <motion.div 
                       key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03, duration: 0.4 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
                       className="group"
                       data-testid={`product-card-${product.id}`}
                     >
@@ -429,7 +429,8 @@ export default function Products() {
                                   src={product.image} 
                                   alt={product.name} 
                                   loading="lazy"
-                                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-700 ease-out" 
+                                  decoding="async"
+                                  className="w-full h-full object-contain" 
                                 />
                               ) : (
                                 <Package className="w-12 h-12 text-gray-200" />
