@@ -362,18 +362,25 @@ export default function ProductDetail() {
             </div>
 
             <div className="space-y-8">
-              <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
-                <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-4 text-center">
-                  Control Integration
-                </h3>
-                <img 
-                  src={controlIntegrationImg} 
-                  alt="Control Integration - ON-OFF, Bluetooth, Tuya Smart, 2.4GHz Wi-Fi, Zigbee, DALI Dimm, CCT Control" 
-                  className="w-full max-w-xl mx-auto object-contain"
-                />
-              </div>
+              {product.brand !== "Paralight" && (
+                <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-4 text-center">
+                    Control Integration
+                  </h3>
+                  <img 
+                    src={controlIntegrationImg} 
+                    alt="Control Integration - ON-OFF, Bluetooth, Tuya Smart, 2.4GHz Wi-Fi, Zigbee, DALI Dimm, CCT Control" 
+                    className="w-full max-w-xl mx-auto object-contain"
+                  />
+                </div>
+              )}
 
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="p-4 border-b border-gray-100">
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+                    Technical Specifications
+                  </h3>
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                   {specs.map((spec, i) => (
                     <div
@@ -388,6 +395,70 @@ export default function ProductDetail() {
                       </p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Technical Drawing */}
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="p-4 border-b border-gray-100">
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+                    Technical Drawing
+                  </h3>
+                </div>
+                <div className="p-4 bg-gray-50">
+                  {(() => {
+                    const allDrawings = [
+                      product.technicalDrawingUrl,
+                      ...(product.technicalDrawings || [])
+                    ].filter(Boolean) as string[];
+                    
+                    if (allDrawings.length === 0) {
+                      return (
+                        <div className="flex items-center justify-center h-44">
+                          <div className="text-center">
+                            <svg
+                              className="w-10 h-10 text-gray-300 mx-auto mb-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="1"
+                                d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                              ></path>
+                            </svg>
+                            <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                              Technical drawing available upon request
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <div className={`grid gap-3 ${allDrawings.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                        {allDrawings.map((drawing, index) => (
+                          <div 
+                            key={index}
+                            className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2 cursor-pointer hover:border-gray-300 transition-colors"
+                            onClick={() => {
+                              setLightboxDrawingIndex(index);
+                              setShowDrawingLightbox(true);
+                            }}
+                            title="Click to view full size"
+                          >
+                            <img
+                              src={drawing}
+                              alt={`Technical Drawing ${index + 1}`}
+                              className="max-w-full max-h-full object-contain hover:opacity-80 transition-opacity"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -484,69 +555,6 @@ export default function ProductDetail() {
                   return null;
                 }
               })()}
-
-              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="p-4 border-b border-gray-100">
-                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
-                      Technical Drawing
-                    </h3>
-                  </div>
-                  <div className="p-4 bg-gray-50">
-                    {(() => {
-                      const allDrawings = [
-                        product.technicalDrawingUrl,
-                        ...(product.technicalDrawings || [])
-                      ].filter(Boolean) as string[];
-                      
-                      if (allDrawings.length === 0) {
-                        return (
-                          <div className="flex items-center justify-center h-44">
-                            <div className="text-center">
-                              <svg
-                                className="w-10 h-10 text-gray-300 mx-auto mb-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="1"
-                                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
-                                ></path>
-                              </svg>
-                              <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-                                Technical drawing available upon request
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      return (
-                        <div className={`grid gap-3 ${allDrawings.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                          {allDrawings.map((drawing, index) => (
-                            <div 
-                              key={index}
-                              className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2 cursor-pointer hover:border-gray-300 transition-colors"
-                              onClick={() => {
-                                setLightboxDrawingIndex(index);
-                                setShowDrawingLightbox(true);
-                              }}
-                              title="Click to view full size"
-                            >
-                              <img
-                                src={drawing}
-                                alt={`Technical Drawing ${index + 1}`}
-                                className="max-w-full max-h-full object-contain hover:opacity-80 transition-opacity"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
 
               <div
                 className="p-5 rounded-lg flex items-center justify-between"
