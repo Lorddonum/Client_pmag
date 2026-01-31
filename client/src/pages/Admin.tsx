@@ -40,6 +40,7 @@ interface Product {
   packagingMethodBDesc?: string | null;
   packagingMethodBSpec?: string | null;
   accessoriesSpec?: string | null;
+  diffuserMaterial?: string | null;
 }
 
 export default function Admin() {
@@ -85,7 +86,8 @@ export default function Admin() {
     packagingMethodASpec: "",
     packagingMethodBDesc: "",
     packagingMethodBSpec: "",
-    accessoriesSpec: ""
+    accessoriesSpec: "",
+    diffuserMaterial: ""
   });
 
   const existingSeries = Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort();
@@ -224,6 +226,7 @@ export default function Admin() {
       technicalDrawings: [],
       standardLength: "",
       diffuserFinish: "",
+      diffuserMaterial: "",
       accessories: "",
       ledStripSize: "",
       installationMethod: "",
@@ -260,6 +263,7 @@ export default function Admin() {
       technicalDrawings: product.technicalDrawings || [],
       standardLength: product.standardLength || "",
       diffuserFinish: product.diffuserFinish || "",
+      diffuserMaterial: product.diffuserMaterial || "",
       accessories: product.accessories || "",
       ledStripSize: product.ledStripSize || "",
       installationMethod: product.installationMethod || "",
@@ -588,10 +592,12 @@ export default function Admin() {
                   <div className="space-y-6 pt-6 border-t border-gray-200">
                     <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                        <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
-                      </div>
+                      {formData.brand !== "Paralight" && (
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
+                          <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
                         <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
@@ -608,22 +614,30 @@ export default function Admin() {
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
                         <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                        <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
-                      </div>
+                      {formData.brand !== "Paralight" && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
+                            <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
+                          </div>
+                        </>
+                      )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
                         <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                        <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                        <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
-                      </div>
+                      {formData.brand !== "Paralight" && (
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
+                            <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
+                            <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
+                          </div>
+                        </>
+                      )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
                         <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
@@ -637,6 +651,10 @@ export default function Admin() {
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Finish</label>
                             <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({...formData, diffuserFinish: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
+                            <input type="text" value={formData.diffuserMaterial} onChange={e => setFormData({...formData, diffuserMaterial: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. PC/PMMA" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>

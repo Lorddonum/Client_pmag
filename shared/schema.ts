@@ -34,6 +34,7 @@ export const products = pgTable("products", {
   // Paralight-specific fields
   standardLength: text("standard_length"),
   diffuserFinish: text("diffuser_finish"),
+  diffuserMaterial: text("diffuser_material"),
   accessories: text("accessories"),
   ledStripSize: text("led_strip_size"),
   installationMethod: text("installation_method"),

@@ -64,6 +64,7 @@ interface Product {
   // Paralight-specific fields
   standardLength?: string | null;
   diffuserFinish?: string | null;
+  diffuserMaterial?: string | null;
   accessories?: string | null;
   ledStripSize?: string | null;
   installationMethod?: string | null;
@@ -201,6 +202,7 @@ export default function ProductDetail() {
     ...(product.brand === "Paralight" ? [
       { label: "Standard Length", value: product.standardLength },
       { label: "Diffuser Finish", value: product.diffuserFinish },
+      { label: "Diffuser Material", value: product.diffuserMaterial },
       { label: "Accessories", value: product.accessories },
       { label: "LED Strip Size", value: product.ledStripSize },
       { label: "Installation Method", value: product.installationMethod },
