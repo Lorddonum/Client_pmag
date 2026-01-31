@@ -116,6 +116,18 @@ export default function ProductDetail() {
     setZoomPosition({ x, y });
   };
 
+  // Update page title when product loads
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Paralight`;
+    } else {
+      document.title = "Product | Paralight";
+    }
+    return () => {
+      document.title = "Paralight";
+    };
+  }, [product]);
+
   useEffect(() => {
     setIsLoading(true);
     setProduct(null);
