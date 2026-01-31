@@ -5,7 +5,7 @@
 
 @theme inline {
   --font-sans: "Inter", sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
+  --font-display: "Cormorant Garamond", serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,41 +42,42 @@
 }
 
 :root {
-  /* Brand Colors from Logo */
-  --brand-gold: 42 89% 50%; /* #ECAA00 - Yellow/Gold from Maglinear logo */
-  --brand-cyan: 195 100% 45%; /* #00A8E8 - Cyan/Blue from Maglinear logo */
-  --brand-blue: 200 100% 40%; /* #0080CC - Deeper blue accent */
+  /* Refined Brand Colors - subtle, sophisticated */
+  --brand-cyan: 195 85% 42%; /* Slightly muted cyan */
+  --brand-gold: 42 85% 48%; /* Refined gold */
+  --brand-charcoal: 220 15% 18%; /* Deep charcoal */
+  --brand-warm-gray: 30 5% 96%; /* Warm off-white */
   
-  /* Light Professional Theme */
-  --background: 0 0% 100%; /* White */
-  --foreground: 220 15% 20%;
+  /* Elegant Light Theme */
+  --background: 30 10% 99%; /* Warm white */
+  --foreground: 220 15% 15%; /* Deep charcoal */
 
-  --card: 0 0% 98%;
-  --card-foreground: 220 15% 20%;
+  --card: 30 10% 98%;
+  --card-foreground: 220 15% 15%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 220 15% 20%;
+  --popover-foreground: 220 15% 15%;
 
-  --primary: 195 100% 45%; /* Cyan blue as primary */
-  --primary-foreground: 0 0% 0%;
+  --primary: 195 85% 42%; /* Refined cyan */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 42 89% 50%; /* Gold as secondary */
+  --secondary: 42 85% 48%; /* Refined gold */
   --secondary-foreground: 0 0% 0%;
 
-  --muted: 220 15% 95%;
-  --muted-foreground: 220 10% 45%;
+  --muted: 30 8% 95%;
+  --muted-foreground: 220 10% 50%;
 
-  --accent: 195 100% 45%; /* Cyan accent */
-  --accent-foreground: 0 0% 0%;
+  --accent: 30 8% 92%;
+  --accent-foreground: 220 15% 15%;
 
-  --destructive: 0 62.8% 30.6%;
+  --destructive: 0 55% 45%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 220 15% 90%;
-  --input: 220 15% 95%;
-  --ring: 195 100% 45%;
+  --border: 30 10% 90%;
+  --input: 30 10% 94%;
+  --ring: 195 85% 42%;
 
-  --radius: 0rem; /* Sharp edges for architectural feel */
+  --radius: 0.25rem; /* Subtle rounding for elegance */
 }
 
 @layer base {
@@ -85,51 +86,123 @@
   }
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
+    font-weight: 500;
+  }
+  h1 {
+    @apply text-5xl md:text-7xl;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    @apply text-3xl md:text-5xl;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
   }
 }
 
-/* Custom Utilities for Glass and Gradients */
+/* Elegant Custom Utilities */
 @layer utilities {
-  .glass-panel {
-    @apply bg-black/40 backdrop-blur-md border border-white/10;
-  }
-  
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ECAA00] to-[#FFD54F];
-  }
-  
   .text-brand-cyan {
-    color: #00A8E8;
+    color: hsl(195, 85%, 42%);
   }
   
   .text-brand-gold {
-    color: #ECAA00;
+    color: hsl(42, 85%, 48%);
   }
   
   .bg-brand-cyan {
-    background-color: #00A8E8;
+    background-color: hsl(195, 85%, 42%);
   }
   
   .bg-brand-gold {
-    background-color: #ECAA00;
+    background-color: hsl(42, 85%, 48%);
   }
   
   .border-brand-cyan {
-    border-color: #00A8E8;
+    border-color: hsl(195, 85%, 42%);
   }
   
   .border-brand-gold {
-    border-color: #ECAA00;
+    border-color: hsl(42, 85%, 48%);
   }
   
   .hover\:bg-brand-cyan:hover {
-    background-color: #00A8E8;
+    background-color: hsl(195, 85%, 42%);
   }
   
   .hover\:bg-brand-gold:hover {
-    background-color: #ECAA00;
+    background-color: hsl(42, 85%, 48%);
   }
+
+  /* Elegant text styles */
+  .text-elegant-heading {
+    @apply font-display font-medium tracking-tight;
+    letter-spacing: -0.01em;
+  }
+  
+  .text-elegant-label {
+    @apply font-sans text-xs font-medium uppercase tracking-[0.2em];
+  }
+  
+  .text-elegant-body {
+    @apply font-sans text-base font-light leading-relaxed;
+  }
+
+  /* Refined gradient accents */
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(195, 85%, 42%) 0%, hsl(42, 85%, 48%) 100%);
+  }
+  
+  .gradient-accent-subtle {
+    background: linear-gradient(135deg, hsl(195, 85%, 42%, 0.1) 0%, hsl(42, 85%, 48%, 0.1) 100%);
+  }
+
+  /* Elegant hover effects */
+  .hover-lift {
+    @apply transition-all duration-500 ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Sophisticated borders */
+  .border-elegant {
+    @apply border border-gray-200/60;
+  }
+  
+  .border-elegant-dark {
+    @apply border border-gray-800/20;
+  }
+}
+
+/* Custom scrollbar for elegance */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(30, 10%, 96%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(220, 10%, 75%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(220, 10%, 60%);
+}
+
+/* Selection color */
+::selection {
+  background: hsl(195, 85%, 42%, 0.2);
+  color: hsl(220, 15%, 15%);
 }

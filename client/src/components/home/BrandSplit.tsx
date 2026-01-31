@@ -2,78 +2,104 @@ import { motion } from "framer-motion";
 import paralightImg from "@assets/generated_images/stack_of_premium_aluminum_profiles.png";
 import maglinearImg from "@assets/generated_images/modern_magnetic_track_lighting_system_interior.png";
 import { ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 
 export default function BrandSplit() {
+  const brands = [
+    {
+      name: "Paralight",
+      subtitle: "Aluminum Profiles",
+      description: "Over 300 customizable aluminum profile models with premium finishes including matte black, sandy white, grey, gold, and anti-oxidation coatings.",
+      image: paralightImg,
+      color: "cyan",
+      link: "/products?brand=Paralight"
+    },
+    {
+      name: "Maglinear",
+      subtitle: "Magnetic Track Systems",
+      description: "Advanced magnetic track lighting and commercial lighting solutions. Panels, downlights, and pendant systems designed for modern architectural spaces.",
+      image: maglinearImg,
+      color: "gold",
+      link: "/products?brand=Maglinear"
+    }
+  ];
+
   return (
-    <section id="brands" className="py-32 bg-gray-100">
-      <div className="container mx-auto px-6">
+    <section className="py-32 bg-white">
+      <div className="container mx-auto px-8 lg:px-12">
+        {/* Section header */}
         <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">OUR BRANDS</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-[#00A8E8] to-[#ECAA00] mx-auto" />
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 mb-4"
+          >
+            Our Brands
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium"
+          >
+            Two Pillars of <span className="italic font-normal">Excellence</span>
+          </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Paralight Brand */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="group relative h-[600px] overflow-hidden border border-gray-200 rounded-lg shadow-lg"
-          >
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
-            <img 
-              src={paralightImg} 
-              alt="Paralight Aluminum Profiles" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            
-            <div className="absolute bottom-0 left-0 right-0 p-10 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent">
-              <div className="max-w-lg">
-                <h3 className="text-3xl font-display font-bold text-white mb-4 flex items-center gap-4">
-                  PARALIGHT <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                </h3>
-                <p className="text-gray-200 mb-6 leading-relaxed">
-                  Specializing in high-quality aluminum profiles offering over 300 customizable models. 
-                  Premium finishes including matte black, sandy white, grey, gold, and anti-oxidation coatings.
-                </p>
-                <span className="text-[#00A8E8] border-b border-[#00A8E8] pb-1 text-sm uppercase tracking-widest">
-                  View Collection
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Maglinear Brand */}
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8 }}
-            className="group relative h-[600px] overflow-hidden border border-gray-200 rounded-lg shadow-lg"
-          >
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
-            <img 
-              src={maglinearImg} 
-              alt="Maglinear Lighting Systems" 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            
-            <div className="absolute bottom-0 left-0 right-0 p-10 z-20 bg-gradient-to-t from-black/90 via-black/70 to-transparent">
-              <div className="max-w-lg">
-                <h3 className="text-3xl font-display font-bold text-white mb-4 flex items-center gap-4">
-                  MAGLINEAR <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                </h3>
-                <p className="text-gray-200 mb-6 leading-relaxed">
-                  Focuses on magnetic track lighting and advanced commercial lighting solutions. 
-                  Panels, downlights, and pendant linear systems designed for modern architectural spaces.
-                </p>
-                <span className="text-[#ECAA00] border-b border-[#ECAA00] pb-1 text-sm uppercase tracking-widest">
-                  View Collection
-                </span>
-              </div>
-            </div>
-          </motion.div>
+        {/* Brand cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {brands.map((brand, index) => (
+            <motion.div
+              key={brand.name}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, delay: index * 0.2 }}
+            >
+              <Link href={brand.link}>
+                <div className="group relative h-[550px] lg:h-[650px] overflow-hidden cursor-pointer">
+                  {/* Image */}
+                  <img 
+                    src={brand.image} 
+                    alt={brand.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500" />
+                  
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-10 lg:p-14">
+                    <span className={`inline-block text-[10px] font-medium tracking-[0.25em] uppercase mb-4 ${
+                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    }`}>
+                      {brand.subtitle}
+                    </span>
+                    
+                    <h3 className="font-display text-4xl lg:text-5xl text-white font-medium mb-4 flex items-center gap-4">
+                      {brand.name}
+                      <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </h3>
+                    
+                    <p className="text-gray-300 text-sm leading-relaxed max-w-md mb-6 opacity-90">
+                      {brand.description}
+                    </p>
+                    
+                    <span className={`inline-flex items-center gap-2 text-xs font-medium tracking-wide ${
+                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    }`}>
+                      View Collection
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

@@ -22,104 +22,112 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Products", href: "/products" },
     { name: "Downloads", href: "/downloads" },
-    { name: "About Us", href: "/about" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-700 ease-in-out border-b border-transparent",
+        "fixed top-0 w-full z-50 transition-all duration-500",
         scrolled
-          ? "shadow-lg"
-          : "",
+          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100"
+          : "bg-transparent",
       )}
     >
-      <div className="relative flex items-center justify-between px-6 transition-all duration-700 ease-in-out py-4">
-        {/* Animated gradient background */}
-        <div 
-          className={cn(
-            "absolute inset-0 bg-gradient-to-r from-white via-gray-300 via-20% to-gray-900 to-40% transition-opacity duration-700 ease-in-out",
-            scrolled ? "opacity-100" : "opacity-0"
-          )}
-        />
-        {/* Logo */}
-        <Link
-          href="/"
-          className="relative z-10 flex items-center -space-x-8 hover:opacity-80 transition-opacity"
-        >
-          <div className="h-16 overflow-hidden flex items-center">
-            <img src={paralightLogo} alt="Paralight" className="h-40 max-w-[360px] object-cover object-center" />
+      <div className="container mx-auto px-8 lg:px-12">
+        <div className="flex items-center justify-between h-20 lg:h-24">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center -space-x-6 hover:opacity-80 transition-opacity duration-300"
+          >
+            <div className="h-12 lg:h-14 overflow-hidden flex items-center">
+              <img src={paralightLogo} alt="Paralight" className="h-32 lg:h-36 max-w-[280px] object-cover object-center" />
+            </div>
+            <div className="h-12 lg:h-14 overflow-hidden flex items-center">
+              <img src={maglinearLogo} alt="Maglinear" className="h-20 lg:h-24 max-w-[200px] object-cover object-center" />
+            </div>
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-12">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={cn(
+                  "relative text-sm font-medium tracking-wide transition-colors duration-300",
+                  location === link.href
+                    ? scrolled ? "text-brand-cyan" : "text-white"
+                    : scrolled 
+                      ? "text-gray-600 hover:text-gray-900" 
+                      : "text-white/90 hover:text-white",
+                )}
+              >
+                {link.name}
+                {location === link.href && (
+                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-current" />
+                )}
+              </Link>
+            ))}
           </div>
-          <div className="h-16 overflow-hidden flex items-center">
-            <img src={maglinearLogo} alt="Maglinear Lighting" className="h-28 max-w-[280px] object-cover object-center" />
-          </div>
-        </Link>
-        
-        {/* Nav Links */}
-        <div className="relative z-10 flex items-center">
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={cn(
-                "text-sm font-medium transition-all duration-700 ease-in-out tracking-wide",
-                location === link.href
-                  ? "text-[#00A8E8] underline underline-offset-8"
-                  : scrolled 
-                    ? "text-gray-300 hover:text-white" 
-                    : "text-white hover:text-[#00A8E8] drop-shadow-md",
-              )}
-            >
-              {link.name}
+          {/* CTA Button */}
+          <div className="hidden lg:block">
+            <Link href="/contact">
+              <button className={cn(
+                "px-6 py-2.5 text-xs font-medium tracking-widest uppercase transition-all duration-300",
+                scrolled
+                  ? "bg-gray-900 text-white hover:bg-gray-800"
+                  : "bg-white text-gray-900 hover:bg-gray-100"
+              )}>
+                Get in Touch
+              </button>
             </Link>
-          ))}
-          <button className={cn(
-            "px-5 py-2 text-xs font-bold tracking-widest uppercase border transition-all duration-700 ease-in-out rounded-none cursor-pointer",
-            scrolled
-              ? "border-[#00A8E8] text-[#00A8E8] hover:bg-[#00A8E8] hover:text-white"
-              : "border-white text-white hover:bg-white hover:text-gray-900 drop-shadow-md"
-          )}>
-            Contact
-          </button>
-        </div>
+          </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className={cn(
-            "md:hidden transition-all duration-700 ease-in-out",
-            scrolled ? "text-white" : "text-white drop-shadow-md"
-          )}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X /> : <Menu />}
-        </button>
+          {/* Mobile Toggle */}
+          <button
+            className={cn(
+              "lg:hidden p-2 transition-colors duration-300",
+              scrolled ? "text-gray-900" : "text-white"
+            )}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Nav */}
-      {isOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-gray-900/95 backdrop-blur-xl border-b border-gray-700 py-8 px-6 flex flex-col space-y-4">
+      {/* Mobile Navigation */}
+      <div className={cn(
+        "lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg transition-all duration-300 overflow-hidden",
+        isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+      )}>
+        <div className="container mx-auto px-8 py-6 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               className={cn(
-                "text-lg font-display transition-colors",
+                "block py-3 text-base font-medium transition-colors border-b border-gray-50 last:border-0",
                 location === link.href
-                  ? "text-[#00A8E8]"
-                  : "text-gray-300 hover:text-white",
+                  ? "text-brand-cyan"
+                  : "text-gray-600 hover:text-gray-900",
               )}
               onClick={() => setIsOpen(false)}
             >
               {link.name}
             </Link>
           ))}
+          <Link href="/contact" onClick={() => setIsOpen(false)}>
+            <button className="w-full mt-4 px-6 py-3 bg-gray-900 text-white text-sm font-medium tracking-wide">
+              Get in Touch
+            </button>
+          </Link>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

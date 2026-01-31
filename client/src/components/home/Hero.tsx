@@ -1,81 +1,85 @@
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import heroBg from "@assets/generated_images/abstract_architectural_lighting_design_with_aluminum_profiles.png";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gray-50">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/60 to-white z-10" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image with elegant overlay */}
+      <div className="absolute inset-0">
         <img
           src={heroBg}
-          alt="Architectural Lighting Background"
-          className="w-full h-full object-cover opacity-60"
+          alt="Architectural Lighting"
+          className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/80" />
       </div>
 
-      <div className="container mx-auto px-6 relative z-20 text-center">
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-8 lg:px-12 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
-          transition={{ duration: 1, delay: 0.2 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-8"
         >
-          <h2 className="text-[#00A8E8] font-mono text-sm tracking-[0.3em] uppercase mb-6">
-            Architectural Lighting Solutions
-          </h2>
+          <span className="inline-block px-4 py-2 text-[11px] font-medium tracking-[0.3em] uppercase text-white/70 border border-white/20">
+            Architectural Lighting Excellence
+          </span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="text-5xl md:text-8xl font-display font-bold text-gray-900 tracking-tight mb-8"
+          className="font-display text-5xl md:text-7xl lg:text-8xl font-medium text-white tracking-tight mb-8"
         >
-          PRECISION IN <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8E8] via-[#00C4E8] to-[#ECAA00]">
-            EVERY PROFILE
-          </span>
+          Precision in{" "}
+          <span className="italic font-normal">Every</span>
+          <br />
+          Profile
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="max-w-2xl mx-auto text-gray-600 text-lg mb-12 font-light leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="max-w-xl mx-auto text-lg text-white/70 font-light leading-relaxed mb-12"
         >
-          Defining modern spaces with high-quality aluminum profiles and
-          advanced magnetic track lighting systems. Engineered for durability,
-          designed for elegance.
+          Defining modern spaces with premium aluminum profiles and 
+          advanced magnetic track lighting systems.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.1 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="flex flex-col md:flex-row gap-6 justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <button className="px-8 py-4 bg-[#00A8E8] text-black font-bold uppercase tracking-widest text-xs hover:bg-[#00C4E8] transition-colors">
-            Explore Profiles
-          </button>
-          <button className="px-8 py-4 border border-[#ECAA00]/50 text-[#ECAA00] font-bold uppercase tracking-widest text-xs hover:bg-[#ECAA00]/10 transition-colors">
-            View Lighting
-          </button>
+          <Link href="/products">
+            <button className="px-10 py-4 bg-white text-gray-900 text-sm font-medium tracking-wide hover:bg-gray-100 transition-colors duration-300">
+              Explore Collection
+            </button>
+          </Link>
+          <Link href="/about">
+            <button className="px-10 py-4 border border-white/30 text-white text-sm font-medium tracking-wide hover:bg-white/10 transition-colors duration-300">
+              Our Story
+            </button>
+          </Link>
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Elegant scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: false }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
       >
-        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-gray-400 to-transparent" />
+        <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-white/50">
+          Scroll
+        </span>
+        <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent" />
       </motion.div>
     </section>
   );
