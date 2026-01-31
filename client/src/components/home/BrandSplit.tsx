@@ -70,29 +70,29 @@ export default function BrandSplit() {
                   />
                   
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-gray-900/20 opacity-90 group-hover:opacity-75 transition-opacity duration-500" />
                   
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-10 lg:p-14">
-                    <span className={`inline-block text-[10px] font-medium tracking-[0.25em] uppercase mb-4 ${
-                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    <span className={`inline-block text-[10px] font-medium tracking-[0.25em] uppercase mb-4 transition-all duration-300 ${
+                      brand.color === 'cyan' ? 'text-brand-cyan group-hover:brightness-125' : 'text-brand-gold group-hover:brightness-125'
                     }`}>
                       {brand.subtitle}
                     </span>
                     
-                    <h3 className={`font-display text-4xl lg:text-5xl font-medium mb-4 flex items-center gap-4 ${
-                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    <h3 className={`font-display text-4xl lg:text-5xl font-medium mb-4 flex items-center gap-4 transition-all duration-300 ${
+                      brand.color === 'cyan' ? 'text-brand-cyan group-hover:brightness-125' : 'text-brand-gold group-hover:brightness-125'
                     }`}>
                       {brand.name}
                       <ArrowRight className="w-6 h-6 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                     </h3>
                     
-                    <p className="text-gray-300 text-sm leading-relaxed max-w-md mb-6 opacity-90">
+                    <p className="text-gray-300 text-sm leading-relaxed max-w-md mb-6 opacity-90 group-hover:text-gray-200 transition-colors duration-300">
                       {brand.description}
                     </p>
                     
-                    <span className={`inline-flex items-center gap-2 text-xs font-medium tracking-wide ${
-                      brand.color === 'cyan' ? 'text-brand-cyan' : 'text-brand-gold'
+                    <span className={`inline-flex items-center gap-2 text-xs font-medium tracking-wide transition-all duration-300 ${
+                      brand.color === 'cyan' ? 'text-brand-cyan group-hover:brightness-125' : 'text-brand-gold group-hover:brightness-125'
                     }`}>
                       View Collection
                       <ArrowRight className="w-3.5 h-3.5" />
