@@ -15,6 +15,9 @@ import milestone2016_3 from "@/assets/milestone-2016-3.png";
 import milestone2019_1 from "@/assets/milestone-2019-1.png";
 import milestone2019_2 from "@/assets/milestone-2019-2.png";
 import milestone2019_3 from "@/assets/milestone-2019-3.png";
+import milestone2021jan_1 from "@/assets/milestone-2021jan-1.png";
+import milestone2021jan_2 from "@/assets/milestone-2021jan-2.png";
+import milestone2021jan_3 from "@/assets/milestone-2021jan-3.png";
 import milestone2021sep_1 from "@/assets/milestone-2021sep-1.png";
 import milestone2021sep_2 from "@/assets/milestone-2021sep-2.png";
 import { Truck, Users, Lightbulb, Package, Quote, Award, CheckCircle, Globe, Heart, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
@@ -103,7 +106,7 @@ export default function About() {
       title: "Establishment of Jiangmen Dingsu Plastic Co., Ltd.",
       location: "Jiangmen",
       description: "Achieving in-house production and sales of PC covers for linear lighting, we have completely integrated the entire chain: from raw materials to aluminum profiles and PC covers, through to finished products.",
-      images: []
+      images: [milestone2021jan_1, milestone2021jan_2, milestone2021jan_3]
     },
     {
       year: "2021",
