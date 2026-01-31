@@ -471,6 +471,17 @@ export default function Admin() {
                         <option value="Maglinear">Maglinear</option>
                       </select>
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series</label>
+                      <input 
+                        type="text" 
+                        data-testid="input-sub-series"
+                        value={formData.subSeries}
+                        onChange={(e) => setFormData({...formData, subSeries: e.target.value})}
+                        placeholder="e.g. Premium, Standard"
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
@@ -648,10 +659,6 @@ export default function Admin() {
                       </div>
                       {formData.brand === "Paralight" && (
                         <>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series</label>
-                            <input type="text" value={formData.subSeries} onChange={e => setFormData({...formData, subSeries: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Premium, Standard" />
-                          </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
                             <input type="text" value={formData.standardLength} onChange={e => setFormData({...formData, standardLength: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />

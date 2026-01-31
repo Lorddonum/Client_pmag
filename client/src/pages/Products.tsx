@@ -11,6 +11,7 @@ interface Product {
   modelNumber: string;
   description: string;
   series: string;
+  subSeries?: string | null;
   brand: string;
   category: string;
   wattage: string | null;
@@ -28,6 +29,7 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeBrand, setActiveBrand] = useState<string>("All");
   const [activeSeries, setActiveSeries] = useState<string>("All");
+  const [activeSubSeries, setActiveSubSeries] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -60,21 +62,36 @@ export default function Products() {
 
   const seriesList = Array.from(new Set(brandFilteredProducts.map(p => p.series)));
 
-  const filteredProducts = brandFilteredProducts
-    .filter(p => activeSeries === "All" || p.series === activeSeries)
+  const seriesFilteredProducts = brandFilteredProducts
+    .filter(p => activeSeries === "All" || p.series === activeSeries);
+
+  const subSeriesList = Array.from(new Set(
+    seriesFilteredProducts
+      .map(p => p.subSeries)
+      .filter((s): s is string => !!s)
+  ));
+
+  const filteredProducts = seriesFilteredProducts
+    .filter(p => activeSubSeries === "All" || p.subSeries === activeSubSeries)
     .filter(p => {
       if (!searchQuery.trim()) return true;
       const query = searchQuery.toLowerCase();
       return (
         p.name.toLowerCase().includes(query) ||
         p.modelNumber.toLowerCase().includes(query) ||
-        p.series.toLowerCase().includes(query)
+        p.series.toLowerCase().includes(query) ||
+        (p.subSeries && p.subSeries.toLowerCase().includes(query))
       );
     });
 
   useEffect(() => {
     setActiveSeries("All");
+    setActiveSubSeries("All");
   }, [activeBrand]);
+
+  useEffect(() => {
+    setActiveSubSeries("All");
+  }, [activeSeries]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -308,6 +325,40 @@ export default function Products() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Sub Series filter - only show when sub series exist */}
+                  {subSeriesList.length > 0 && (
+                    <div>
+                      <h3 className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400 mb-4">Sub Series</h3>
+                      <div className="space-y-1 max-h-72 overflow-y-auto">
+                        <button
+                          onClick={() => setActiveSubSeries("All")}
+                          data-testid="filter-subseries-all"
+                          className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
+                            activeSubSeries === "All" 
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          All Sub Series
+                        </button>
+                        {subSeriesList.map(subSeries => (
+                          <button
+                            key={subSeries}
+                            onClick={() => setActiveSubSeries(subSeries)}
+                            data-testid={`filter-subseries-${subSeries.toLowerCase().replace(/\s+/g, '-')}`}
+                            className={`block w-full text-left px-4 py-2.5 text-sm transition-all ${
+                              activeSubSeries === subSeries 
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-600 hover:bg-gray-50"
+                            }`}
+                          >
+                            {subSeries}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </aside>
@@ -320,14 +371,23 @@ export default function Products() {
                   <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
                 </p>
                 
-                {(activeSeries !== "All" || searchQuery) && (
-                  <div className="flex items-center gap-2">
+                {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery) && (
+                  <div className="flex items-center gap-2 flex-wrap">
                     {activeSeries !== "All" && (
                       <button 
                         onClick={() => setActiveSeries("All")}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
                       >
                         {activeSeries}
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                    {activeSubSeries !== "All" && (
+                      <button 
+                        onClick={() => setActiveSubSeries("All")}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
+                      >
+                        {activeSubSeries}
                         <X className="w-3 h-3" />
                       </button>
                     )}
