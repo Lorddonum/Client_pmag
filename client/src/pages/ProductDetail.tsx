@@ -485,8 +485,7 @@ export default function ProductDetail() {
                 }
               })()}
 
-              {product.brand === "Maglinear" && (
-                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                   <div className="p-4 border-b border-gray-100">
                     <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
                       Technical Drawing
@@ -548,7 +547,6 @@ export default function ProductDetail() {
                     })()}
                   </div>
                 </div>
-              )}
 
               <div
                 className="p-5 rounded-lg flex items-center justify-between"
