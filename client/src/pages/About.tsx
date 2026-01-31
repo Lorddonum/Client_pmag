@@ -329,10 +329,10 @@ export default function About() {
                 <button
                   key={index}
                   onClick={() => setCurrentMilestone(index)}
-                  className={`transition-all duration-300 ${
+                  className={`transition-all duration-300 rounded-full ${
                     index === currentMilestone 
-                      ? 'w-8 h-3 bg-gradient-to-r from-[#00A8E8] to-[#ECAA00] rounded-full' 
-                      : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'
+                      ? 'w-8 h-3 bg-gray-600' 
+                      : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
                   }`}
                   data-testid={`button-milestone-${index}`}
                 >
