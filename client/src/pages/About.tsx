@@ -174,9 +174,9 @@ export default function About() {
         <section key={i} className="relative overflow-hidden">
           <div className={`bg-gradient-to-br ${exec.bgGradient}`}>
             <div className="container mx-auto">
-              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch min-h-[340px]`}>
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch min-h-[450px]`}>
                 {/* Text Content */}
-                <div className={`flex flex-col justify-center py-10 lg:py-12 px-6 lg:px-12 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                <div className={`flex flex-col justify-center py-12 lg:py-16 px-8 lg:px-16 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
                   <motion.div
                     initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -184,22 +184,22 @@ export default function About() {
                     transition={{ duration: 0.6 }}
                   >
                     <span 
-                      className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4"
+                      className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-5"
                       style={{ backgroundColor: `${exec.color}20`, color: exec.color }}
                     >
                       {exec.role}
                     </span>
-                    <h2 className="text-2xl md:text-4xl font-display font-bold mb-4" style={{ color: exec.color }}>
+                    <h2 className="text-3xl md:text-5xl font-display font-bold mb-5" style={{ color: exec.color }}>
                       {exec.name}
                     </h2>
-                    <p className="text-base md:text-xl text-gray-700 font-light leading-relaxed italic">
+                    <p className="text-lg md:text-2xl text-gray-700 font-light leading-relaxed italic">
                       "{exec.tagline}"
                     </p>
                   </motion.div>
                 </div>
                 
                 {/* Image */}
-                <div className={`relative h-[340px] overflow-hidden ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
+                <div className={`relative h-[450px] overflow-hidden ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -219,23 +219,23 @@ export default function About() {
           </div>
           
           {/* Bio Section */}
-          <div className="bg-white py-10">
+          <div className="bg-white py-14">
             <div className="container mx-auto px-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="max-w-3xl mx-auto relative"
+                className="max-w-4xl mx-auto relative"
               >
-                <Quote className="w-8 h-8 absolute -top-4 -left-4 opacity-20" style={{ color: exec.color }} />
-                <h3 className="text-base font-semibold mb-2" style={{ color: exec.color }}>
+                <Quote className="w-10 h-10 absolute -top-5 -left-5 opacity-20" style={{ color: exec.color }} />
+                <h3 className="text-lg font-semibold mb-3" style={{ color: exec.color }}>
                   {exec.subtitle}
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-base">
+                <p className="text-gray-600 leading-relaxed text-lg">
                   {exec.bio}
                 </p>
-                <Quote className="w-8 h-8 absolute -bottom-4 -right-4 opacity-20 rotate-180" style={{ color: exec.color }} />
+                <Quote className="w-10 h-10 absolute -bottom-5 -right-5 opacity-20 rotate-180" style={{ color: exec.color }} />
               </motion.div>
             </div>
           </div>
