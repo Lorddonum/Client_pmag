@@ -72,8 +72,8 @@ export default function BrandSplit() {
                   {/* Overlay */}
                   <div className={`absolute inset-0 bg-gradient-to-t opacity-90 group-hover:opacity-75 transition-opacity duration-500 ${
                     brand.color === 'cyan' 
-                      ? 'from-[#002a3d] via-[#002a3d]/60 to-[#002a3d]/20' 
-                      : 'from-[#3d2800] via-[#3d2800]/60 to-[#3d2800]/20'
+                      ? 'from-[#002a3d] via-[#002a3d]/50 to-transparent' 
+                      : 'from-[#3d2800] via-[#3d2800]/50 to-transparent'
                   }`} />
                   
                   {/* Content */}
