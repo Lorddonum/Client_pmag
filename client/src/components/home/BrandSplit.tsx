@@ -66,7 +66,7 @@ export default function BrandSplit() {
                     src={brand.image} 
                     alt={brand.name}
                     className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
-                      brand.color === 'cyan' ? 'object-[center_60%]' : 'object-[center_20%]'
+                      brand.color === 'cyan' ? 'object-[center_40%]' : 'object-[center_10%]'
                     }`}
                     loading="lazy"
                   />
