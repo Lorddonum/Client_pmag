@@ -648,7 +648,7 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute top-0 left-0 w-[45%] lg:w-[40%] z-30"
+              className="absolute top-[-3%] left-[5%] w-[45%] lg:w-[40%] z-30"
             >
               <img 
                 src="/images/showcase-3.png" 
