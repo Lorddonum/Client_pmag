@@ -657,7 +657,7 @@ export default function About() {
                 src={showcase3} 
                 alt="Design sketching"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="lazy"
+                loading="eager"
               />
             </motion.div>
 
@@ -673,7 +673,7 @@ export default function About() {
                 src={showcase2} 
                 alt="Modern living room lighting"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="lazy"
+                loading="eager"
               />
             </motion.div>
 
@@ -689,7 +689,7 @@ export default function About() {
                 src={showcase1} 
                 alt="Modern showroom"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="lazy"
+                loading="eager"
               />
             </motion.div>
 
@@ -705,7 +705,7 @@ export default function About() {
                 src={showcase4} 
                 alt="Precision measurement"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="lazy"
+                loading="eager"
               />
             </motion.div>
           </div>
