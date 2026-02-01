@@ -4,10 +4,6 @@ import Footer from "@/components/layout/Footer";
 import chairmanImg from "@/assets/chairman-situ.png";
 import ceoImg from "@/assets/ceo-michelle.png";
 import coreTeamImg from "@/assets/core-team.png";
-import showcase1 from "@/assets/showcase-1.png";
-import showcase2 from "@/assets/showcase-2.png";
-import showcase3 from "@/assets/showcase-3.png";
-import showcase4 from "@/assets/showcase-4.png";
 import milestone2016_1 from "@/assets/milestone-2016-1.png";
 import milestone2016_2 from "@/assets/milestone-2016-2.png";
 import milestone2016_3 from "@/assets/milestone-2016-3.png";
@@ -102,6 +98,7 @@ function HonorsSlideshow() {
                 key={currentSlide}
                 src={honors[currentSlide].image}
                 alt={honors[currentSlide].title}
+                loading="lazy"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -654,10 +651,10 @@ export default function About() {
               className="absolute top-0 left-0 w-[45%] lg:w-[40%] z-10"
             >
               <img 
-                src={showcase3} 
+                src="/images/showcase-3.png" 
                 alt="Design sketching"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="eager"
+                loading="lazy"
               />
             </motion.div>
 
@@ -670,10 +667,10 @@ export default function About() {
               className="absolute top-[35%] left-0 w-[35%] lg:w-[30%] z-20"
             >
               <img 
-                src={showcase2} 
+                src="/images/showcase-2.png" 
                 alt="Modern living room lighting"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="eager"
+                loading="lazy"
               />
             </motion.div>
 
@@ -686,10 +683,10 @@ export default function About() {
               className="absolute top-[10%] right-0 w-[45%] lg:w-[40%] z-10"
             >
               <img 
-                src={showcase1} 
+                src="/images/showcase-1.png" 
                 alt="Modern showroom"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="eager"
+                loading="lazy"
               />
             </motion.div>
 
@@ -702,10 +699,10 @@ export default function About() {
               className="absolute bottom-0 right-[5%] w-[50%] lg:w-[45%] z-20"
             >
               <img 
-                src={showcase4} 
+                src="/images/showcase-4.png" 
                 alt="Precision measurement"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                loading="eager"
+                loading="lazy"
               />
             </motion.div>
           </div>
