@@ -15,7 +15,7 @@ export default function BrandSplit() {
       link: "/products?brand=Paralight"
     },
     {
-      name: "Maglinear Lighting",
+      name: "Maglinear",
       subtitle: "Magnetic Track Systems",
       description: "Advanced magnetic track lighting and commercial lighting solutions. Panels, downlights, and pendant systems designed for modern architectural spaces.",
       image: maglinearImg,
