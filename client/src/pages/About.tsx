@@ -3,10 +3,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import chairmanImg from "@/assets/chairman-situ.png";
 import ceoImg from "@/assets/ceo-michelle.png";
-import salesTeamImg from "@/assets/sales-team.png";
-import logisticsTeamImg from "@/assets/logistics-team.png";
-import rdTeamImg from "@/assets/rd-team.png";
-import productionTeamImg from "@/assets/production-team.png";
 import coreTeamImg from "@/assets/core-team.png";
 import milestone2016_1 from "@/assets/milestone-2016-1.png";
 import milestone2016_2 from "@/assets/milestone-2016-2.png";
@@ -181,37 +177,6 @@ export default function About() {
       image: ceoImg,
       color: "#00A8E8",
       bgGradient: "from-cyan-50 to-blue-100"
-    }
-  ];
-
-  const teams = [
-    {
-      name: "Sales Team",
-      icon: Users,
-      color: "#00A8E8",
-      image: salesTeamImg,
-      description: "Serving as the vital link between clients and our enterprise, our team utilizes multilingual expertise to transcend regional boundaries and connect precisely with a global customer base. Starting from the initial order discussions, we thoroughly explore individualized requirements and maintain attentive after-sales follow-up — guaranteeing that \"every client need receives immediate and effective implementation.\""
-    },
-    {
-      name: "Logistics Team",
-      icon: Truck,
-      color: "#ECAA00",
-      image: logisticsTeamImg,
-      description: "Integrating resources across the entire chain, accurately transmitting customer needs to all departments, and coordinating resources such as design and logistics to ensure customized service delivery. Progress is updated to customers in real time, making collaboration transparent and manageable — minimizing information gaps and reducing customer waiting costs."
-    },
-    {
-      name: "R&D Team",
-      icon: Lightbulb,
-      color: "#00A8E8",
-      image: rdTeamImg,
-      description: "Our R&D team brings together industry engineers and embedded marketing experts who work side by side throughout every development cycle. Each project begins with a deep understanding of customer pain points, ensuring the delivery of precise, application-specific, and customized solutions."
-    },
-    {
-      name: "Production Team",
-      icon: Package,
-      color: "#ECAA00",
-      image: productionTeamImg,
-      description: "Our entire production workflow is managed by experienced technical experts. We adapt flexibly to client specifications, conducting thorough inspections from raw materials to final products, complemented by professional brand packaging—all to guarantee flawless delivery and ensure every item fulfills customer expectations."
     }
   ];
 
@@ -671,53 +636,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* Other Team Sections */}
-      {teams.map((team, i) => (
-        <section key={i} className={`py-12 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-          <div className="container mx-auto px-6">
-            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-              <motion.div
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className={i % 2 === 1 ? 'lg:order-2' : ''}
-              >
-                <div 
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
-                  style={{ backgroundColor: `${team.color}15` }}
-                >
-                  <team.icon className="w-4 h-4" style={{ color: team.color }} />
-                  <span className="font-semibold text-sm" style={{ color: team.color }}>{team.name}</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-display font-bold mb-4">{team.name}</h3>
-                <p className="text-gray-600 text-base leading-relaxed">
-                  {team.description}
-                </p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className={`relative overflow-hidden rounded-2xl shadow-xl group ${i % 2 === 1 ? 'lg:order-1' : ''}`}
-              >
-                <img 
-                  src={team.image} 
-                  alt={team.name}
-                  loading="lazy"
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
-                />
-                <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: `linear-gradient(to top, ${team.color}40, transparent)` }}
-                />
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      ))}
 
       {/* Certifications */}
       <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
