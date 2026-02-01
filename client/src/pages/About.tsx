@@ -98,7 +98,7 @@ function HonorsSlideshow() {
                 key={currentSlide}
                 src={honors[currentSlide].image}
                 alt={honors[currentSlide].title}
-                loading="lazy"
+                loading="eager"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -413,7 +413,7 @@ export default function About() {
                       <img 
                         src={milestones[currentMilestone].images[currentImageIndex]} 
                         alt={milestones[currentMilestone].title}
-                        loading="lazy"
+                        loading="eager"
                         className="w-full h-full object-cover transition-opacity duration-500"
                       />
                     ) : (
@@ -523,7 +523,7 @@ export default function About() {
                     <img 
                       src={exec.image} 
                       alt={exec.name}
-                      loading="lazy"
+                      loading="eager"
                       className="w-full h-full object-contain object-center"
                     />
                   </motion.div>
@@ -604,7 +604,7 @@ export default function About() {
                 <img 
                   src={coreTeamImg} 
                   alt="Paralight Core Team"
-                  loading="lazy"
+                  loading="eager"
                   className="w-full h-auto object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
@@ -653,7 +653,7 @@ export default function About() {
               src="/images/showcase-3.png" 
               alt="Design sketching"
               className="w-full h-auto grayscale"
-              loading="lazy"
+              loading="eager"
             />
           </motion.div>
 
@@ -669,7 +669,7 @@ export default function About() {
               src="/images/showcase-2.png" 
               alt="Modern living room lighting"
               className="w-full h-auto"
-              loading="lazy"
+              loading="eager"
             />
           </motion.div>
 
@@ -685,7 +685,7 @@ export default function About() {
               src="/images/showcase-1.png" 
               alt="Modern showroom"
               className="w-full h-auto"
-              loading="lazy"
+              loading="eager"
             />
           </motion.div>
 
@@ -701,7 +701,7 @@ export default function About() {
               src="/images/showcase-4.png" 
               alt="Precision measurement"
               className="w-full h-auto grayscale"
-              loading="lazy"
+              loading="eager"
             />
           </motion.div>
 
