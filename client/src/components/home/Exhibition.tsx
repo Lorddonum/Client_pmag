@@ -309,15 +309,15 @@ export default function Exhibition() {
                   className="group cursor-pointer flex-shrink-0"
                   data-testid={`exhibition-logo-${eventIndex}`}
                 >
-                  <div className={`bg-white/10 backdrop-blur-sm p-10 flex items-center justify-center h-48 w-48 md:h-56 md:w-56 lg:h-64 lg:w-64 transition-all duration-500 ${
+                  <div className={`overflow-hidden h-48 w-48 md:h-56 md:w-56 lg:h-64 lg:w-64 transition-all duration-500 ${
                     isCenter 
                       ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
-                      : "hover:bg-white/15"
+                      : "hover:opacity-80"
                   }`}>
                     <img
                       src={event.logo}
                       alt={event.name}
-                      className="max-h-full max-w-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="mt-4 text-center">
