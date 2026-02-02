@@ -27,53 +27,34 @@ export default function GlobalNetwork() {
       <div className="container mx-auto px-8 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Content */}
-          <div>
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 mb-4"
-            >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="bg-[#F5F0E8]/50 backdrop-blur-[20px] p-10 lg:p-12"
+          >
+            <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4">
               Worldwide Presence
-            </motion.span>
+            </span>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium mb-8"
-            >
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium mb-8">
               Global Export <span className="italic font-normal">Network</span>
-            </motion.h2>
+            </h2>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-gray-600 text-lg leading-relaxed mb-10 max-w-lg"
-            >
+            <p className="text-gray-600 text-lg leading-relaxed mb-10 max-w-lg">
               We proudly export our lighting solutions to over 100 countries
               worldwide, delivering premium aluminum profiles and commercial
               lighting systems to partners across Asia, Europe, the Middle East,
               Africa, and the Americas.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <Link href="/contact">
-                <button className="px-8 py-4 bg-gray-900 text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors duration-300">
-                  Become a Partner
-                </button>
-              </Link>
-            </motion.div>
-          </div>
+            <Link href="/contact">
+              <button className="px-8 py-4 bg-gray-900 text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors duration-300">
+                Become a Partner
+              </button>
+            </Link>
+          </motion.div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -84,7 +65,7 @@ export default function GlobalNetwork() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
-                className={`bg-white border border-gray-100 p-10 ${index === 2 ? "sm:col-span-2" : ""}`}
+                className={`bg-white/50 backdrop-blur-[20px] border border-white/30 p-10 ${index === 2 ? "sm:col-span-2" : ""}`}
               >
                 <stat.icon className="w-6 h-6 text-gray-400 mb-6" />
                 <h3 className="font-display text-5xl text-gray-900 font-medium mb-2">
