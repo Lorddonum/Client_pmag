@@ -24,14 +24,14 @@ export default function ProjectGallery() {
 
   return (
     <section className="py-0 overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#2a2520] via-[#1f1a16] to-[#2a2520]" />
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-500/15 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-amber-600/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-orange-500/15 rounded-full blur-[120px]" />
       </div>
       
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)`,
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,235,205,0.1) 2px, rgba(255,235,205,0.1) 4px)`,
         backgroundSize: '100% 4px',
       }} />
 
