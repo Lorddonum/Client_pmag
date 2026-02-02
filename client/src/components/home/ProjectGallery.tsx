@@ -23,7 +23,7 @@ export default function ProjectGallery() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-0 overflow-hidden relative">
+    <section className="pt-12 pb-0 overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-b from-[#d4c4a8] via-[#c9b896] to-[#d4c4a8]" />
       
       <div className="absolute inset-0 opacity-[0.02]" style={{
