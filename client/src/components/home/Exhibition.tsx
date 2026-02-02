@@ -309,7 +309,7 @@ export default function Exhibition() {
                   className="group cursor-pointer flex-shrink-0"
                   data-testid={`exhibition-logo-${eventIndex}`}
                 >
-                  <div className={`bg-white/10 backdrop-blur-sm p-8 flex items-center justify-center h-32 md:h-40 w-40 md:w-56 transition-all duration-500 ${
+                  <div className={`bg-white/10 backdrop-blur-sm p-10 flex items-center justify-center h-48 w-48 md:h-56 md:w-56 lg:h-64 lg:w-64 transition-all duration-500 ${
                     isCenter 
                       ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
                       : "hover:bg-white/15"
