@@ -5,15 +5,15 @@ import { useState, useEffect } from "react";
 interface ExhibitionEvent {
   name: string;
   location: string;
-  date: string;
+  logo: string;
   images: string[];
 }
 
-const events: ExhibitionEvent[] = [
+const exhibitionEvents: ExhibitionEvent[] = [
   { 
-    name: "Light Middle East", 
+    name: "Middle East Energy", 
     location: "Dubai, UAE", 
-    date: "2024",
+    logo: "/exhibitions/logos/middle-east-energy.jpg",
     images: [
       "/exhibitions/dubai-2024/img-1.jpg",
       "/exhibitions/dubai-2024/img-2.jpg",
@@ -28,7 +28,7 @@ const events: ExhibitionEvent[] = [
   { 
     name: "Canton Fair", 
     location: "Guangzhou, China", 
-    date: "2024",
+    logo: "/exhibitions/logos/canton-fair.jpg",
     images: [
       "/exhibitions/canton-2024/img-1.jpg",
       "/exhibitions/canton-2024/img-2.jpg",
@@ -41,9 +41,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "Poland Lighting Fair", 
-    location: "Warsaw, Poland", 
-    date: "2024",
+    name: "GILF", 
+    location: "Guzhen, China", 
+    logo: "/exhibitions/logos/gilf.jpg",
     images: [
       "/exhibitions/poland-2024/img-1.jpg",
       "/exhibitions/poland-2024/img-2.jpg",
@@ -56,9 +56,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "LED Technology Exhibition", 
+    name: "LED Middle East", 
     location: "Cairo, Egypt", 
-    date: "2023",
+    logo: "/exhibitions/logos/led-middle-east.png",
     images: [
       "/exhibitions/egypt-2023/img-1.jpg",
       "/exhibitions/egypt-2023/img-2.jpg",
@@ -70,9 +70,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "Hong Kong Electronics Fair", 
+    name: "HK Lighting Fair", 
     location: "Hong Kong", 
-    date: "2023",
+    logo: "/exhibitions/logos/hk-lighting-fair.jpg",
     images: [
       "/exhibitions/hongkong-2023/img-1.jpg",
       "/exhibitions/hongkong-2023/img-2.jpg",
@@ -85,9 +85,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "Barcelona Lighting Fair", 
-    location: "Barcelona, Spain", 
-    date: "2022",
+    name: "Light + Building", 
+    location: "Frankfurt, Germany", 
+    logo: "/exhibitions/logos/light-building.jpg",
     images: [
       "/exhibitions/spain-2022/img-1.jpg",
       "/exhibitions/spain-2022/img-2.jpg",
@@ -98,9 +98,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "India Lighting Exhibition", 
-    location: "New Delhi, India", 
-    date: "2022",
+    name: "LEDTEC Asia", 
+    location: "Ho Chi Minh, Vietnam", 
+    logo: "/exhibitions/logos/ledtec-asia.jpg",
     images: [
       "/exhibitions/india-2022/img-1.jpg",
       "/exhibitions/india-2022/img-2.jpg",
@@ -112,9 +112,9 @@ const events: ExhibitionEvent[] = [
     ]
   },
   { 
-    name: "Expolux Brazil", 
+    name: "Expolux", 
     location: "São Paulo, Brazil", 
-    date: "2022",
+    logo: "/exhibitions/logos/expolux.png",
     images: [
       "/exhibitions/brazil-2022/img-1.jpg",
       "/exhibitions/brazil-2022/img-2.jpg",
@@ -126,67 +126,7 @@ const events: ExhibitionEvent[] = [
   },
 ];
 
-function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: () => void }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    if (event.images.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % event.images.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [event.images.length]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      onClick={onClick}
-      className="group relative bg-gray-800/50 border border-gray-700/50 overflow-hidden hover:border-gray-600 transition-all duration-500 cursor-pointer"
-    >
-      <div className="relative h-64 overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={currentIndex}
-            src={event.images[currentIndex]}
-            alt={`${event.name} - Image ${currentIndex + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent" />
-        
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {event.images.slice(0, 5).map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex % 5 ? "bg-white w-4" : "bg-white/40"
-              }`}
-            />
-          ))}
-          {event.images.length > 5 && (
-            <span className="text-white/60 text-xs ml-1">+{event.images.length - 5}</span>
-          )}
-        </div>
-      </div>
-      
-      <div className="p-8">
-        <h3 className="font-display text-2xl lg:text-3xl text-white font-medium mb-3 group-hover:text-brand-cyan transition-colors duration-300">
-          {event.name}
-        </h3>
-        <p className="text-gray-500 text-sm">{event.location}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-function Lightbox({ 
+function ExhibitionLightbox({ 
   event, 
   onClose 
 }: { 
@@ -229,7 +169,7 @@ function Lightbox({
 
       <div className="absolute top-6 left-6 text-white z-10">
         <h3 className="font-display text-2xl font-medium">{event.name}</h3>
-        <p className="text-white/60 text-sm">{event.location} - {event.date}</p>
+        <p className="text-white/60 text-sm">{event.location}</p>
       </div>
 
       <button
@@ -287,53 +227,59 @@ export default function Exhibition() {
   const [selectedEvent, setSelectedEvent] = useState<ExhibitionEvent | null>(null);
 
   return (
-    <section className="py-32 bg-gray-900">
+    <section className="py-20 bg-gray-900">
       <div className="container mx-auto px-8 lg:px-12">
-        <div className="text-center mb-20">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4"
-          >
-            Meet Us
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display text-4xl md:text-5xl lg:text-6xl text-white font-medium mb-6"
-          >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-brand-cyan text-[11px] font-medium uppercase tracking-[0.3em]">
+            Meet Us Worldwide
+          </span>
+          <h2 className="font-display text-3xl md:text-5xl text-white font-medium mt-4 mb-6">
             <span className="italic font-normal">Exhibitions</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-gray-400 max-w-xl mx-auto text-lg"
-          >
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto text-lg">
             We participate in leading lighting exhibitions worldwide, showcasing 
-            our latest innovations and strengthening connections with global partners.
-          </motion.p>
-        </div>
+            our latest innovations and connecting with global partners.
+          </p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <ExhibitionCard 
-              key={event.name} 
-              event={event} 
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {exhibitionEvents.map((event, index) => (
+            <motion.div
+              key={event.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
               onClick={() => setSelectedEvent(event)}
-            />
+              className="group cursor-pointer"
+              data-testid={`exhibition-logo-${index}`}
+            >
+              <div className="bg-white p-6 flex items-center justify-center h-24 md:h-28 transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
+                <img
+                  src={event.logo}
+                  alt={event.name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div className="mt-3 text-center">
+                <h4 className="text-white text-sm font-medium group-hover:text-brand-cyan transition-colors">
+                  {event.name}
+                </h4>
+                <p className="text-gray-500 text-xs mt-1">{event.location}</p>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
 
       <AnimatePresence>
         {selectedEvent && (
-          <Lightbox event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+          <ExhibitionLightbox event={selectedEvent} onClose={() => setSelectedEvent(null)} />
         )}
       </AnimatePresence>
     </section>
