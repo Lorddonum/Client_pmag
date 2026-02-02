@@ -55,6 +55,19 @@ const events: ExhibitionEvent[] = [
       "/exhibitions/hongkong-2023/img-8.jpg",
     ]
   },
+  { 
+    name: "Barcelona Lighting Fair", 
+    location: "Barcelona, Spain", 
+    date: "2022",
+    images: [
+      "/exhibitions/spain-2022/img-1.jpg",
+      "/exhibitions/spain-2022/img-2.jpg",
+      "/exhibitions/spain-2022/img-3.jpg",
+      "/exhibitions/spain-2022/img-4.jpg",
+      "/exhibitions/spain-2022/img-5.jpg",
+      "/exhibitions/spain-2022/img-6.jpg",
+    ]
+  },
 ];
 
 function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: () => void }) {
