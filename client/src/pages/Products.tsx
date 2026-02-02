@@ -525,10 +525,10 @@ export default function Products() {
                               </div>
                               
                               {/* Brand badge */}
-                              <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-sm ${
+                              <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-md ${
                                 product.brand === "Paralight" 
-                                  ? "bg-brand-cyan/20 text-white border border-brand-cyan/30" 
-                                  : "bg-brand-gold/20 text-white border border-brand-gold/30"
+                                  ? "bg-brand-cyan/70 text-white border border-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
+                                  : "bg-brand-gold/70 text-gray-900 border border-brand-gold/50 shadow-lg shadow-brand-gold/20"
                               }`}>
                                 {product.brand}
                               </div>
