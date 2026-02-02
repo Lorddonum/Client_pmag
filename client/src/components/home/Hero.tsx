@@ -1,17 +1,41 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
-import heroBg from "@assets/generated_images/abstract_architectural_lighting_design_with_aluminum_profiles.png";
+import { useState, useEffect } from "react";
+
+const heroImages = [
+  "/hero/hero-1.jpg",
+  "/hero/hero-2.jpg",
+  "/hero/hero-3.jpg",
+  "/hero/hero-4.jpg",
+  "/hero/hero-5.jpg",
+];
 
 export default function Hero() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with elegant overlay */}
+      {/* Background Slideshow */}
       <div className="absolute inset-0">
-        <img
-          src={heroBg}
-          alt="Architectural Lighting"
-          className="w-full h-full object-cover"
-        />
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentIndex}
+            src={heroImages[currentIndex]}
+            alt="Architectural Lighting"
+            className="absolute inset-0 w-full h-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          />
+        </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/80" />
       </div>
 
@@ -67,6 +91,21 @@ export default function Hero() {
             </button>
           </Link>
         </motion.div>
+      </div>
+
+      {/* Slide indicators */}
+      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {heroImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              index === currentIndex 
+                ? "bg-white w-6" 
+                : "bg-white/40 hover:bg-white/60"
+            }`}
+          />
+        ))}
       </div>
 
       {/* Elegant scroll indicator */}
