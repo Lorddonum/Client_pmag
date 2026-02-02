@@ -225,6 +225,32 @@ function ExhibitionLightbox({
 
 export default function Exhibition() {
   const [selectedEvent, setSelectedEvent] = useState<ExhibitionEvent | null>(null);
+  const [activeIndex, setActiveIndex] = useState(1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % exhibitionEvents.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const goNext = () => {
+    setActiveIndex((prev) => (prev + 1) % exhibitionEvents.length);
+  };
+
+  const goPrev = () => {
+    setActiveIndex((prev) => (prev - 1 + exhibitionEvents.length) % exhibitionEvents.length);
+  };
+
+  const getVisibleIndices = () => {
+    const total = exhibitionEvents.length;
+    const left = (activeIndex - 1 + total) % total;
+    const center = activeIndex;
+    const right = (activeIndex + 1) % total;
+    return [left, center, right];
+  };
+
+  const visibleIndices = getVisibleIndices();
 
   return (
     <section className="py-20 bg-gray-900">
@@ -247,33 +273,78 @@ export default function Exhibition() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {exhibitionEvents.map((event, index) => (
-            <motion.div
-              key={event.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setSelectedEvent(event)}
-              className="group cursor-pointer"
-              data-testid={`exhibition-logo-${index}`}
-            >
-              <div className="bg-white p-6 flex items-center justify-center h-24 md:h-28 transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
-                <img
-                  src={event.logo}
-                  alt={event.name}
-                  className="max-h-full max-w-full object-contain"
-                />
-              </div>
-              <div className="mt-3 text-center">
-                <h4 className="text-white text-sm font-medium group-hover:text-brand-cyan transition-colors">
-                  {event.name}
-                </h4>
-                <p className="text-gray-500 text-xs mt-1">{event.location}</p>
-              </div>
-            </motion.div>
-          ))}
+        <div className="relative max-w-5xl mx-auto">
+          <button
+            onClick={goPrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 p-3 text-white/60 hover:text-white transition-colors"
+            data-testid="exhibition-prev"
+          >
+            <ChevronLeft className="w-10 h-10" />
+          </button>
+
+          <button
+            onClick={goNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 p-3 text-white/60 hover:text-white transition-colors"
+            data-testid="exhibition-next"
+          >
+            <ChevronRight className="w-10 h-10" />
+          </button>
+
+          <div className="flex items-center justify-center gap-6 md:gap-10 overflow-hidden py-4">
+            {visibleIndices.map((eventIndex, position) => {
+              const event = exhibitionEvents[eventIndex];
+              const isCenter = position === 1;
+              
+              return (
+                <motion.div
+                  key={`${eventIndex}-${activeIndex}`}
+                  initial={{ opacity: 0, x: position === 0 ? -100 : position === 2 ? 100 : 0 }}
+                  animate={{ 
+                    opacity: isCenter ? 1 : 0.5,
+                    x: 0,
+                    scale: isCenter ? 1.1 : 0.9,
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  onClick={() => setSelectedEvent(event)}
+                  className="group cursor-pointer flex-shrink-0"
+                  data-testid={`exhibition-logo-${eventIndex}`}
+                >
+                  <div className={`bg-white/10 backdrop-blur-sm p-8 flex items-center justify-center h-32 md:h-40 w-40 md:w-56 transition-all duration-500 ${
+                    isCenter 
+                      ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
+                      : "hover:bg-white/15"
+                  }`}>
+                    <img
+                      src={event.logo}
+                      alt={event.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <div className="mt-4 text-center">
+                    <h4 className={`text-sm font-medium transition-colors ${
+                      isCenter ? "text-brand-cyan" : "text-white/70 group-hover:text-white"
+                    }`}>
+                      {event.name}
+                    </h4>
+                    <p className="text-gray-500 text-xs mt-1">{event.location}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="flex justify-center gap-2 mt-8">
+            {exhibitionEvents.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  idx === activeIndex ? "bg-brand-cyan w-6" : "bg-white/30 hover:bg-white/50"
+                }`}
+                data-testid={`exhibition-dot-${idx}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
