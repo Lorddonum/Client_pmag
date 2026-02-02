@@ -31,7 +31,11 @@ export default function GlobalNetwork() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="max-w-xl bg-[#F5F0E8]/60 backdrop-blur-sm p-10 lg:p-12"
+            className="max-w-xl p-10 lg:p-12 relative"
+            style={{
+              background: 'radial-gradient(ellipse at center, rgba(245, 240, 232, 0.7) 0%, rgba(245, 240, 232, 0.5) 50%, rgba(245, 240, 232, 0) 100%)',
+              backdropFilter: 'blur(8px)',
+            }}
           >
             <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4">
               Worldwide Presence
