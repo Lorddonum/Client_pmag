@@ -11,6 +11,21 @@ interface ExhibitionEvent {
 
 const events: ExhibitionEvent[] = [
   { 
+    name: "Light Middle East", 
+    location: "Dubai, UAE", 
+    date: "2024",
+    images: [
+      "/exhibitions/dubai-2024/img-1.jpg",
+      "/exhibitions/dubai-2024/img-2.jpg",
+      "/exhibitions/dubai-2024/img-3.jpg",
+      "/exhibitions/dubai-2024/img-4.jpg",
+      "/exhibitions/dubai-2024/img-5.jpg",
+      "/exhibitions/dubai-2024/img-6.jpg",
+      "/exhibitions/dubai-2024/img-7.jpg",
+      "/exhibitions/dubai-2024/img-8.jpg",
+    ]
+  },
+  { 
     name: "Canton Fair", 
     location: "Guangzhou, China", 
     date: "2024",
