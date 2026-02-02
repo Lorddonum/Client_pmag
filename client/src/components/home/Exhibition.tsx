@@ -68,6 +68,20 @@ const events: ExhibitionEvent[] = [
       "/exhibitions/spain-2022/img-6.jpg",
     ]
   },
+  { 
+    name: "India Lighting Exhibition", 
+    location: "New Delhi, India", 
+    date: "2022",
+    images: [
+      "/exhibitions/india-2022/img-1.jpg",
+      "/exhibitions/india-2022/img-2.jpg",
+      "/exhibitions/india-2022/img-3.jpg",
+      "/exhibitions/india-2022/img-4.jpg",
+      "/exhibitions/india-2022/img-5.jpg",
+      "/exhibitions/india-2022/img-6.jpg",
+      "/exhibitions/india-2022/img-7.jpg",
+    ]
+  },
 ];
 
 function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: () => void }) {
