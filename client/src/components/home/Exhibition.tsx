@@ -26,6 +26,20 @@ const events: ExhibitionEvent[] = [
       "/exhibitions/poland-2024/img-9.jpg",
     ]
   },
+  { 
+    name: "LED Technology Exhibition", 
+    location: "Cairo, Egypt", 
+    date: "2023",
+    images: [
+      "/exhibitions/egypt-2023/img-1.jpg",
+      "/exhibitions/egypt-2023/img-2.jpg",
+      "/exhibitions/egypt-2023/img-3.jpg",
+      "/exhibitions/egypt-2023/img-4.jpg",
+      "/exhibitions/egypt-2023/img-5.jpg",
+      "/exhibitions/egypt-2023/img-6.jpg",
+      "/exhibitions/egypt-2023/img-7.jpg",
+    ]
+  },
 ];
 
 function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: () => void }) {
