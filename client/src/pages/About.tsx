@@ -393,100 +393,94 @@ function ProjectGallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const clipPaths = [
-    "polygon(0 15%, 100% 0, 100% 85%, 0 100%)",
-    "polygon(0 0, 100% 10%, 100% 100%, 0 90%)",
-    "polygon(5% 0, 100% 0, 95% 100%, 0 100%)",
-    "polygon(0 0, 95% 5%, 100% 100%, 5% 95%)",
-    "polygon(0 5%, 100% 0, 100% 95%, 0 100%)",
-    "polygon(0 0, 100% 8%, 100% 92%, 0 100%)",
-  ];
-
   return (
-    <section className="py-16 bg-gray-900 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="relative h-[600px] md:h-[700px]">
+    <section className="py-20 bg-gray-50 overflow-hidden">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-12 grid-rows-2 gap-3 h-[500px] md:h-[600px]">
           {projects.map((project, index) => {
-            const positions = [
-              { top: "0%", left: "0%", width: "45%", height: "55%", rotate: -2, z: 10 },
-              { top: "5%", left: "40%", width: "35%", height: "45%", rotate: 3, z: 20 },
-              { top: "0%", left: "68%", width: "32%", height: "50%", rotate: -1, z: 15 },
-              { top: "48%", left: "5%", width: "38%", height: "52%", rotate: 2, z: 25 },
-              { top: "45%", left: "38%", width: "32%", height: "48%", rotate: -3, z: 30 },
-              { top: "42%", left: "65%", width: "35%", height: "55%", rotate: 1, z: 22 },
+            const gridStyles = [
+              "col-span-6 md:col-span-5 row-span-2",
+              "col-span-6 md:col-span-4 row-span-1",
+              "col-span-6 md:col-span-3 row-span-1",
+              "col-span-6 md:col-span-3 row-span-1",
+              "col-span-6 md:col-span-4 row-span-1",
+              "col-span-12 md:col-span-5 row-span-1 md:row-span-1",
             ];
-            const pos = positions[index];
+            
             const isHovered = hoveredIndex === index;
             const isOtherHovered = hoveredIndex !== null && hoveredIndex !== index;
 
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 50, rotate: pos.rotate * 2 }}
-                whileInView={{ opacity: 1, y: 0, rotate: pos.rotate }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.6, type: "spring" }}
-                className="absolute cursor-pointer"
-                style={{
-                  top: pos.top,
-                  left: pos.left,
-                  width: pos.width,
-                  height: pos.height,
-                  zIndex: isHovered ? 50 : pos.z,
-                }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className={`${gridStyles[index]} relative overflow-hidden cursor-pointer`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onClick={() => setSelectedImage(index)}
                 data-testid={`button-project-${index}`}
               >
                 <motion.div
-                  className="w-full h-full relative"
+                  className="w-full h-full relative rounded-lg overflow-hidden"
                   animate={{
-                    scale: isHovered ? 1.15 : isOtherHovered ? 0.95 : 1,
-                    rotate: isHovered ? 0 : pos.rotate,
-                    filter: isOtherHovered ? "brightness(0.5) blur(2px)" : "brightness(1) blur(0px)",
+                    scale: isHovered ? 1.02 : 1,
+                    filter: isOtherHovered ? "brightness(0.7) saturate(0.5)" : "brightness(1) saturate(1)",
                   }}
-                  transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+                  transition={{ duration: 0.4 }}
+                  style={{
+                    boxShadow: isHovered 
+                      ? "0 25px 50px -12px rgba(0,0,0,0.35)" 
+                      : "0 10px 25px -10px rgba(0,0,0,0.15)",
+                  }}
                 >
-                  <div
-                    className="w-full h-full overflow-hidden shadow-2xl"
-                    style={{ clipPath: clipPaths[index] }}
-                  >
-                    <motion.img
-                      src={project.image}
-                      alt={`Project ${index + 1}`}
-                      loading="lazy"
-                      className="w-full h-full object-cover"
-                      animate={{
-                        scale: isHovered ? 1.1 : 1.2,
-                        x: isHovered ? 0 : (index % 2 === 0 ? -20 : 20),
-                        y: isHovered ? 0 : (index % 3 === 0 ? -15 : 15),
-                      }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                  <motion.div
-                    className="absolute inset-0 border-2 border-white/20 pointer-events-none"
-                    style={{ clipPath: clipPaths[index] }}
+                  <motion.img
+                    src={project.image}
+                    alt={`Project ${index + 1}`}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
                     animate={{
-                      borderColor: isHovered ? "rgba(0, 168, 232, 0.6)" : "rgba(255,255,255,0.2)",
-                      boxShadow: isHovered ? "0 0 40px rgba(0, 168, 232, 0.3)" : "none",
+                      scale: isHovered ? 1 : 1.15,
                     }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  />
+                  
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                    animate={{
+                      opacity: isHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 p-4"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{
+                      y: isHovered ? 0 : 20,
+                      opacity: isHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-[2px] bg-brand-cyan" />
+                      <span className="text-white/80 text-xs uppercase tracking-widest">View Project</span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className="absolute inset-0 border-2 border-transparent rounded-lg pointer-events-none"
+                    animate={{
+                      borderColor: isHovered ? "rgba(0, 168, 232, 0.5)" : "transparent",
+                    }}
+                    transition={{ duration: 0.3 }}
                   />
                 </motion.div>
               </motion.div>
             );
           })}
-
-          <motion.div 
-            className="absolute bottom-4 right-4 text-right"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1 }}
-          >
-            <span className="text-gray-500 text-xs uppercase tracking-widest">Hover to explore</span>
-          </motion.div>
         </div>
       </div>
 
@@ -496,7 +490,7 @@ function ProjectGallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center backdrop-blur-sm"
             onClick={() => setSelectedImage(null)}
           >
             <button
@@ -524,28 +518,30 @@ function ProjectGallery() {
             <motion.div 
               className="max-w-5xl max-h-[90vh] mx-4"
               onClick={(e) => e.stopPropagation()}
-              initial={{ scale: 0.8, rotate: -5 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0.8, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 200 }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
               <motion.img
                 key={selectedImage}
                 src={projects[selectedImage].image}
                 alt={`Project ${selectedImage + 1}`}
-                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
               />
             </motion.div>
 
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
               {projects.map((_, index) => (
                 <motion.button
                   key={index}
                   onClick={(e) => { e.stopPropagation(); setSelectedImage(index); }}
-                  className="w-16 h-12 overflow-hidden rounded opacity-50 hover:opacity-100 transition-opacity"
+                  className="w-14 h-10 overflow-hidden rounded-md border-2 transition-all"
                   animate={{ 
-                    opacity: index === selectedImage ? 1 : 0.5,
-                    scale: index === selectedImage ? 1.1 : 1,
+                    borderColor: index === selectedImage ? "rgba(0, 168, 232, 1)" : "rgba(255,255,255,0.2)",
+                    opacity: index === selectedImage ? 1 : 0.6,
                   }}
                 >
                   <img src={projects[index].image} alt="" className="w-full h-full object-cover" />
