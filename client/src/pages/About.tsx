@@ -1222,6 +1222,9 @@ export default function About() {
         </div>
       </section>
 
+      {/* Exhibitions Section */}
+      <ExhibitionsSection />
+
       {/* Global Delivery */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
@@ -1286,9 +1289,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* Exhibitions Section */}
-      <ExhibitionsSection />
 
       <Footer />
     </div>
