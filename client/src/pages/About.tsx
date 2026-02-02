@@ -438,8 +438,8 @@ function HonorsSlideshow() {
         </div>
       </div>
 
-      <div className="relative overflow-hidden bg-white/5 border border-white/10 p-4 md:p-6 max-w-2xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+      <div className="relative overflow-hidden bg-white/5 border border-white/10 p-5 md:p-8 max-w-3xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center gap-5 md:gap-10">
           <div className="relative w-full md:w-1/2 aspect-[4/3] bg-white rounded-lg overflow-hidden shadow-xl">
             <AnimatePresence mode="wait">
               <motion.img
@@ -451,7 +451,7 @@ function HonorsSlideshow() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.5 }}
-                className="w-full h-full object-contain p-2"
+                className="w-full h-full object-contain p-3"
               />
             </AnimatePresence>
           </div>
@@ -465,28 +465,28 @@ function HonorsSlideshow() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
               >
-                <span className="text-brand-gold text-xs font-medium tracking-wide">
+                <span className="text-brand-gold text-sm font-medium tracking-wide">
                   {honors[currentSlide].year}
                 </span>
-                <h4 className="font-display text-base md:text-lg text-white font-medium mt-1 mb-2">
+                <h4 className="font-display text-lg md:text-xl text-white font-medium mt-2 mb-3">
                   {honors[currentSlide].title}
                 </h4>
-                <p className="text-gray-400 text-xs leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   Official certification recognizing Paralight Group's
                   commitment to quality, innovation, and industry excellence.
                 </p>
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex items-center justify-center md:justify-start gap-1.5 mt-4">
+            <div className="flex items-center justify-center md:justify-start gap-2 mt-5">
               {honors.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`h-1 transition-all duration-300 ${
                     index === currentSlide
-                      ? "w-6 bg-brand-gold"
-                      : "w-3 bg-gray-600 hover:bg-gray-500"
+                      ? "w-7 bg-brand-gold"
+                      : "w-3.5 bg-gray-600 hover:bg-gray-500"
                   }`}
                 />
               ))}
