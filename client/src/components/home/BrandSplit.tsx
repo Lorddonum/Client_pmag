@@ -34,7 +34,7 @@ export default function BrandSplit() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 mb-4"
+            className="inline-block text-sm font-medium tracking-[0.3em] uppercase text-gray-400 mb-4"
           >
             Our Brands
           </motion.span>
