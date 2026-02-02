@@ -24,7 +24,7 @@ export default function ProjectGallery() {
 
   return (
     <section className="py-0 overflow-hidden relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#d4c4a8] via-[#c9b896] to-[#d4c4a8]" />
       
       <div className="absolute inset-0 opacity-[0.02]" style={{
         backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)`,
