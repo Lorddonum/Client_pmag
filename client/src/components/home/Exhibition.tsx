@@ -11,6 +11,21 @@ interface ExhibitionEvent {
 
 const events: ExhibitionEvent[] = [
   { 
+    name: "Canton Fair", 
+    location: "Guangzhou, China", 
+    date: "2024",
+    images: [
+      "/exhibitions/canton-2024/img-1.jpg",
+      "/exhibitions/canton-2024/img-2.jpg",
+      "/exhibitions/canton-2024/img-3.jpg",
+      "/exhibitions/canton-2024/img-4.jpg",
+      "/exhibitions/canton-2024/img-5.jpg",
+      "/exhibitions/canton-2024/img-6.jpg",
+      "/exhibitions/canton-2024/img-7.jpg",
+      "/exhibitions/canton-2024/img-8.jpg",
+    ]
+  },
+  { 
     name: "Poland Lighting Fair", 
     location: "Warsaw, Poland", 
     date: "2024",
