@@ -26,9 +26,9 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Background image */}
+      {/* Foreground decorative image */}
       <div 
-        className="absolute top-0 left-0 w-[900px] h-[600px] opacity-[0.15] pointer-events-none"
+        className="absolute top-0 left-0 w-[1000px] h-[650px] opacity-[0.2] pointer-events-none z-20"
         style={{
           backgroundImage: 'url(/brand-split-bg.png)',
           backgroundSize: 'contain',
@@ -37,7 +37,7 @@ export default function BrandSplit() {
         }}
       />
       
-      <div className="container mx-auto px-8 lg:px-12 relative z-10">
+      <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
         {/* Section header */}
         <div className="text-center mb-20">
           <motion.span
