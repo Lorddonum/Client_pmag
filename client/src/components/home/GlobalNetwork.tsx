@@ -32,11 +32,18 @@ export default function GlobalNetwork() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
             className="max-w-xl p-10 lg:p-12 relative"
-            style={{
-              background: 'radial-gradient(ellipse at center, rgba(245, 240, 232, 0.7) 0%, rgba(245, 240, 232, 0.5) 50%, rgba(245, 240, 232, 0) 100%)',
-              backdropFilter: 'blur(8px)',
-            }}
           >
+            {/* Blur background layer with fading edges */}
+            <div 
+              className="absolute inset-0 -z-10"
+              style={{
+                background: 'rgba(245, 240, 232, 0.6)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                maskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at center, black 30%, transparent 100%)',
+              }}
+            />
             <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4">
               Worldwide Presence
             </span>
