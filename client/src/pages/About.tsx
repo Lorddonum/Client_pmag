@@ -394,9 +394,20 @@ function ProjectGallery() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-16 bg-gray-100 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="flex h-[400px] md:h-[500px] gap-1 md:gap-2">
+    <section className="py-0 overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950" />
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-500/15 rounded-full blur-[120px]" />
+      </div>
+      
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)`,
+        backgroundSize: '100% 4px',
+      }} />
+
+      <div className="relative z-10">
+        <div className="flex h-[450px] md:h-[550px]">
           {projects.map((project, index) => {
             const isHovered = hoveredIndex === index;
             const isAnyHovered = hoveredIndex !== null;
@@ -404,12 +415,17 @@ function ProjectGallery() {
             return (
               <motion.div
                 key={index}
-                className="relative overflow-hidden cursor-pointer rounded-lg"
+                className="relative overflow-hidden cursor-pointer"
+                style={{ 
+                  clipPath: isHovered 
+                    ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' 
+                    : `polygon(${index === 0 ? '0' : '8%'} 0, 100% 0, ${index === projects.length - 1 ? '100%' : '92%'} 100%, 0 100%)`,
+                }}
                 initial={{ flex: 1 }}
                 animate={{
-                  flex: isHovered ? 4 : isAnyHovered ? 0.5 : 1,
+                  flex: isHovered ? 5 : isAnyHovered ? 0.4 : 1,
                 }}
-                transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onClick={() => setSelectedImage(index)}
@@ -418,9 +434,11 @@ function ProjectGallery() {
                 <motion.div
                   className="absolute inset-0"
                   animate={{
-                    filter: isAnyHovered && !isHovered ? "brightness(0.6) saturate(0.7)" : "brightness(1) saturate(1)",
+                    filter: isAnyHovered && !isHovered 
+                      ? "brightness(0.3) saturate(0.3) blur(1px)" 
+                      : "brightness(1) saturate(1) blur(0px)",
                   }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.5 }}
                 >
                   <motion.img
                     src={project.image}
@@ -428,51 +446,106 @@ function ProjectGallery() {
                     loading="lazy"
                     className="w-full h-full object-cover"
                     animate={{
-                      scale: isHovered ? 1 : 1.3,
-                      x: isHovered ? 0 : `${(index - 2.5) * 5}%`,
+                      scale: isHovered ? 1.05 : 1.4,
+                      x: isHovered ? 0 : `${(index - 2.5) * 8}%`,
                     }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
                   />
                 </motion.div>
 
                 <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
+                  className="absolute inset-0"
+                  style={{
+                    background: isHovered 
+                      ? 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, transparent 70%)' 
+                      : 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 100%)',
+                  }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                />
+
+                <motion.div
+                  className="absolute top-4 left-4 font-mono text-xs tracking-wider"
                   animate={{
-                    opacity: isHovered ? 1 : 0.3,
+                    opacity: isHovered ? 1 : 0.4,
+                    color: isHovered ? '#00A8E8' : '#666',
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-2xl font-bold">0{index + 1}</span>
+                  <span className="text-gray-500">/0{projects.length}</span>
+                </motion.div>
+
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 p-6 md:p-8"
+                  animate={{
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 40,
+                  }}
+                  transition={{ duration: 0.5, delay: isHovered ? 0.15 : 0 }}
+                >
+                  <motion.div
+                    className="h-[1px] bg-gradient-to-r from-cyan-400 via-cyan-400 to-transparent mb-4"
+                    animate={{ width: isHovered ? '60%' : '0%' }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  />
+                  <span className="text-cyan-400 text-[10px] uppercase tracking-[0.3em] font-medium">
+                    Interior Design
+                  </span>
+                  <h3 className="text-white text-lg md:text-xl font-medium mt-1 font-display">
+                    Lighting Project
+                  </h3>
+                  <motion.div 
+                    className="flex items-center gap-2 mt-4"
+                    animate={{ opacity: isHovered ? 1 : 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <span className="text-white/60 text-xs uppercase tracking-widest">Explore</span>
+                    <motion.div
+                      animate={{ x: isHovered ? [0, 5, 0] : 0 }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                    >
+                      <ChevronRight className="w-4 h-4 text-cyan-400" />
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  animate={{
+                    boxShadow: isHovered 
+                      ? 'inset 0 0 100px rgba(0, 168, 232, 0.15), inset 0 0 0 1px rgba(0, 168, 232, 0.4)' 
+                      : 'inset 0 0 0 0 transparent',
                   }}
                   transition={{ duration: 0.4 }}
                 />
 
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 p-6"
+                  className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
                   animate={{
                     opacity: isHovered ? 1 : 0,
-                    y: isHovered ? 0 : 30,
-                  }}
-                  transition={{ duration: 0.4, delay: isHovered ? 0.1 : 0 }}
-                >
-                  <div className="flex items-center gap-3">
-                    <motion.div 
-                      className="h-[2px] bg-brand-cyan"
-                      animate={{ width: isHovered ? 40 : 0 }}
-                      transition={{ duration: 0.3, delay: 0.2 }}
-                    />
-                    <span className="text-white text-sm uppercase tracking-widest font-medium">
-                      View Project
-                    </span>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="absolute inset-0 border-2 pointer-events-none rounded-lg"
-                  animate={{
-                    borderColor: isHovered ? "rgba(0, 168, 232, 0.6)" : "rgba(255,255,255,0.1)",
+                    scaleX: isHovered ? 1 : 0,
                   }}
                   transition={{ duration: 0.3 }}
                 />
               </motion.div>
             );
           })}
+        </div>
+
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
+          {projects.map((_, index) => (
+            <motion.div
+              key={index}
+              className="w-8 h-1 rounded-full cursor-pointer"
+              animate={{
+                backgroundColor: hoveredIndex === index ? '#00A8E8' : 'rgba(255,255,255,0.2)',
+                scaleX: hoveredIndex === index ? 1.5 : 1,
+              }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setHoveredIndex(index)}
+            />
+          ))}
         </div>
       </div>
 
@@ -482,12 +555,16 @@ function ProjectGallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/98 flex items-center justify-center"
             onClick={() => setSelectedImage(null)}
           >
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/30 rounded-full blur-[200px]" />
+            </div>
+
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10"
+              className="absolute top-6 right-6 text-white/50 hover:text-cyan-400 transition-colors z-10"
               data-testid="button-close-project-lightbox"
             >
               <X className="w-8 h-8" />
@@ -495,48 +572,58 @@ function ProjectGallery() {
 
             <button
               onClick={(e) => { e.stopPropagation(); setSelectedImage((prev) => prev !== null ? (prev - 1 + projects.length) % projects.length : 0); }}
-              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-10"
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 border border-white/20 hover:border-cyan-400 hover:bg-cyan-400/10 transition-all z-10"
             >
               <ChevronLeft className="w-6 h-6 text-white" />
             </button>
 
             <button
               onClick={(e) => { e.stopPropagation(); setSelectedImage((prev) => prev !== null ? (prev + 1) % projects.length : 0); }}
-              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-10"
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 border border-white/20 hover:border-cyan-400 hover:bg-cyan-400/10 transition-all z-10"
             >
               <ChevronRight className="w-6 h-6 text-white" />
             </button>
 
             <motion.div 
-              className="max-w-5xl max-h-[90vh] mx-4"
+              className="max-w-5xl max-h-[85vh] mx-4 relative"
               onClick={(e) => e.stopPropagation()}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/50 via-transparent to-amber-500/50 rounded-lg opacity-50 blur-sm" />
               <motion.img
                 key={selectedImage}
                 src={projects[selectedImage].image}
                 alt={`Project ${selectedImage + 1}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+                className="relative max-w-full max-h-[80vh] object-contain rounded-lg"
               />
+              <div className="absolute top-4 left-4 font-mono text-cyan-400">
+                <span className="text-3xl font-bold">0{selectedImage + 1}</span>
+                <span className="text-gray-500">/0{projects.length}</span>
+              </div>
             </motion.div>
 
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
               {projects.map((_, index) => (
                 <motion.button
                   key={index}
                   onClick={(e) => { e.stopPropagation(); setSelectedImage(index); }}
-                  className="w-14 h-10 overflow-hidden rounded-md border-2 transition-all"
+                  className="w-16 h-12 overflow-hidden transition-all relative"
                   animate={{ 
-                    borderColor: index === selectedImage ? "rgba(0, 168, 232, 1)" : "rgba(255,255,255,0.2)",
-                    opacity: index === selectedImage ? 1 : 0.6,
+                    opacity: index === selectedImage ? 1 : 0.4,
                   }}
                 >
                   <img src={projects[index].image} alt="" className="w-full h-full object-cover" />
+                  <motion.div 
+                    className="absolute inset-0 border-2"
+                    animate={{
+                      borderColor: index === selectedImage ? '#00A8E8' : 'transparent',
+                    }}
+                  />
                 </motion.button>
               ))}
             </div>
