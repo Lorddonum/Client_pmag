@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ExhibitionEvent {
@@ -177,15 +177,6 @@ function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: (
       </div>
       
       <div className="p-8">
-        <div className="flex items-start justify-between mb-6">
-          <div className="p-3 bg-gray-700/50 text-gray-400 group-hover:bg-brand-cyan group-hover:text-white transition-all duration-300">
-            <Calendar className="w-5 h-5" />
-          </div>
-          <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-gray-500">
-            {event.date}
-          </span>
-        </div>
-        
         <h3 className="font-display text-2xl lg:text-3xl text-white font-medium mb-3 group-hover:text-brand-cyan transition-colors duration-300">
           {event.name}
         </h3>
