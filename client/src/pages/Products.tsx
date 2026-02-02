@@ -422,34 +422,33 @@ export default function Products() {
                       <Link href={`/products/${product.id}`}>
                         <div className="cursor-pointer">
                           {/* Image container */}
-                          <div className="aspect-square bg-gray-50 relative overflow-hidden mb-5 group-hover:bg-gray-100 transition-colors duration-500">
-                            <div className="w-full h-full flex items-center justify-center p-8">
-                              {product.image ? (
-                                <img 
-                                  src={product.image} 
-                                  alt={product.name} 
-                                  loading="lazy"
-                                  decoding="async"
-                                  className="w-full h-full object-contain" 
-                                />
-                              ) : (
-                                <Package className="w-12 h-12 text-gray-200" />
-                              )}
-                            </div>
-                            {/* Brand tag */}
-                            <div className="absolute top-4 left-4">
-                              <span className={`px-2 py-1 text-[9px] font-medium tracking-wider uppercase ${
-                                product.brand === "Paralight" 
-                                  ? "bg-brand-cyan/10 text-brand-cyan" 
-                                  : "bg-brand-gold/10 text-brand-gold"
-                              }`}>
-                                {product.series}
-                              </span>
-                            </div>
+                          <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden group-hover:bg-gray-50 transition-colors duration-500">
+                            {product.image ? (
+                              <img 
+                                src={product.image} 
+                                alt={product.name} 
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Package className="w-12 h-12 text-gray-300" />
+                              </div>
+                            )}
+                            {/* Gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           </div>
                           {/* Product info */}
-                          <div>
-                            <h2 className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-1">
+                          <div className="pt-4">
+                            <span className={`text-[10px] font-medium tracking-wider uppercase ${
+                              product.brand === "Paralight" 
+                                ? "text-brand-cyan" 
+                                : "text-brand-gold"
+                            }`}>
+                              {product.series}
+                            </span>
+                            <h2 className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-1 mt-1">
                               {product.name}
                             </h2>
                             <p className="text-xs text-gray-400 mt-1">{product.modelNumber}</p>
