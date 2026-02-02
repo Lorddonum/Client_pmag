@@ -422,22 +422,20 @@ export default function Products() {
                       <Link href={`/products/${product.id}`}>
                         <div className="cursor-pointer">
                           {/* Image container */}
-                          <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden group-hover:bg-gray-50 transition-colors duration-500">
+                          <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden group-hover:bg-gray-100 transition-colors duration-500">
                             {product.image ? (
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
                                 loading="lazy"
                                 decoding="async"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                className="w-full h-full object-contain p-4 group-hover:scale-102 transition-transform duration-500" 
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
                                 <Package className="w-12 h-12 text-gray-300" />
                               </div>
                             )}
-                            {/* Gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           </div>
                           {/* Product info */}
                           <div className="pt-4">
