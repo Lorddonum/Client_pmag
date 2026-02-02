@@ -7,6 +7,7 @@ interface ExhibitionEvent {
   location: string;
   logo: string;
   images: string[];
+  zoomOut?: boolean;
 }
 
 const exhibitionEvents: ExhibitionEvent[] = [
@@ -14,6 +15,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "Middle East Energy", 
     location: "Dubai, UAE", 
     logo: "/exhibitions/logos/middle-east-energy.jpg",
+    zoomOut: true,
     images: [
       "/exhibitions/dubai-2024/img-1.jpg",
       "/exhibitions/dubai-2024/img-2.jpg",
@@ -29,6 +31,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "Canton Fair", 
     location: "Guangzhou, China", 
     logo: "/exhibitions/logos/canton-fair.jpg",
+    zoomOut: true,
     images: [
       "/exhibitions/canton-2024/img-1.jpg",
       "/exhibitions/canton-2024/img-2.jpg",
@@ -73,6 +76,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "HK Lighting Fair", 
     location: "Hong Kong", 
     logo: "/exhibitions/logos/hk-lighting-fair.jpg",
+    zoomOut: true,
     images: [
       "/exhibitions/hongkong-2023/img-1.jpg",
       "/exhibitions/hongkong-2023/img-2.jpg",
@@ -88,6 +92,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "Light + Building", 
     location: "Frankfurt, Germany", 
     logo: "/exhibitions/logos/light-building.jpg",
+    zoomOut: true,
     images: [
       "/exhibitions/spain-2022/img-1.jpg",
       "/exhibitions/spain-2022/img-2.jpg",
@@ -101,6 +106,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "LEDTEC Asia", 
     location: "Ho Chi Minh, Vietnam", 
     logo: "/exhibitions/logos/ledtec-asia.jpg",
+    zoomOut: true,
     images: [
       "/exhibitions/india-2022/img-1.jpg",
       "/exhibitions/india-2022/img-2.jpg",
@@ -115,6 +121,7 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "Expolux", 
     location: "São Paulo, Brazil", 
     logo: "/exhibitions/logos/expolux.png",
+    zoomOut: true,
     images: [
       "/exhibitions/brazil-2022/img-1.jpg",
       "/exhibitions/brazil-2022/img-2.jpg",
@@ -313,11 +320,11 @@ export default function Exhibition() {
                     isCenter 
                       ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
                       : "hover:opacity-80"
-                  }`}>
+                  } ${event.zoomOut ? "bg-white flex items-center justify-center p-4" : ""}`}>
                     <img
                       src={event.logo}
                       alt={event.name}
-                      className="w-full h-full object-cover"
+                      className={event.zoomOut ? "max-w-full max-h-full object-contain" : "w-full h-full object-cover"}
                     />
                   </div>
                   <div className="mt-4 text-center">
