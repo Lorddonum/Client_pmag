@@ -142,7 +142,7 @@ export default function ProjectGallery() {
                   className="absolute inset-0 pointer-events-none"
                   animate={{
                     boxShadow: isHovered 
-                      ? `inset 0 0 100px ${isBlue ? 'rgba(0, 168, 232, 0.15)' : 'rgba(236, 170, 0, 0.15)'}, inset 0 0 0 1px ${isBlue ? 'rgba(0, 168, 232, 0.4)' : 'rgba(236, 170, 0, 0.4)'}` 
+                      ? `inset 0 0 60px ${isBlue ? 'rgba(0, 168, 232, 0.08)' : 'rgba(236, 170, 0, 0.08)'}, inset 0 0 0 1px ${isBlue ? 'rgba(0, 168, 232, 0.25)' : 'rgba(236, 170, 0, 0.25)'}` 
                       : 'inset 0 0 0 0 transparent',
                   }}
                   transition={{ duration: 0.4 }}
