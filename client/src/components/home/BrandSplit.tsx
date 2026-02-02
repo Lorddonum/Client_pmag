@@ -26,7 +26,7 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Foreground decorative image */}
+      {/* Foreground decorative image - left */}
       <div 
         className="absolute top-0 left-0 w-[1000px] h-[650px] opacity-100 pointer-events-none z-20"
         style={{
@@ -34,6 +34,17 @@ export default function BrandSplit() {
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'top left',
+        }}
+      />
+      
+      {/* Foreground decorative image - right pendant */}
+      <div 
+        className="absolute top-0 right-0 w-[300px] h-[800px] opacity-100 pointer-events-none z-20"
+        style={{
+          backgroundImage: 'url(/brand-split-pendant.png)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'top right',
         }}
       />
       
