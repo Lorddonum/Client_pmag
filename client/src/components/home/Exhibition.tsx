@@ -40,6 +40,21 @@ const events: ExhibitionEvent[] = [
       "/exhibitions/egypt-2023/img-7.jpg",
     ]
   },
+  { 
+    name: "Hong Kong Electronics Fair", 
+    location: "Hong Kong", 
+    date: "2023",
+    images: [
+      "/exhibitions/hongkong-2023/img-1.jpg",
+      "/exhibitions/hongkong-2023/img-2.jpg",
+      "/exhibitions/hongkong-2023/img-3.jpg",
+      "/exhibitions/hongkong-2023/img-4.jpg",
+      "/exhibitions/hongkong-2023/img-5.jpg",
+      "/exhibitions/hongkong-2023/img-6.jpg",
+      "/exhibitions/hongkong-2023/img-7.jpg",
+      "/exhibitions/hongkong-2023/img-8.jpg",
+    ]
+  },
 ];
 
 function ExhibitionCard({ event, onClick }: { event: ExhibitionEvent; onClick: () => void }) {
