@@ -100,10 +100,10 @@ export default function Footer() {
         </div>
 
         {/* Main footer content */}
-        <div className="py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="py-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Brand */}
           <div className="lg:col-span-5">
-            <div className="flex items-center -space-x-6 mb-3">
+            <div className="flex items-center -space-x-6 mb-4">
               <div className="h-10 overflow-hidden flex items-center">
                 <img src={paralightLogo} alt="Paralight" className="h-28 max-w-[220px] object-cover object-center brightness-110" />
               </div>
@@ -118,7 +118,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="lg:col-span-7 lg:pt-2">
+          <div className="lg:col-span-7">
             <div className="flex flex-wrap gap-x-8 gap-y-3 lg:justify-end">
               {quickLinks.map((link) => (
                 <Link 
