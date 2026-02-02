@@ -6,7 +6,7 @@ import { Link } from "wouter";
 export default function GlobalNetwork() {
   const stats = [
     { icon: Globe, label: "Countries Served", value: "100+" },
-    { icon: Users, label: "Global Partners", value: "500+" },
+    { icon: Users, label: "Global Partners", value: "3000+" },
     { icon: TrendingUp, label: "Projects Completed", value: "10k+" },
   ];
 
@@ -14,7 +14,12 @@ export default function GlobalNetwork() {
     <section className="py-32 bg-gray-50 relative overflow-hidden">
       {/* Subtle background */}
       <div className="absolute inset-0 opacity-10">
-        <img src={mapImg} alt="" className="w-full h-full object-cover" loading="lazy" />
+        <img
+          src={mapImg}
+          alt=""
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-transparent to-gray-50" />
       </div>
 
@@ -31,8 +36,8 @@ export default function GlobalNetwork() {
             >
               Worldwide Presence
             </motion.span>
-            
-            <motion.h2 
+
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -41,17 +46,18 @@ export default function GlobalNetwork() {
             >
               Global Export <span className="italic font-normal">Network</span>
             </motion.h2>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-gray-600 text-lg leading-relaxed mb-10 max-w-lg"
             >
-              We proudly export our lighting solutions to over 100 countries worldwide, 
-              delivering premium aluminum profiles and commercial lighting systems 
-              to partners across Asia, Europe, the Middle East, Africa, and the Americas.
+              We proudly export our lighting solutions to over 100 countries
+              worldwide, delivering premium aluminum profiles and commercial
+              lighting systems to partners across Asia, Europe, the Middle East,
+              Africa, and the Americas.
             </motion.p>
 
             <motion.div
@@ -77,11 +83,15 @@ export default function GlobalNetwork() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
-                className={`bg-white border border-gray-100 p-10 ${index === 2 ? 'sm:col-span-2' : ''}`}
+                className={`bg-white border border-gray-100 p-10 ${index === 2 ? "sm:col-span-2" : ""}`}
               >
                 <stat.icon className="w-6 h-6 text-gray-400 mb-6" />
-                <h3 className="font-display text-5xl text-gray-900 font-medium mb-2">{stat.value}</h3>
-                <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400">{stat.label}</p>
+                <h3 className="font-display text-5xl text-gray-900 font-medium mb-2">
+                  {stat.value}
+                </h3>
+                <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
           </div>
