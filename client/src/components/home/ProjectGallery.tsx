@@ -32,6 +32,14 @@ export default function ProjectGallery() {
       }} />
 
       <div className="relative z-10">
+        <div className="container mx-auto px-6 mb-8 text-center">
+          <span className="text-[11px] font-medium tracking-[0.3em] uppercase text-gray-600">
+            Our Work
+          </span>
+          <h2 className="font-display text-3xl md:text-4xl font-medium text-gray-900 mt-2">
+            Project <span className="italic font-normal">Gallery</span>
+          </h2>
+        </div>
         <div className="flex h-[450px] md:h-[550px]">
           {projects.map((project, index) => {
             const isHovered = hoveredIndex === index;
