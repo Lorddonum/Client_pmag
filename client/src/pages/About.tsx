@@ -1202,7 +1202,7 @@ export default function About() {
               <img
                 src="/images/showcase-2.png"
                 alt="Modern living room lighting"
-                className="w-full h-auto rounded-lg shadow-2xl"
+                className="w-full h-auto rounded-lg shadow-2xl grayscale"
                 loading="eager"
               />
             </motion.div>
