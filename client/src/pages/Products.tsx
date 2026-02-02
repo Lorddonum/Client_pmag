@@ -422,14 +422,14 @@ export default function Products() {
                       <Link href={`/products/${product.id}`}>
                         <div className="cursor-pointer">
                           {/* Image container */}
-                          <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden group-hover:bg-gray-100 transition-colors duration-500">
+                          <div className="aspect-square bg-gray-50 relative overflow-hidden group-hover:bg-gray-100 transition-colors duration-500">
                             {product.image ? (
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
                                 loading="lazy"
                                 decoding="async"
-                                className="w-full h-full object-contain p-4 group-hover:scale-102 transition-transform duration-500" 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
