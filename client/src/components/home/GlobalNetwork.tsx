@@ -11,8 +11,8 @@ export default function GlobalNetwork() {
   ];
 
   return (
-    <section className="py-32 bg-[#d8e4ec] relative overflow-hidden">
-      {/* Map background centered on China */}
+    <section className="relative overflow-hidden">
+      {/* Map background - full visibility */}
       <div className="absolute inset-0">
         <img
           src={mapImg}
@@ -20,29 +20,28 @@ export default function GlobalNetwork() {
           className="w-[200%] h-full object-cover object-[70%_center]"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#d8e4ec]/80 via-transparent to-[#d8e4ec]/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#d8e4ec]/90 via-transparent to-[#d8e4ec]/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#d8e4ec]/60 via-transparent to-[#d8e4ec]/40" />
       </div>
 
-      <div className="container mx-auto px-8 lg:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          {/* Content */}
+      {/* Content overlay on left */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-8 lg:px-12 py-24 lg:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="bg-[#F5F0E8]/50 backdrop-blur-[20px] p-10 lg:p-12"
+            className="max-w-xl bg-[#F5F0E8]/60 backdrop-blur-sm p-10 lg:p-12"
           >
             <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4">
               Worldwide Presence
             </span>
 
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium mb-8">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium mb-6">
               Global Export <span className="italic font-normal">Network</span>
             </h2>
 
-            <p className="text-gray-600 text-lg leading-relaxed mb-10 max-w-lg">
+            <p className="text-gray-600 text-lg leading-relaxed mb-8">
               We proudly export our lighting solutions to over 100 countries
               worldwide, delivering premium aluminum profiles and commercial
               lighting systems to partners across Asia, Europe, the Middle East,
@@ -55,27 +54,33 @@ export default function GlobalNetwork() {
               </button>
             </Link>
           </motion.div>
+        </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
-                className={`bg-white/50 backdrop-blur-[20px] border border-white/30 p-10 ${index === 2 ? "sm:col-span-2" : ""}`}
-              >
-                <stat.icon className="w-6 h-6 text-gray-400 mb-6" />
-                <h3 className="font-display text-5xl text-gray-900 font-medium mb-2">
-                  {stat.value}
-                </h3>
-                <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400">
-                  {stat.label}
-                </p>
-              </motion.div>
-            ))}
+        {/* Stats bar at bottom */}
+        <div className="bg-gray-900/90 backdrop-blur-sm">
+          <div className="container mx-auto px-8 lg:px-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 + index * 0.1, duration: 0.6 }}
+                  className="flex items-center gap-6 py-8 px-6"
+                >
+                  <stat.icon className="w-8 h-8 text-brand-cyan shrink-0" />
+                  <div>
+                    <h3 className="font-display text-3xl lg:text-4xl text-white font-medium">
+                      {stat.value}
+                    </h3>
+                    <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-gray-400">
+                      {stat.label}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
