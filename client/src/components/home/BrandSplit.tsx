@@ -28,7 +28,7 @@ export default function BrandSplit() {
     <section className="py-32 bg-white relative overflow-hidden">
       {/* Foreground decorative image */}
       <div 
-        className="absolute top-0 left-0 w-[1000px] h-[650px] opacity-[0.2] pointer-events-none z-20"
+        className="absolute top-0 left-0 w-[1000px] h-[650px] opacity-100 pointer-events-none z-20"
         style={{
           backgroundImage: 'url(/brand-split-bg.png)',
           backgroundSize: 'contain',
