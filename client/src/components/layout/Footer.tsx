@@ -65,12 +65,12 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social Media - elegant minimal */}
+            {/* Social Media */}
             <div className="lg:text-right">
               <h4 className="text-[11px] font-medium uppercase tracking-[0.3em] text-white/50 mb-6">
                 Follow Us
               </h4>
-              <div className="flex flex-wrap lg:justify-end gap-4">
+              <div className="flex flex-wrap lg:justify-end gap-2">
                 {socials.map((social) => (
                   <a 
                     key={social.label}
@@ -78,9 +78,9 @@ export default function Footer() {
                     target="_blank" 
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="text-white/40 hover:text-brand-cyan transition-colors duration-300"
+                    className="w-10 h-10 flex items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-brand-cyan hover:text-brand-cyan transition-all duration-300"
                   >
-                    <social.icon className="w-5 h-5" />
+                    <social.icon className="w-4 h-4" />
                   </a>
                 ))}
               </div>
