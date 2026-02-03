@@ -714,7 +714,7 @@ export default function Admin() {
                       {formData.brand === "Maglinear" && (
                         <>
                           <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Maglinear Name</label>
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
                             <input type="text" value={formData.maglinearName} onChange={e => setFormData({...formData, maglinearName: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
                           </div>
                           <div className="space-y-2">
