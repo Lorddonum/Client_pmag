@@ -260,7 +260,7 @@ export default function Exhibition() {
   const visibleIndices = getVisibleIndices();
 
   return (
-    <section className="h-full py-12 bg-gray-900 flex flex-col justify-center">
+    <section className="h-full py-12 bg-slate-50 flex flex-col justify-center">
       <div className="container mx-auto px-8 lg:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -271,10 +271,10 @@ export default function Exhibition() {
           <span className="text-brand-cyan text-[11px] font-medium uppercase tracking-[0.3em]">
             Meet Us Worldwide
           </span>
-          <h2 className="font-display text-3xl md:text-5xl text-white font-medium mt-4 mb-6">
+          <h2 className="font-display text-3xl md:text-5xl text-gray-900 font-medium mt-4 mb-6">
             <span className="italic font-normal">Exhibitions</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-lg">
+          <p className="text-gray-500 max-w-xl mx-auto text-lg">
             We participate in leading lighting exhibitions worldwide, showcasing 
             our latest innovations and connecting with global partners.
           </p>
@@ -283,7 +283,7 @@ export default function Exhibition() {
         <div className="relative max-w-5xl mx-auto">
           <button
             onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 p-3 text-white/60 hover:text-white transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-10 p-3 text-gray-400 hover:text-gray-700 transition-colors"
             data-testid="exhibition-prev"
           >
             <ChevronLeft className="w-10 h-10" />
@@ -291,7 +291,7 @@ export default function Exhibition() {
 
           <button
             onClick={goNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 p-3 text-white/60 hover:text-white transition-colors"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-10 p-3 text-gray-400 hover:text-gray-700 transition-colors"
             data-testid="exhibition-next"
           >
             <ChevronRight className="w-10 h-10" />
@@ -329,11 +329,11 @@ export default function Exhibition() {
                   </div>
                   <div className="mt-4 text-center">
                     <h4 className={`text-sm font-medium transition-colors ${
-                      isCenter ? "text-brand-cyan" : "text-white/70 group-hover:text-white"
+                      isCenter ? "text-brand-cyan" : "text-gray-500 group-hover:text-gray-700"
                     }`}>
                       {event.name}
                     </h4>
-                    <p className="text-gray-500 text-xs mt-1">{event.location}</p>
+                    <p className="text-gray-400 text-xs mt-1">{event.location}</p>
                   </div>
                 </motion.div>
               );
@@ -346,7 +346,7 @@ export default function Exhibition() {
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  idx === activeIndex ? "bg-brand-cyan w-6" : "bg-white/30 hover:bg-white/50"
+                  idx === activeIndex ? "bg-brand-cyan w-6" : "bg-gray-300 hover:bg-gray-400"
                 }`}
                 data-testid={`exhibition-dot-${idx}`}
               />
