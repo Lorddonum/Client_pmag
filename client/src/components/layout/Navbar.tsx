@@ -5,10 +5,11 @@ import { Menu, X } from "lucide-react";
 import paralightLogo from "@/assets/paralight-logo.png";
 import maglinearLogo from "@/assets/maglinear-logo.png";
 
-export default function Navbar() {
+export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
+  const [isLightSection, setIsLightSection] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +18,37 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (location !== '/') {
+      setIsLightSection(false);
+      return;
+    }
+    
+    const scrollContainer = document.querySelector('.snap-y');
+    if (!scrollContainer) return;
+
+    const checkSection = () => {
+      const sections = scrollContainer.querySelectorAll('section.snap-start');
+      const scrollTop = scrollContainer.scrollTop;
+      const viewportHeight = window.innerHeight;
+      
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 100 && rect.bottom > 100) {
+          // Sections 2 (index 1) and 5 (index 4) have light backgrounds
+          setIsLightSection(index === 1 || index === 4);
+        }
+      });
+    };
+
+    scrollContainer.addEventListener('scroll', checkSection);
+    checkSection();
+    
+    return () => scrollContainer.removeEventListener('scroll', checkSection);
+  }, [location]);
+
+  const useDarkText = darkText || isLightSection || scrolled;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -32,7 +64,7 @@ export default function Navbar() {
         "fixed top-0 w-full z-50 transition-all duration-500",
         scrolled
           ? "bg-white/95 backdrop-blur-md shadow-sm"
-          : "bg-transparent",
+          : isLightSection ? "bg-white/80 backdrop-blur-sm" : "bg-transparent",
       )}
     >
       <div className="container mx-auto px-8 lg:px-12">
@@ -59,8 +91,8 @@ export default function Navbar() {
                 className={cn(
                   "relative text-sm font-medium tracking-wide transition-colors duration-300",
                   location === link.href
-                    ? scrolled ? "text-brand-cyan" : "text-white"
-                    : scrolled 
+                    ? useDarkText ? "text-brand-cyan" : "text-white"
+                    : useDarkText 
                       ? "text-gray-600 hover:text-gray-900" 
                       : "text-white/90 hover:text-white",
                 )}
@@ -78,7 +110,7 @@ export default function Navbar() {
             <Link href="/contact">
               <button className={cn(
                 "px-6 py-2.5 text-xs font-medium tracking-widest uppercase transition-all duration-300",
-                scrolled
+                useDarkText
                   ? "bg-gray-900 text-white hover:bg-gray-800"
                   : "bg-white text-gray-900 hover:bg-gray-100"
               )}>
@@ -91,7 +123,7 @@ export default function Navbar() {
           <button
             className={cn(
               "lg:hidden p-2 transition-colors duration-300",
-              scrolled ? "text-gray-900" : "text-white"
+              useDarkText ? "text-gray-900" : "text-white"
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
