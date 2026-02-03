@@ -74,22 +74,23 @@ export default function BrandSplit() {
             <Link href="/products?brand=Paralight">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
                 
-                {/* Image expanding from top-left with triangular cut */}
+                {/* Image expanding from top-left - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  style={{ 
+                  initial={{ clipPath: 'polygon(0 0, 0 0, 0 0)' }}
+                  animate={{ 
                     clipPath: hoveredBrand === 'Paralight' 
-                      ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' 
-                      : 'polygon(0 0, 30% 0, 0 40%)'
+                      ? 'polygon(0 0, 100% 0, 0 100%)' 
+                      : 'polygon(0 0, 0 0, 0 0)'
                   }}
-                  transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <img 
                     src={paralightImg} 
                     alt="Paralight"
                     className="absolute inset-0 w-full h-full object-cover object-[center_40%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-900/60 via-gray-900/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-transparent to-transparent" />
                 </motion.div>
                 
                 {/* Blur glow effect */}
@@ -149,22 +150,23 @@ export default function BrandSplit() {
             <Link href="/products?brand=Maglinear">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
                 
-                {/* Image expanding from bottom-right with triangular cut */}
+                {/* Image expanding from bottom-right - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  style={{ 
+                  initial={{ clipPath: 'polygon(100% 100%, 100% 100%, 100% 100%)' }}
+                  animate={{ 
                     clipPath: hoveredBrand === 'Maglinear' 
-                      ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' 
-                      : 'polygon(100% 100%, 70% 100%, 100% 60%)'
+                      ? 'polygon(100% 0, 100% 100%, 0 100%)' 
+                      : 'polygon(100% 100%, 100% 100%, 100% 100%)'
                   }}
-                  transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <img 
                     src={maglinearImg} 
                     alt="Maglinear"
                     className="absolute inset-0 w-full h-full object-cover object-[center_10%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-tl from-gray-900/60 via-gray-900/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-tl from-gray-900/50 via-transparent to-transparent" />
                 </motion.div>
                 
                 {/* Blur glow effect */}
