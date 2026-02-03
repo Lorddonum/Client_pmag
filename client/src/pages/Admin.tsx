@@ -551,7 +551,8 @@ export default function Admin() {
                             {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
                               <button
                                 type="button"
-                                onClick={() => {
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
                                   if (!formData.series.includes(seriesFilter.trim())) {
                                     setFormData({...formData, series: [...formData.series, seriesFilter.trim()]});
                                   }
@@ -568,7 +569,8 @@ export default function Admin() {
                               <button
                                 key={series}
                                 type="button"
-                                onClick={() => {
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
                                   if (!formData.series.includes(series)) {
                                     setFormData({...formData, series: [...formData.series, series]});
                                   }
@@ -652,7 +654,8 @@ export default function Admin() {
                             {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
                               <button
                                 type="button"
-                                onClick={() => {
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
                                   if (!formData.subSeries.includes(subSeriesFilter.trim())) {
                                     setFormData({...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()]});
                                   }
@@ -669,7 +672,8 @@ export default function Admin() {
                               <button
                                 key={subSeries}
                                 type="button"
-                                onClick={() => {
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
                                   if (!formData.subSeries.includes(subSeries)) {
                                     setFormData({...formData, subSeries: [...formData.subSeries, subSeries]});
                                   }
