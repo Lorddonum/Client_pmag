@@ -38,7 +38,7 @@ export default function BrandSplit() {
       
       <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
         {/* Section header */}
-        <div className="text-center mb-24">
+        <div className="text-center mb-8">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export default function BrandSplit() {
         </div>
 
         {/* Brand cards - corner positioned */}
-        <div className="relative min-h-[700px] lg:min-h-[650px]">
+        <div className="relative flex-1 min-h-0">
           
           {/* Paralight Card - bottom left */}
           <motion.div
@@ -72,7 +72,7 @@ export default function BrandSplit() {
             className="lg:absolute lg:bottom-0 lg:left-0 lg:w-[40%] mb-8 lg:mb-0"
           >
             <Link href="/products?brand=Paralight">
-              <div className="group relative h-[500px] lg:h-[600px] overflow-hidden cursor-pointer">
+              <div className="group relative h-[350px] lg:h-[420px] overflow-hidden cursor-pointer">
                 
                 {/* Image expanding from bottom-left - triangular shape */}
                 <motion.div
@@ -157,7 +157,7 @@ export default function BrandSplit() {
             className="lg:absolute lg:top-0 lg:right-0 lg:w-[40%]"
           >
             <Link href="/products?brand=Maglinear">
-              <div className="group relative h-[500px] lg:h-[600px] overflow-hidden cursor-pointer">
+              <div className="group relative h-[350px] lg:h-[420px] overflow-hidden cursor-pointer">
                 
                 {/* Image expanding from top-right - triangular shape */}
                 <motion.div
