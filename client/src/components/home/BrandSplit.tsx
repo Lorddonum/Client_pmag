@@ -4,11 +4,13 @@ import maglinearImg from "@/assets/paralight-brand.png";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 
-const slidingImages = [
-  "/brand-split-bg.png",
-  "/brand-split-pendant.png",
-  "/brand-split-bg.png",
-  "/brand-split-pendant.png",
+const fixtures = [
+  { src: "/fixture-1.png", height: 280, delay: 0 },
+  { src: "/fixture-2.png", height: 160, delay: 0.5 },
+  { src: "/fixture-3.png", height: 240, delay: 1 },
+  { src: "/fixture-4.png", height: 260, delay: 1.5 },
+  { src: "/fixture-5.png", height: 300, delay: 2 },
+  { src: "/fixture-6.png", height: 280, delay: 2.5 },
 ];
 
 export default function BrandSplit() {
@@ -33,45 +35,74 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Animated sliding background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Top row - sliding left */}
-        <div className="absolute top-0 left-0 w-full h-[300px] opacity-[0.25]">
-          <motion.div
-            className="flex gap-16 items-center h-full"
-            animate={{ x: [0, -1500] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            style={{ width: '300%' }}
-          >
-            {[...slidingImages, ...slidingImages, ...slidingImages].map((img, i) => (
-              <img 
-                key={i} 
-                src={img} 
-                alt="" 
-                className="h-[250px] w-auto object-contain flex-shrink-0"
+      {/* Track bar at top spanning full width */}
+      <div className="absolute top-8 left-0 right-0 h-[60px] pointer-events-none z-0">
+        <img 
+          src="/track-bar.png" 
+          alt="" 
+          className="w-full h-full object-cover object-center"
+          style={{ minWidth: '100vw' }}
+        />
+      </div>
+      
+      {/* Hanging fixtures from track */}
+      <div className="absolute top-[40px] left-0 right-0 pointer-events-none z-0 overflow-visible">
+        <motion.div 
+          className="flex justify-around items-start px-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          {fixtures.map((fixture, index) => (
+            <motion.div
+              key={index}
+              className="relative"
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ 
+                delay: fixture.delay,
+                duration: 0.8,
+                ease: [0.25, 0.1, 0.25, 1]
+              }}
+            >
+              {/* Magnetic connection effect */}
+              <motion.div
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-2 rounded-full"
+                initial={{ boxShadow: '0 0 0px rgba(236, 170, 0, 0)' }}
+                animate={{ 
+                  boxShadow: [
+                    '0 0 0px rgba(236, 170, 0, 0)',
+                    '0 0 15px rgba(236, 170, 0, 0.6)',
+                    '0 0 8px rgba(236, 170, 0, 0.3)',
+                  ]
+                }}
+                transition={{ 
+                  delay: fixture.delay + 0.3,
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
               />
-            ))}
-          </motion.div>
-        </div>
-        
-        {/* Bottom row - sliding right */}
-        <div className="absolute bottom-0 left-0 w-full h-[300px] opacity-[0.2]">
-          <motion.div
-            className="flex gap-16 items-center h-full"
-            animate={{ x: [-1500, 0] }}
-            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-            style={{ width: '300%' }}
-          >
-            {[...slidingImages, ...slidingImages, ...slidingImages].map((img, i) => (
-              <img 
-                key={i} 
-                src={img} 
-                alt="" 
-                className="h-[250px] w-auto object-contain flex-shrink-0"
+              
+              {/* Fixture image */}
+              <motion.img 
+                src={fixture.src} 
+                alt=""
+                style={{ height: fixture.height }}
+                className="w-auto object-contain"
+                animate={{ 
+                  y: [0, 3, 0],
+                }}
+                transition={{
+                  duration: 4 + index * 0.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.3
+                }}
               />
-            ))}
-          </motion.div>
-        </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
       
       <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
