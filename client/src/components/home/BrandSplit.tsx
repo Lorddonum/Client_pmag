@@ -106,7 +106,7 @@ export default function BrandSplit() {
                   <motion.span 
                     className="inline-block text-[10px] font-medium tracking-[0.3em] uppercase mb-3 transition-colors duration-300"
                     animate={{ x: hoveredBrand === 'Paralight' ? 0 : 0, opacity: 1 }}
-                    style={{ color: hoveredBrand === 'Paralight' ? '#ffffff' : 'rgba(0, 168, 232, 0.8)' }}
+                    style={{ color: hoveredBrand === 'Paralight' ? '#ffffff' : '#1a1a1a' }}
                   >
                     Aluminum Profiles
                   </motion.span>
@@ -190,7 +190,7 @@ export default function BrandSplit() {
                 <div className="absolute top-8 right-8 lg:top-12 lg:right-12 z-20 max-w-md text-right">
                   <motion.span 
                     className="inline-block text-[10px] font-medium tracking-[0.3em] uppercase mb-3 transition-colors duration-300"
-                    style={{ color: hoveredBrand === 'Maglinear' ? '#ffffff' : 'rgba(236, 170, 0, 0.8)' }}
+                    style={{ color: hoveredBrand === 'Maglinear' ? '#ffffff' : '#1a1a1a' }}
                   >
                     Magnetic Track Systems & Commercial Lights
                   </motion.span>
