@@ -33,7 +33,7 @@ export default function BrandSplit() {
         <video 
           autoPlay 
           loop 
-          muted 
+          muted={true}
           playsInline
           className="w-full h-full object-cover opacity-40"
         >
