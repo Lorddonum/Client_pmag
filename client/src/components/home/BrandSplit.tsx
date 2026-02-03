@@ -36,12 +36,11 @@ export default function BrandSplit() {
   return (
     <section className="py-32 bg-white relative overflow-hidden">
       {/* Track bar at top spanning full width */}
-      <div className="absolute top-8 left-0 right-0 h-[60px] pointer-events-none z-0">
+      <div className="absolute top-8 h-[60px] pointer-events-none z-0" style={{ left: '-10vw', right: '-10vw', width: '120vw' }}>
         <img 
           src="/track-bar.png" 
           alt="" 
-          className="w-full h-full object-cover object-center"
-          style={{ minWidth: '100vw' }}
+          className="w-full h-full object-fill"
         />
       </div>
       
