@@ -63,6 +63,8 @@ export default function Admin() {
   const [, setLocation] = useLocation();
   const [showSeriesDropdown, setShowSeriesDropdown] = useState(false);
   const [seriesFilter, setSeriesFilter] = useState("");
+  const [adminBrandFilter, setAdminBrandFilter] = useState<"All" | "Paralight" | "Maglinear">("All");
+  const [adminSeriesFilter, setAdminSeriesFilter] = useState("All");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -1161,22 +1163,99 @@ export default function Admin() {
                 </form>
               </section>
               <section className="space-y-6">
-                <div className="flex justify-between items-center gap-4">
-                  <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">Live Products ({products.length})</h3>
-                  <div className="relative flex-1 max-w-xs">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      placeholder="Search products..."
-                      value={adminSearchQuery}
-                      onChange={(e) => setAdminSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
-                    />
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">
+                      Live Products 
+                      <span className="text-gray-400 font-normal ml-2">
+                        ({products.filter(p => 
+                          (adminBrandFilter === "All" || p.brand === adminBrandFilter) &&
+                          (adminSeriesFilter === "All" || p.series === adminSeriesFilter) &&
+                          (!adminSearchQuery.trim() || 
+                            p.name.toLowerCase().includes(adminSearchQuery.toLowerCase()) ||
+                            p.modelNumber.toLowerCase().includes(adminSearchQuery.toLowerCase())
+                          )
+                        ).length} of {products.length})
+                      </span>
+                    </h3>
+                  </div>
+                  
+                  {/* Filter Bar */}
+                  <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    {/* Search */}
+                    <div className="relative flex-1 min-w-[200px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={adminSearchQuery}
+                        onChange={(e) => setAdminSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
+                      />
+                    </div>
+                    
+                    {/* Brand Filter */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand:</span>
+                      <div className="flex rounded-lg overflow-hidden border border-gray-200">
+                        {(["All", "Paralight", "Maglinear"] as const).map((brand) => (
+                          <button
+                            key={brand}
+                            type="button"
+                            onClick={() => setAdminBrandFilter(brand)}
+                            className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${
+                              adminBrandFilter === brand 
+                                ? brand === "Paralight" ? 'bg-[#00A8E8] text-white' 
+                                  : brand === "Maglinear" ? 'bg-[#ECAA00] text-white' 
+                                  : 'bg-gray-800 text-white'
+                                : 'bg-white text-gray-600 hover:bg-gray-100'
+                            }`}
+                          >
+                            {brand}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Series Filter */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series:</span>
+                      <select
+                        value={adminSeriesFilter}
+                        onChange={(e) => setAdminSeriesFilter(e.target.value)}
+                        className="px-3 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] transition-colors"
+                      >
+                        <option value="All">All Series</option>
+                        {Array.from(new Set(products.map(p => p.series).filter(Boolean))).sort().map((series) => (
+                          <option key={series} value={series}>{series}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* Clear Filters */}
+                    {(adminSearchQuery || adminBrandFilter !== "All" || adminSeriesFilter !== "All") && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAdminSearchQuery("");
+                          setAdminBrandFilter("All");
+                          setAdminSeriesFilter("All");
+                        }}
+                        className="px-3 py-2 text-[10px] uppercase tracking-widest font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Clear Filters
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   {products
                     .filter(product => {
+                      // Brand filter
+                      if (adminBrandFilter !== "All" && product.brand !== adminBrandFilter) return false;
+                      // Series filter
+                      if (adminSeriesFilter !== "All" && product.series !== adminSeriesFilter) return false;
+                      // Search filter
                       if (!adminSearchQuery.trim()) return true;
                       const query = adminSearchQuery.toLowerCase();
                       return (
