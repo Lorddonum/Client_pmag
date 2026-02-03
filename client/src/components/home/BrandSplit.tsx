@@ -90,7 +90,7 @@ export default function BrandSplit() {
                     alt="Paralight"
                     className="absolute inset-0 w-full h-full object-cover object-[center_40%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
                 </motion.div>
                 
                 {/* Blur glow effect */}
@@ -110,7 +110,15 @@ export default function BrandSplit() {
                     Aluminum Profiles
                   </motion.span>
                   
-                  <h3 className="font-display text-5xl lg:text-6xl font-medium text-brand-cyan mb-4 flex items-center gap-4">
+                  <motion.h3 
+                    className="font-display text-5xl lg:text-6xl font-medium text-brand-cyan mb-4 flex items-center gap-4"
+                    animate={{ 
+                      textShadow: hoveredBrand === 'Paralight' 
+                        ? '0 0 20px rgba(0, 168, 232, 0.6), 0 0 40px rgba(0, 168, 232, 0.4)' 
+                        : '0 0 0px rgba(0, 168, 232, 0)'
+                    }}
+                    transition={{ duration: 0.4 }}
+                  >
                     Paralight
                     <motion.span
                       animate={{ x: hoveredBrand === 'Paralight' ? 0 : -10, opacity: hoveredBrand === 'Paralight' ? 1 : 0 }}
@@ -118,7 +126,7 @@ export default function BrandSplit() {
                     >
                       <ArrowRight className="w-8 h-8" />
                     </motion.span>
-                  </h3>
+                  </motion.h3>
                   
                   <motion.p 
                     className={`text-sm leading-relaxed mb-5 transition-colors duration-300 ${
@@ -166,7 +174,7 @@ export default function BrandSplit() {
                     alt="Maglinear"
                     className="absolute inset-0 w-full h-full object-cover object-[center_10%]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-tl from-gray-900/50 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/40 to-transparent" />
                 </motion.div>
                 
                 {/* Blur glow effect */}
@@ -185,7 +193,15 @@ export default function BrandSplit() {
                     Magnetic Track Systems
                   </motion.span>
                   
-                  <h3 className="font-display text-5xl lg:text-6xl font-medium text-brand-gold mb-4 flex items-center justify-end gap-4">
+                  <motion.h3 
+                    className="font-display text-5xl lg:text-6xl font-medium text-brand-gold mb-4 flex items-center justify-end gap-4"
+                    animate={{ 
+                      textShadow: hoveredBrand === 'Maglinear' 
+                        ? '0 0 20px rgba(236, 170, 0, 0.6), 0 0 40px rgba(236, 170, 0, 0.4)' 
+                        : '0 0 0px rgba(236, 170, 0, 0)'
+                    }}
+                    transition={{ duration: 0.4 }}
+                  >
                     <motion.span
                       animate={{ x: hoveredBrand === 'Maglinear' ? 0 : 10, opacity: hoveredBrand === 'Maglinear' ? 1 : 0 }}
                       transition={{ duration: 0.3 }}
@@ -193,7 +209,7 @@ export default function BrandSplit() {
                       <ArrowRight className="w-8 h-8 rotate-180" />
                     </motion.span>
                     Maglinear Lighting
-                  </h3>
+                  </motion.h3>
                   
                   <motion.p 
                     className={`text-sm leading-relaxed mb-5 transition-colors duration-300 ${
