@@ -41,12 +41,19 @@ export default function BrandSplit() {
         </video>
         {/* Soft gradient overlay for depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white opacity-30" />
-        {/* Hover color overlay */}
-        <div 
-          className={`absolute inset-0 transition-opacity duration-500 ${
-            hoveredBrand === 'Paralight' ? 'opacity-15 bg-brand-cyan' : 
-            hoveredBrand === 'Maglinear Lighting' ? 'opacity-15 bg-brand-gold' : 'opacity-0'
-          }`}
+        {/* Hover color overlay - cyan for Paralight */}
+        <motion.div 
+          className="absolute inset-0 bg-brand-cyan"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hoveredBrand === 'Paralight' ? 0.12 : 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+        />
+        {/* Hover color overlay - gold for Maglinear */}
+        <motion.div 
+          className="absolute inset-0 bg-brand-gold"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: hoveredBrand === 'Maglinear Lighting' ? 0.12 : 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         />
       </div>
       
