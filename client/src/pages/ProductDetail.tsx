@@ -198,7 +198,7 @@ export default function ProductDetail() {
   const additionalSpecRows = useMemo(() => {
     if (!product?.technicalSpecs) return [];
     try {
-      return JSON.parse(product.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string }>;
+      return JSON.parse(product.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; wallThickness?: string }>;
     } catch {
       return [];
     }
@@ -222,6 +222,7 @@ export default function ProductDetail() {
       { label: "Accessories", value: row.accessories },
       { label: "LED Strip Size", value: row.ledStripSize },
       { label: "Installation Method", value: row.installationMethod },
+      { label: "Wall Thickness", value: row.wallThickness },
     ].filter((spec) => spec.value && spec.value.trim() !== "");
     
     // Always include Model as the first column, use main model if not specified
