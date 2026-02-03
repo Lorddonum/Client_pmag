@@ -8,11 +8,31 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   
-  // Get all products
+  // Helper function to strip base64 data but keep valid URLs
+  const stripBase64 = (value: string | null | undefined): string => {
+    if (!value) return '';
+    if (value.startsWith('data:')) return '';
+    return value;
+  };
+
+  const stripBase64Array = (arr: string[] | null | undefined): string[] => {
+    if (!arr || !Array.isArray(arr)) return [];
+    return arr.filter(item => item && !item.startsWith('data:'));
+  };
+
+  // Get all products (strips base64 to prevent timeout)
   app.get("/api/products", async (req, res) => {
     try {
       const products = await storage.getProducts();
-      res.json(products);
+      const cleanedProducts = products.map((product: any) => ({
+        ...product,
+        image: stripBase64(product.image),
+        images: stripBase64Array(product.images),
+        technicalDrawings: stripBase64Array(product.technicalDrawings),
+        technicalDrawingUrl: stripBase64(product.technicalDrawingUrl),
+        catalogueUrl: stripBase64(product.catalogueUrl),
+      }));
+      res.json(cleanedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ error: "Failed to fetch products", details: String(error) });
