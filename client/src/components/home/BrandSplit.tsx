@@ -4,15 +4,6 @@ import maglinearImg from "@/assets/paralight-brand.png";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 
-const fixtures = [
-  { src: "/fixture-1.png", height: 280, delay: 0 },
-  { src: "/fixture-2.png", height: 160, delay: 0.5 },
-  { src: "/fixture-3.png", height: 240, delay: 1 },
-  { src: "/fixture-4.png", height: 180, delay: 1.5 },
-  { src: "/fixture-5.png", height: 300, delay: 2 },
-  { src: "/fixture-6.png", height: 280, delay: 2.5 },
-];
-
 export default function BrandSplit() {
   const brands = [
     {
@@ -35,59 +26,31 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Track bar at top spanning full width */}
-      <div className="absolute top-8 left-0 right-0 h-[60px] pointer-events-none z-0">
-        <img 
-          src="/track-bar.png" 
-          alt="" 
-          className="w-full h-full object-cover object-center"
-        />
-      </div>
-      
-      {/* Sliding fixtures along track */}
-      <div className="absolute top-[40px] left-0 right-0 pointer-events-none z-0 overflow-hidden h-[350px]">
-        <motion.div 
-          className="flex items-start gap-24"
-          animate={{ x: [0, -1200] }}
-          transition={{ 
-            duration: 20, 
-            repeat: Infinity, 
-            ease: "linear",
-          }}
-          style={{ width: 'max-content' }}
+      {/* Dynamic artistic background - Japanese game cover style */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <motion.div
+          className="absolute inset-0"
+          animate={{ x: [0, -100, 0], scale: [1, 1.05, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         >
-          {[...fixtures, ...fixtures, ...fixtures].map((fixture, index) => (
-            <motion.div
-              key={index}
-              className="relative flex-shrink-0"
-            >
-              {/* Magnetic connection glow */}
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full bg-brand-gold/40"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  boxShadow: [
-                    '0 0 4px rgba(236, 170, 0, 0.3)',
-                    '0 0 12px rgba(236, 170, 0, 0.7)',
-                    '0 0 4px rgba(236, 170, 0, 0.3)',
-                  ]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: index * 0.2
-                }}
-              />
-              
-              {/* Fixture image */}
-              <img 
-                src={fixture.src} 
-                alt=""
-                style={{ height: fixture.height }}
-                className="w-auto object-contain"
-              />
-            </motion.div>
-          ))}
+          <img 
+            src="/brand-split-dynamic-bg.png" 
+            alt="" 
+            className="w-full h-full object-cover opacity-25"
+          />
+        </motion.div>
+        {/* Secondary layer with offset animation */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ x: [0, 80, 0], y: [0, -30, 0] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        >
+          <img 
+            src="/brand-split-dynamic-bg.png" 
+            alt="" 
+            className="w-full h-full object-cover opacity-15 scale-110"
+            style={{ filter: 'hue-rotate(30deg)' }}
+          />
         </motion.div>
       </div>
       
