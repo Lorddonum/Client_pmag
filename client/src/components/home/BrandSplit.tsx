@@ -3,8 +3,10 @@ import paralightImg from "@/assets/paralight-profiles.png";
 import maglinearImg from "@/assets/paralight-brand.png";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
 
 export default function BrandSplit() {
+  const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
   const brands = [
     {
       name: "Paralight",
@@ -39,6 +41,13 @@ export default function BrandSplit() {
         </video>
         {/* Soft gradient overlay for depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white opacity-30" />
+        {/* Hover color overlay */}
+        <div 
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            hoveredBrand === 'Paralight' ? 'opacity-15 bg-brand-cyan' : 
+            hoveredBrand === 'Maglinear Lighting' ? 'opacity-15 bg-brand-gold' : 'opacity-0'
+          }`}
+        />
       </div>
       
       <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
@@ -73,6 +82,8 @@ export default function BrandSplit() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
+              onMouseEnter={() => setHoveredBrand(brand.name)}
+              onMouseLeave={() => setHoveredBrand(null)}
             >
               <Link href={brand.link}>
                 <div className="group relative h-[500px] lg:h-[580px] overflow-hidden cursor-pointer">
