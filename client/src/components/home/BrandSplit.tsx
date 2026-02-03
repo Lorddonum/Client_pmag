@@ -80,7 +80,7 @@ export default function BrandSplit() {
                   initial={{ clipPath: 'polygon(0 100%, 0 100%, 0 100%)' }}
                   animate={{ 
                     clipPath: hoveredBrand === 'Paralight' 
-                      ? 'polygon(0 0, 0 100%, 100% 100%)' 
+                      ? 'polygon(0 0, 100% 100%, 0 100%)' 
                       : 'polygon(0 100%, 0 100%, 0 100%)'
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
@@ -156,7 +156,7 @@ export default function BrandSplit() {
                   initial={{ clipPath: 'polygon(100% 0, 100% 0, 100% 0)' }}
                   animate={{ 
                     clipPath: hoveredBrand === 'Maglinear' 
-                      ? 'polygon(0 0, 100% 0, 100% 100%)' 
+                      ? 'polygon(100% 0, 0 0, 100% 100%)' 
                       : 'polygon(100% 0, 100% 0, 100% 0)'
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
