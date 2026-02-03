@@ -9,7 +9,12 @@ export default function FloatingSidebar() {
   const [showWeChat, setShowWeChat] = useState(false);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const scrollContainer = document.querySelector('.overflow-y-scroll');
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const companyPhone = "+86 750 3830 391";
