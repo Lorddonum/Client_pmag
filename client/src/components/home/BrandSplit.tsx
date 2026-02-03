@@ -58,10 +58,10 @@ export default function BrandSplit() {
           </motion.h2>
         </div>
 
-        {/* Brand cards - asymmetric layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+        {/* Brand cards - corner positioned */}
+        <div className="relative min-h-[600px] lg:min-h-[500px]">
           
-          {/* Paralight Card */}
+          {/* Paralight Card - bottom left */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -69,7 +69,7 @@ export default function BrandSplit() {
             transition={{ duration: 0.8 }}
             onMouseEnter={() => setHoveredBrand('Paralight')}
             onMouseLeave={() => setHoveredBrand(null)}
-            className="lg:mt-12"
+            className="lg:absolute lg:bottom-0 lg:left-0 lg:w-[48%] mb-8 lg:mb-0"
           >
             <Link href="/products?brand=Paralight">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
@@ -137,7 +137,7 @@ export default function BrandSplit() {
             </Link>
           </motion.div>
 
-          {/* Maglinear Card */}
+          {/* Maglinear Card - top right */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -145,7 +145,7 @@ export default function BrandSplit() {
             transition={{ duration: 0.8, delay: 0.15 }}
             onMouseEnter={() => setHoveredBrand('Maglinear')}
             onMouseLeave={() => setHoveredBrand(null)}
-            className="lg:-mt-8"
+            className="lg:absolute lg:top-0 lg:right-0 lg:w-[48%]"
           >
             <Link href="/products?brand=Maglinear">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
