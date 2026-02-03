@@ -4,6 +4,13 @@ import maglinearImg from "@/assets/paralight-brand.png";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 
+const slidingImages = [
+  "/brand-split-bg.png",
+  "/brand-split-pendant.png",
+  "/brand-split-bg.png",
+  "/brand-split-pendant.png",
+];
+
 export default function BrandSplit() {
   const brands = [
     {
@@ -26,28 +33,46 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Background decorative image - left */}
-      <div 
-        className="absolute top-0 left-0 w-[1000px] h-[650px] opacity-100 pointer-events-none z-0"
-        style={{
-          backgroundImage: 'url(/brand-split-bg.png)',
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top left',
-        }}
-      />
-      
-      {/* Background decorative image - right pendant */}
-      <div 
-        className="absolute top-0 w-[900px] h-[2400px] opacity-100 pointer-events-none z-0"
-        style={{
-          right: '-50px',
-          backgroundImage: 'url(/brand-split-pendant.png)',
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'top right',
-        }}
-      />
+      {/* Animated sliding background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Top row - sliding left */}
+        <div className="absolute top-0 left-0 w-full h-[300px] opacity-[0.08]">
+          <motion.div
+            className="flex gap-16 items-center h-full"
+            animate={{ x: [0, -1500] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            style={{ width: '300%' }}
+          >
+            {[...slidingImages, ...slidingImages, ...slidingImages].map((img, i) => (
+              <img 
+                key={i} 
+                src={img} 
+                alt="" 
+                className="h-[250px] w-auto object-contain flex-shrink-0"
+              />
+            ))}
+          </motion.div>
+        </div>
+        
+        {/* Bottom row - sliding right */}
+        <div className="absolute bottom-0 left-0 w-full h-[300px] opacity-[0.06]">
+          <motion.div
+            className="flex gap-16 items-center h-full"
+            animate={{ x: [-1500, 0] }}
+            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+            style={{ width: '300%' }}
+          >
+            {[...slidingImages, ...slidingImages, ...slidingImages].map((img, i) => (
+              <img 
+                key={i} 
+                src={img} 
+                alt="" 
+                className="h-[250px] w-auto object-contain flex-shrink-0"
+              />
+            ))}
+          </motion.div>
+        </div>
+      </div>
       
       <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
         {/* Section header */}
