@@ -74,14 +74,14 @@ export default function BrandSplit() {
             <Link href="/products?brand=Paralight">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
                 
-                {/* Image expanding from top-left - triangular shape */}
+                {/* Image expanding from bottom-left - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  initial={{ clipPath: 'polygon(0 0, 0 0, 0 0)' }}
+                  initial={{ clipPath: 'polygon(0 100%, 0 100%, 0 100%)' }}
                   animate={{ 
                     clipPath: hoveredBrand === 'Paralight' 
-                      ? 'polygon(0 0, 100% 0, 0 100%)' 
-                      : 'polygon(0 0, 0 0, 0 0)'
+                      ? 'polygon(0 0, 0 100%, 100% 100%)' 
+                      : 'polygon(0 100%, 0 100%, 0 100%)'
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
@@ -150,14 +150,14 @@ export default function BrandSplit() {
             <Link href="/products?brand=Maglinear">
               <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
                 
-                {/* Image expanding from bottom-right - triangular shape */}
+                {/* Image expanding from top-right - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  initial={{ clipPath: 'polygon(100% 100%, 100% 100%, 100% 100%)' }}
+                  initial={{ clipPath: 'polygon(100% 0, 100% 0, 100% 0)' }}
                   animate={{ 
                     clipPath: hoveredBrand === 'Maglinear' 
-                      ? 'polygon(100% 0, 100% 100%, 0 100%)' 
-                      : 'polygon(100% 100%, 100% 100%, 100% 100%)'
+                      ? 'polygon(0 0, 100% 0, 100% 100%)' 
+                      : 'polygon(100% 0, 100% 0, 100% 0)'
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
