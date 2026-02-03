@@ -265,6 +265,17 @@ export default function ProductDetail() {
       <Navbar />
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-8 lg:px-12">
+          {/* Back to Catalog */}
+          <Link href="/products">
+            <button
+              className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-900 transition-colors group mb-6"
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Back to Catalog
+            </button>
+          </Link>
+
           {/* Breadcrumb-style tags */}
           <div className="flex items-center gap-3 mb-10">
             <span
@@ -672,15 +683,6 @@ export default function ProductDetail() {
                 </Link>
               </div>
 
-              <Link href="/products">
-                <button
-                  className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-900 transition-colors group"
-                  data-testid="button-back"
-                >
-                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                  Back to Catalog
-                </button>
-              </Link>
             </div>
           </div>
         </div>
