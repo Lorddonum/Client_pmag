@@ -48,6 +48,10 @@ export const products = pgTable("products", {
   accessoriesSpec: text("accessories_spec"),
   // Maglinear-specific fields
   mountingTrack: text("mounting_track"),
+  conductionMethod: text("conduction_method"),
+  maglinearName: text("maglinear_name"),
+  inputVoltage: text("input_voltage"),
+  outputVoltage: text("output_voltage"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
 });

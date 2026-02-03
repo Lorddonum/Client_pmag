@@ -44,6 +44,10 @@ interface Product {
   diffuserMaterial?: string | null;
   // Maglinear-specific fields
   mountingTrack?: string | null;
+  conductionMethod?: string | null;
+  maglinearName?: string | null;
+  inputVoltage?: string | null;
+  outputVoltage?: string | null;
   // Technical Specifications (JSON string for table data)
   technicalSpecs?: string | null;
 }
@@ -95,6 +99,10 @@ export default function Admin() {
     accessoriesSpec: "",
     diffuserMaterial: "",
     mountingTrack: "",
+    conductionMethod: "",
+    maglinearName: "",
+    inputVoltage: "",
+    outputVoltage: "",
     technicalSpecs: ""
   });
 
@@ -245,6 +253,10 @@ export default function Admin() {
       packagingMethodBSpec: "",
       accessoriesSpec: "",
       mountingTrack: "",
+      conductionMethod: "",
+      maglinearName: "",
+      inputVoltage: "",
+      outputVoltage: "",
       technicalSpecs: ""
     });
   };
@@ -285,6 +297,10 @@ export default function Admin() {
       packagingMethodBSpec: product.packagingMethodBSpec || "",
       accessoriesSpec: product.accessoriesSpec || "",
       mountingTrack: product.mountingTrack || "",
+      conductionMethod: product.conductionMethod || "",
+      maglinearName: product.maglinearName || "",
+      inputVoltage: product.inputVoltage || "",
+      outputVoltage: product.outputVoltage || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -696,10 +712,28 @@ export default function Admin() {
                         </>
                       )}
                       {formData.brand === "Maglinear" && (
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
-                          <input type="text" value={formData.mountingTrack} onChange={e => setFormData({...formData, mountingTrack: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
-                        </div>
+                        <>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Maglinear Name</label>
+                            <input type="text" value={formData.maglinearName} onChange={e => setFormData({...formData, maglinearName: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
+                            <input type="text" value={formData.mountingTrack} onChange={e => setFormData({...formData, mountingTrack: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
+                            <input type="text" value={formData.conductionMethod} onChange={e => setFormData({...formData, conductionMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
+                            <input type="text" value={formData.inputVoltage} onChange={e => setFormData({...formData, inputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
+                            <input type="text" value={formData.outputVoltage} onChange={e => setFormData({...formData, outputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
+                          </div>
+                        </>
                       )}
                     </div>
 
