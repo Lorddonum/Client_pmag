@@ -77,11 +77,10 @@ export default function BrandSplit() {
                 {/* Image expanding from bottom-left - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  initial={{ clipPath: 'polygon(0 100%, 0 100%, 0 100%)' }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ 
-                    clipPath: hoveredBrand === 'Paralight' 
-                      ? 'polygon(0 0, 100% 100%, 0 100%)' 
-                      : 'polygon(0 100%, 0 100%, 0 100%)'
+                    opacity: hoveredBrand === 'Paralight' ? 1 : 0,
+                    scale: hoveredBrand === 'Paralight' ? 1 : 0.9
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
@@ -153,11 +152,10 @@ export default function BrandSplit() {
                 {/* Image expanding from top-right - triangular shape */}
                 <motion.div
                   className="absolute inset-0 z-10"
-                  initial={{ clipPath: 'polygon(100% 0, 100% 0, 100% 0)' }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ 
-                    clipPath: hoveredBrand === 'Maglinear' 
-                      ? 'polygon(100% 0, 0 0, 100% 100%)' 
-                      : 'polygon(100% 0, 100% 0, 100% 0)'
+                    opacity: hoveredBrand === 'Maglinear' ? 1 : 0,
+                    scale: hoveredBrand === 'Maglinear' ? 1 : 0.9
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                 >
