@@ -59,7 +59,7 @@ export default function BrandSplit() {
         </div>
 
         {/* Brand cards - corner positioned */}
-        <div className="relative min-h-[600px] lg:min-h-[500px]">
+        <div className="relative min-h-[700px] lg:min-h-[650px]">
           
           {/* Paralight Card - bottom left */}
           <motion.div
@@ -69,10 +69,10 @@ export default function BrandSplit() {
             transition={{ duration: 0.8 }}
             onMouseEnter={() => setHoveredBrand('Paralight')}
             onMouseLeave={() => setHoveredBrand(null)}
-            className="lg:absolute lg:bottom-0 lg:left-0 lg:w-[48%] mb-8 lg:mb-0"
+            className="lg:absolute lg:bottom-0 lg:left-0 lg:w-[55%] mb-8 lg:mb-0"
           >
             <Link href="/products?brand=Paralight">
-              <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
+              <div className="group relative h-[500px] lg:h-[600px] overflow-hidden cursor-pointer">
                 
                 {/* Image expanding from bottom-left - triangular shape */}
                 <motion.div
@@ -145,10 +145,10 @@ export default function BrandSplit() {
             transition={{ duration: 0.8, delay: 0.15 }}
             onMouseEnter={() => setHoveredBrand('Maglinear')}
             onMouseLeave={() => setHoveredBrand(null)}
-            className="lg:absolute lg:top-0 lg:right-0 lg:w-[48%]"
+            className="lg:absolute lg:top-0 lg:right-0 lg:w-[55%]"
           >
             <Link href="/products?brand=Maglinear">
-              <div className="group relative h-[450px] lg:h-[520px] overflow-hidden cursor-pointer">
+              <div className="group relative h-[500px] lg:h-[600px] overflow-hidden cursor-pointer">
                 
                 {/* Image expanding from top-right - triangular shape */}
                 <motion.div
