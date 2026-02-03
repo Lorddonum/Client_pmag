@@ -8,16 +8,28 @@ import ProjectGallery from "@/components/home/ProjectGallery";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white">
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory bg-white text-gray-900 selection:bg-[#00A8E8] selection:text-white">
       <Navbar />
       <main>
-        <Hero />
-        <BrandSplit />
-        <GlobalNetwork />
-        <Exhibition />
-        <ProjectGallery />
+        <section className="snap-start min-h-screen">
+          <Hero />
+        </section>
+        <section className="snap-start min-h-screen">
+          <BrandSplit />
+        </section>
+        <section className="snap-start min-h-screen">
+          <GlobalNetwork />
+        </section>
+        <section className="snap-start min-h-screen">
+          <Exhibition />
+        </section>
+        <section className="snap-start min-h-screen">
+          <ProjectGallery />
+        </section>
+        <section className="snap-start">
+          <Footer />
+        </section>
       </main>
-      <Footer />
     </div>
   );
 }
