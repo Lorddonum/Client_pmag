@@ -36,8 +36,8 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
       sections.forEach((section, index) => {
         const rect = section.getBoundingClientRect();
         if (rect.top <= 100 && rect.bottom > 100) {
-          // Sections 2 (index 1) and 5 (index 4) have light backgrounds
-          setIsLightSection(index === 1 || index === 4);
+          // Sections 2 (index 1), 3 (index 2), and 5 (index 4) have light backgrounds
+          setIsLightSection(index === 1 || index === 2 || index === 4);
         }
       });
     };
