@@ -9,11 +9,27 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   
-  // Get all products
+  // Helper to strip base64 but keep URLs
+  const stripBase64 = (val: string | null | undefined): string => {
+    if (!val) return '';
+    return val.startsWith('data:') ? '' : val;
+  };
+  const stripBase64Arr = (arr: string[] | null | undefined): string[] => {
+    if (!arr || !Array.isArray(arr)) return [];
+    return arr.filter(i => i && !i.startsWith('data:'));
+  };
+
+  // Get all products (strips base64 for fast loading)
   app.get("/api/products", async (req, res) => {
     try {
       const products = await storage.getProducts();
-      res.json(products);
+      const cleaned = products.map((p: any) => ({
+        ...p,
+        image: stripBase64(p.image),
+        images: stripBase64Arr(p.images),
+        technicalDrawings: stripBase64Arr(p.technicalDrawings),
+      }));
+      res.json(cleaned);
     } catch (error) {
       console.error("Error fetching products:", error);
       res.status(500).json({ error: "Failed to fetch products", details: String(error) });
