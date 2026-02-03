@@ -26,32 +26,22 @@ export default function BrandSplit() {
 
   return (
     <section className="py-32 bg-white relative overflow-hidden">
-      {/* Dynamic artistic background - Japanese game cover style */}
+      {/* Professional dynamic background */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Main background layer with subtle drift */}
         <motion.div
           className="absolute inset-0"
-          animate={{ x: [0, -100, 0], scale: [1, 1.05, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ x: [0, -30, 0], scale: [1, 1.02, 1] }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         >
           <img 
             src="/brand-split-dynamic-bg.png" 
             alt="" 
-            className="w-full h-full object-cover opacity-25"
+            className="w-full h-full object-cover opacity-20"
           />
         </motion.div>
-        {/* Secondary layer with offset animation */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ x: [0, 80, 0], y: [0, -30, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        >
-          <img 
-            src="/brand-split-dynamic-bg.png" 
-            alt="" 
-            className="w-full h-full object-cover opacity-15 scale-110"
-            style={{ filter: 'hue-rotate(30deg)' }}
-          />
-        </motion.div>
+        {/* Soft gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white opacity-60" />
       </div>
       
       <div className="container mx-auto px-8 lg:px-12 relative z-10 pt-8">
