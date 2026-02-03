@@ -111,11 +111,11 @@ export default function BrandSplit() {
                   </motion.span>
                   
                   <motion.h3 
-                    className="font-display text-5xl lg:text-6xl font-medium text-brand-cyan mb-4 flex items-center gap-4"
+                    className="font-display text-5xl lg:text-6xl font-medium text-[#00C8FF] mb-4 flex items-center gap-4"
                     animate={{ 
                       textShadow: hoveredBrand === 'Paralight' 
-                        ? '0 0 20px rgba(0, 168, 232, 0.6), 0 0 40px rgba(0, 168, 232, 0.4)' 
-                        : '0 0 0px rgba(0, 168, 232, 0)'
+                        ? '0 0 12px rgba(0, 200, 255, 0.5)' 
+                        : '0 0 0px rgba(0, 200, 255, 0)'
                     }}
                     transition={{ duration: 0.4 }}
                   >
@@ -194,11 +194,11 @@ export default function BrandSplit() {
                   </motion.span>
                   
                   <motion.h3 
-                    className="font-display text-5xl lg:text-6xl font-medium text-brand-gold mb-4 flex items-center justify-end gap-4"
+                    className="font-display text-5xl lg:text-6xl font-medium text-[#FFD033] mb-4 flex items-center justify-end gap-4"
                     animate={{ 
                       textShadow: hoveredBrand === 'Maglinear' 
-                        ? '0 0 20px rgba(236, 170, 0, 0.6), 0 0 40px rgba(236, 170, 0, 0.4)' 
-                        : '0 0 0px rgba(236, 170, 0, 0)'
+                        ? '0 0 12px rgba(255, 200, 50, 0.5)' 
+                        : '0 0 0px rgba(255, 200, 50, 0)'
                     }}
                     transition={{ duration: 0.4 }}
                   >
