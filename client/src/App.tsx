@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ScrollToTop from "@/components/ScrollToTop";
+import FloatingSidebar from "@/components/layout/FloatingSidebar";
 import NotFound from "@/pages/not-found";
 import { useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
@@ -54,6 +55,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <ScrollToTop />
+        <FloatingSidebar />
         <Suspense fallback={<PageLoader />}>
           <Router />
         </Suspense>
