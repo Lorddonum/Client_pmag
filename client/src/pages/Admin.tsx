@@ -512,25 +512,42 @@ export default function Admin() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image</label>
-                      <div className="relative group">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image URL</label>
+                      <div className="space-y-3">
                         <input 
-                          type="file" 
-                          accept="image/*"
-                          onChange={(e) => handleFileChange(e, 'image')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                          type="url" 
+                          placeholder="Paste image URL (e.g., https://example.com/image.jpg)"
+                          value={formData.image}
+                          onChange={(e) => setFormData({...formData, image: e.target.value})}
+                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                         />
-                        <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.image ? 'bg-[#00A8E8]/5 border-[#00A8E8]/30' : 'border-gray-300 hover:border-[#00A8E8]'}`}>
+                        <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${formData.image ? 'bg-[#00A8E8]/5 border-[#00A8E8]/30' : 'border-gray-300'}`}>
                           {formData.image ? (
-                            <div className="flex flex-col items-center gap-2">
-                              <img src={formData.image} alt="Preview" className="w-24 h-24 object-contain border border-gray-200 rounded-lg" />
-                              <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace image</p>
+                            <div className="flex items-center gap-4">
+                              <img 
+                                src={formData.image} 
+                                alt="Preview" 
+                                className="w-20 h-20 object-contain border border-gray-200 rounded-lg bg-white"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                              <div className="flex-1 text-left">
+                                <p className="text-xs text-green-600 font-medium">Image URL Set</p>
+                                <p className="text-[10px] text-gray-500 truncate max-w-[200px]">{formData.image}</p>
+                                <button 
+                                  type="button" 
+                                  onClick={() => setFormData({...formData, image: ''})}
+                                  className="text-[10px] text-red-500 hover:underline mt-1"
+                                >
+                                  Remove
+                                </button>
+                              </div>
                             </div>
                           ) : (
-                            <>
-                              <ImageIcon className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
-                              <p className="text-xs text-gray-500 uppercase tracking-widest">Product Picture</p>
-                            </>
+                            <div className="py-4">
+                              <ImageIcon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                              <p className="text-[10px] text-gray-500">Enter an image URL above</p>
+                              <p className="text-[8px] text-gray-400 mt-1">Use URLs from your website or image hosting service</p>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -1170,7 +1187,7 @@ export default function Admin() {
                       );
                     })
                     .map((product) => (
-                    <div key={product.id} data-testid={`product-item-${product.id}`} className="bg-white border border-gray-200 rounded-xl p-6 flex justify-between items-center group hover:border-[#00A8E8]/50 hover:shadow-md transition-all">
+                    <div key={product.id} data-testid={`product-item-${product.id}`} className={`rounded-xl p-6 flex justify-between items-center group transition-all ${editingId === product.id ? 'bg-[#00A8E8]/5 border-2 border-[#00A8E8] shadow-lg shadow-[#00A8E8]/10' : 'bg-white border border-gray-200 hover:border-[#00A8E8]/50 hover:shadow-md'}`}>
                       <div className="flex items-center gap-6">
                         <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
                           {product.image ? (
@@ -1192,9 +1209,10 @@ export default function Admin() {
                         <button 
                           onClick={() => handleEdit(product)}
                           data-testid={`button-edit-${product.id}`}
-                          className="p-3 bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8] transition-colors rounded-lg"
+                          className={`p-3 transition-colors rounded-lg flex items-center gap-2 ${editingId === product.id ? 'bg-[#00A8E8] text-white' : 'bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8]'}`}
                         >
                           <Edit2 className="w-4 h-4" />
+                          {editingId === product.id && <span className="text-xs font-bold uppercase tracking-wider">Editing</span>}
                         </button>
                         <button 
                           onClick={() => handleDelete(product.id)}
