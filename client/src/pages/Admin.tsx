@@ -49,7 +49,6 @@ interface Product {
   maglinearName?: string | null;
   inputVoltage?: string | null;
   outputVoltage?: string | null;
-  wallThickness?: string | null;
   // Technical Specifications (JSON string for table data)
   technicalSpecs?: string | null;
 }
@@ -109,7 +108,6 @@ export default function Admin() {
     maglinearName: "",
     inputVoltage: "",
     outputVoltage: "",
-    wallThickness: "",
     technicalSpecs: ""
   });
 
@@ -996,10 +994,6 @@ export default function Admin() {
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
                             <input type="text" value={formData.outputVoltage} onChange={e => setFormData({...formData, outputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
                           </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
-                            <input type="text" value={formData.wallThickness} onChange={e => setFormData({...formData, wallThickness: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.0mm" />
-                          </div>
                         </>
                       )}
                     </div>
@@ -1008,7 +1002,7 @@ export default function Admin() {
 
                   {/* Additional Specification Rows */}
                   {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string }, rowIndex: number) => (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string }, rowIndex: number) => (
                       <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
