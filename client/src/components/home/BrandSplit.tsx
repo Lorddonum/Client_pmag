@@ -192,7 +192,7 @@ export default function BrandSplit() {
                     >
                       <ArrowRight className="w-8 h-8 rotate-180" />
                     </motion.span>
-                    Maglinear
+                    Maglinear Lighting
                   </h3>
                   
                   <motion.p 
