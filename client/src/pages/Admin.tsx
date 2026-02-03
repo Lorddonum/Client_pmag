@@ -503,7 +503,7 @@ export default function Admin() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series * (Multiple)</label>
-                      <div className="relative">
+                      <div>
                         {formData.series.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-2">
                             {formData.series.map((s, idx) => (
@@ -516,36 +516,37 @@ export default function Admin() {
                             ))}
                           </div>
                         )}
-                        <input 
-                          type="text" 
-                          data-testid="input-series"
-                          value={seriesFilter}
-                          onChange={(e) => {
-                            setSeriesFilter(e.target.value);
-                            setShowSeriesDropdown(true);
-                          }}
-                          onFocus={() => setShowSeriesDropdown(true)}
-                          onBlur={() => setTimeout(() => setShowSeriesDropdown(false), 200)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && seriesFilter.trim()) {
-                              e.preventDefault();
-                              if (!formData.series.includes(seriesFilter.trim())) {
-                                setFormData({...formData, series: [...formData.series, seriesFilter.trim()]});
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            data-testid="input-series"
+                            value={seriesFilter}
+                            onChange={(e) => {
+                              setSeriesFilter(e.target.value);
+                              setShowSeriesDropdown(true);
+                            }}
+                            onFocus={() => setShowSeriesDropdown(true)}
+                            onBlur={() => setTimeout(() => setShowSeriesDropdown(false), 200)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && seriesFilter.trim()) {
+                                e.preventDefault();
+                                if (!formData.series.includes(seriesFilter.trim())) {
+                                  setFormData({...formData, series: [...formData.series, seriesFilter.trim()]});
+                                }
+                                setSeriesFilter("");
+                                setShowSeriesDropdown(false);
                               }
-                              setSeriesFilter("");
-                              setShowSeriesDropdown(false);
-                            }
-                          }}
-                          placeholder={formData.series.length === 0 ? "Type and press Enter or select..." : "Add another series..."}
-                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowSeriesDropdown(!showSeriesDropdown)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
-                        </button>
+                            }}
+                            placeholder={formData.series.length === 0 ? "Type and press Enter or select..." : "Add another series..."}
+                            className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowSeriesDropdown(!showSeriesDropdown)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
+                          </button>
                         {showSeriesDropdown && (
                           <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                             {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
@@ -589,6 +590,7 @@ export default function Admin() {
                             )}
                           </div>
                         )}
+                        </div>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -607,7 +609,7 @@ export default function Admin() {
                     {formData.brand === "Maglinear" ? (
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series (Multiple)</label>
-                      <div className="relative">
+                      <div>
                         {formData.subSeries.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-2">
                             {formData.subSeries.map((s, idx) => (
@@ -620,35 +622,36 @@ export default function Admin() {
                             ))}
                           </div>
                         )}
-                        <input 
-                          type="text" 
-                          data-testid="input-sub-series"
-                          value={subSeriesFilter}
-                          onChange={(e) => {
-                            setSubSeriesFilter(e.target.value);
-                            setShowSubSeriesDropdown(true);
-                          }}
-                          onFocus={() => setShowSubSeriesDropdown(true)}
-                          onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
-                          placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && subSeriesFilter.trim()) {
-                              e.preventDefault();
-                              if (!formData.subSeries.includes(subSeriesFilter.trim())) {
-                                setFormData({...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()]});
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            data-testid="input-sub-series"
+                            value={subSeriesFilter}
+                            onChange={(e) => {
+                              setSubSeriesFilter(e.target.value);
+                              setShowSubSeriesDropdown(true);
+                            }}
+                            onFocus={() => setShowSubSeriesDropdown(true)}
+                            onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
+                            placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && subSeriesFilter.trim()) {
+                                e.preventDefault();
+                                if (!formData.subSeries.includes(subSeriesFilter.trim())) {
+                                  setFormData({...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()]});
+                                }
+                                setSubSeriesFilter("");
                               }
-                              setSubSeriesFilter("");
-                            }
-                          }}
-                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
-                        </button>
+                            }}
+                            className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
+                          </button>
                         {showSubSeriesDropdown && (
                           <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                             {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
@@ -696,6 +699,7 @@ export default function Admin() {
                             )}
                           </div>
                         )}
+                        </div>
                       </div>
                     </div>
                     ) : null}
