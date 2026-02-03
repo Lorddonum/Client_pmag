@@ -17,8 +17,8 @@ export default function FloatingSidebar() {
     }
   };
 
-  const companyPhone = "+86 750 3830 391";
-  const companyEmail = "sales@paralight-led.com";
+  const companyPhone = "+86 181 2825 9727";
+  const companyEmail = "inquiry@paralight.cc";
 
   return (
     <>
