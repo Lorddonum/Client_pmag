@@ -1111,6 +1111,82 @@ export default function Products() {
                         )}
                       </motion.div>
                     </div>
+
+                    {/* Related Products Section */}
+                    {(() => {
+                      const relatedProducts = products.filter(p => 
+                        p.id !== selectedProduct.id && 
+                        (p.brand === selectedProduct.brand || 
+                         (p.series || []).some(s => (selectedProduct.series || []).includes(s)))
+                      ).slice(0, 4);
+                      
+                      if (relatedProducts.length === 0) return null;
+                      
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 }}
+                          className="mt-16"
+                        >
+                          <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-xl font-display font-medium text-gray-900">Related Products</h2>
+                            <button
+                              onClick={handleBackToGrid}
+                              className="text-xs text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                            >
+                              View All
+                              <ChevronRight className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {relatedProducts.map((product) => {
+                              const relatedBrandColor = product.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
+                              return (
+                                <motion.div
+                                  key={product.id}
+                                  whileHover={{ y: -4 }}
+                                  onClick={() => {
+                                    setSelectedProduct(product);
+                                    setSelectedImageIndex(0);
+                                    setExpandedFaq(null);
+                                    if (detailRef.current) {
+                                      detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }
+                                  }}
+                                  className="cursor-pointer bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-gray-100"
+                                  data-testid={`related-product-${product.id}`}
+                                >
+                                  <div className="aspect-square bg-gray-50 relative overflow-hidden">
+                                    {product.image ? (
+                                      <img 
+                                        src={product.image} 
+                                        alt={product.name}
+                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center">
+                                        <Package className="w-12 h-12 text-gray-200" />
+                                      </div>
+                                    )}
+                                    <div 
+                                      className="absolute top-2 left-2 px-2 py-1 text-[8px] font-medium uppercase tracking-wider text-white rounded"
+                                      style={{ backgroundColor: relatedBrandColor }}
+                                    >
+                                      {product.brand}
+                                    </div>
+                                  </div>
+                                  <div className="p-3">
+                                    <h3 className="text-sm font-medium text-gray-900 line-clamp-1">{product.name}</h3>
+                                    <p className="text-xs text-gray-400 mt-0.5">{product.modelNumber}</p>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      );
+                    })()}
                   </motion.div>
                 ) : (
                   /* Product Grid View */
