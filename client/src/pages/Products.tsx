@@ -38,6 +38,8 @@ interface Product {
   installationMethod?: string | null;
   mountingTrack?: string | null;
   cutOutSize?: string | null;
+  oneCct?: string | null;
+  threeCct?: string | null;
   technicalSpecs?: string | null;
   accessoriesSpec?: string | null;
   packagingMethodADesc?: string | null;
@@ -232,6 +234,9 @@ export default function Products() {
       ...(selectedProduct.brand === "Maglinear" ? [
         { label: "Mounting Track", value: selectedProduct.mountingTrack },
         { label: "Cut Out Size", value: selectedProduct.cutOutSize },
+        { label: "1 CCT", value: selectedProduct.oneCct },
+        { label: "3 CCT", value: selectedProduct.threeCct },
+        { label: "Installation Method", value: selectedProduct.installationMethod },
       ] : [])
     ].filter((spec) => spec.value && spec.value.trim() !== "");
   }, [selectedProduct]);
@@ -239,7 +244,7 @@ export default function Products() {
   const additionalSpecRows = useMemo(() => {
     if (!selectedProduct?.technicalSpecs) return [];
     try {
-      return JSON.parse(selectedProduct.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; cutOutSize?: string }>;
+      return JSON.parse(selectedProduct.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; installationMethod?: string }>;
     } catch {
       return [];
     }
@@ -259,6 +264,9 @@ export default function Products() {
       { label: "Beam Angle", value: row.beamAngle },
       { label: "Mounting Track", value: row.mountingTrack },
       { label: "Cut Out Size", value: row.cutOutSize },
+      { label: "1 CCT", value: row.oneCct },
+      { label: "3 CCT", value: row.threeCct },
+      { label: "Installation Method", value: row.installationMethod },
     ].filter((spec) => spec.value && spec.value.trim() !== "");
     return [
       { label: "Model", value: row.model?.trim() || mainModelNumber },

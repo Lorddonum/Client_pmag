@@ -1051,7 +1051,7 @@ export default function Admin() {
 
                   {/* Additional Specification Rows */}
                   {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string }, rowIndex: number) => (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string; oneCct?: string; threeCct?: string }, rowIndex: number) => (
                       <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
@@ -1272,7 +1272,7 @@ export default function Admin() {
                       type="button"
                       onClick={() => {
                         const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
-                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '' };
+                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '', oneCct: '', threeCct: '', installationMethod: '' };
                         setFormData({...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow])});
                       }}
                       className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
