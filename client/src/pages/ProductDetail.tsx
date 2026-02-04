@@ -387,14 +387,16 @@ export default function ProductDetail() {
             ))}
           </div>
 
-          {/* Full-width background banner above product name */}
+          {/* Full-width background banner - from top of page to just above the title */}
           <div 
-            className="absolute left-0 right-0 h-48 -mt-8"
+            className="absolute left-0 right-0 top-0 bottom-auto"
             style={{ 
+              height: 'calc(100% - 60%)',
               background: product.brand === "Paralight" 
-                ? 'linear-gradient(180deg, #E8F6FC 0%, #D0EFFA 30%, transparent 100%)' 
-                : 'linear-gradient(180deg, #FDF6E8 0%, #FAE8C8 30%, transparent 100%)',
-              zIndex: 0
+                ? 'linear-gradient(180deg, #D0EFFA 0%, #E8F6FC 60%, transparent 100%)' 
+                : 'linear-gradient(180deg, #FAE8C8 0%, #FDF6E8 60%, transparent 100%)',
+              zIndex: 0,
+              marginTop: '-8rem'
             }}
           >
             {/* Decorative pattern overlay */}
