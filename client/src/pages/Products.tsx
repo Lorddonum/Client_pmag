@@ -743,13 +743,13 @@ export default function Products() {
                           </p>
                           
                           {/* Packaging Method Image - Paralight only */}
-                          {selectedProduct.brand === "Paralight" && selectedProduct.packagingMethodImage && (
+                          {selectedProduct.brand === "Paralight" && (
                             <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
                               <h4 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-3 text-center">
                                 Packaging Method
                               </h4>
                               <img 
-                                src={selectedProduct.packagingMethodImage} 
+                                src="/packaging-method.png" 
                                 alt="Packaging Method" 
                                 className="max-w-full h-auto mx-auto"
                               />
