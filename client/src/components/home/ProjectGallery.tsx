@@ -49,7 +49,7 @@ export default function ProjectGallery() {
 
       <motion.div 
         className="relative z-10 flex px-4 lg:px-8 pb-4 mt-auto"
-        animate={{ height: hoveredIndex !== null ? 180 : 140 }}
+        animate={{ height: hoveredIndex !== null ? 200 : 160 }}
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       >
         {applicationCategories.map((category, index) => {
