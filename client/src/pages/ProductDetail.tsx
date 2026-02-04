@@ -387,34 +387,27 @@ export default function ProductDetail() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div className="space-y-6">
-              {/* Product Banner */}
-              <div 
-                className="relative rounded-xl overflow-hidden p-4"
-                style={{ 
-                  background: `linear-gradient(135deg, ${brandColor}15 0%, ${brandColor}05 50%, transparent 100%)`,
-                  borderLeft: `4px solid ${brandColor}`
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div 
-                    className="w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: `${brandColor}20` }}
-                  >
-                    <Package className="w-5 h-5" style={{ color: brandColor }} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 font-medium">
-                      {product.brand === "Paralight" ? "Aluminum Profile" : "Magnetic Track System"}
-                    </p>
-                    <p className="text-xs font-bold" style={{ color: brandColor }}>
-                      {product.brand === "Paralight" ? "Premium LED Housing Solution" : "Modular Lighting Design"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Full-width background banner above product name */}
+          <div 
+            className="absolute left-0 right-0 h-48 -mt-8"
+            style={{ 
+              background: product.brand === "Paralight" 
+                ? 'linear-gradient(180deg, #E8F6FC 0%, #D0EFFA 30%, transparent 100%)' 
+                : 'linear-gradient(180deg, #FDF6E8 0%, #FAE8C8 30%, transparent 100%)',
+              zIndex: 0
+            }}
+          >
+            {/* Decorative pattern overlay */}
+            <div 
+              className="absolute inset-0 opacity-30"
+              style={{ 
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='${brandColor.replace('#', '%23')}' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            />
+          </div>
 
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
+            <div className="space-y-6">
               <div>
                 <h1
                   className="font-display text-3xl md:text-4xl text-gray-900 font-medium mb-2"
