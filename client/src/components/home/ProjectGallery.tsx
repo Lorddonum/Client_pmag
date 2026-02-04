@@ -131,7 +131,7 @@ export default function ProjectGallery() {
                 style={{
                   background: isHovered 
                     ? `linear-gradient(to top, ${isBlue ? 'rgba(0,30,45,0.7)' : 'rgba(45,35,0,0.7)'} 0%, rgba(0,0,0,0.3) 40%, transparent 70%)` 
-                    : 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 100%)',
+                    : 'linear-gradient(to top, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)',
                 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
