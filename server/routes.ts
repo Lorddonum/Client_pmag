@@ -80,8 +80,8 @@ export async function registerRoutes(
     }
   });
 
-  // PUT product (full update)
-  app.put("/api/products/:id", async (req, res) => {
+  // PUT/PATCH product (full update)
+  const updateProductHandler = async (req: any, res: any) => {
     try {
       const id = parseInt(req.params.id);
       const parsed = insertProductSchema.safeParse(req.body);
@@ -94,9 +94,13 @@ export async function registerRoutes(
       }
       res.json(product);
     } catch (error) {
+      console.error("Failed to update product:", error);
       res.status(500).json({ error: "Failed to update product" });
     }
-  });
+  };
+  
+  app.put("/api/products/:id", updateProductHandler);
+  app.patch("/api/products/:id", updateProductHandler);
 
   // Compress image endpoint
   app.post("/api/compress-image", async (req, res) => {
