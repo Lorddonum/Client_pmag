@@ -108,6 +108,7 @@ export default function Admin() {
     maglinearName: "",
     inputVoltage: "",
     outputVoltage: "",
+    wallThickness: "",
     technicalSpecs: ""
   });
 
@@ -324,6 +325,7 @@ export default function Admin() {
       maglinearName: "",
       inputVoltage: "",
       outputVoltage: "",
+      wallThickness: "",
       technicalSpecs: ""
     });
   };
@@ -368,6 +370,7 @@ export default function Admin() {
       maglinearName: product.maglinearName || "",
       inputVoltage: product.inputVoltage || "",
       outputVoltage: product.outputVoltage || "",
+      wallThickness: product.wallThickness || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -413,6 +416,7 @@ export default function Admin() {
       maglinearName: product.maglinearName || "",
       inputVoltage: product.inputVoltage || "",
       outputVoltage: product.outputVoltage || "",
+      wallThickness: product.wallThickness || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -997,6 +1001,10 @@ export default function Admin() {
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
                             <input type="text" value={formData.outputVoltage} onChange={e => setFormData({...formData, outputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
+                            <input type="text" value={formData.wallThickness} onChange={e => setFormData({...formData, wallThickness: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
                           </div>
                         </>
                       )}

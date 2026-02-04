@@ -52,6 +52,7 @@ export const products = pgTable("products", {
   maglinearName: text("maglinear_name"),
   inputVoltage: text("input_voltage"),
   outputVoltage: text("output_voltage"),
+  wallThickness: text("wall_thickness"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
 });
