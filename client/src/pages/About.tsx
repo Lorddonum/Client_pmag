@@ -928,87 +928,105 @@ export default function About() {
         </div>
       </section>
 
-      {/* REDESIGNED: Showcase Section - Full-bleed with scattered images */}
-      <section className="py-24 bg-[#0a1628] relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#00A8E8]/10 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#ECAA00]/10 rounded-full blur-[120px]" />
-        </div>
+      {/* Showcase Animation Section */}
+      <section className="py-24 bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 overflow-hidden">
+        <div className="container mx-auto px-8 lg:px-12">
+          <div className="relative h-[700px] lg:h-[800px]">
+            {/* Image 3 - Top Left - Sketching */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="absolute top-[-3%] left-[5%] w-[45%] lg:w-[40%] z-30"
+            >
+              <img
+                src="/images/showcase-3.png"
+                alt="Design sketching"
+                className="w-full h-auto rounded-lg shadow-2xl grayscale"
+                loading="eager"
+              />
+            </motion.div>
 
-        <div className="container mx-auto px-8 lg:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-4">
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-              >
-                <span className="text-[#ECAA00] text-xs font-semibold uppercase tracking-widest mb-4 block">Craftsmanship</span>
-                <h2 className="font-display text-3xl lg:text-5xl text-white font-bold mb-6">
-                  <span className="italic font-normal">In-House</span> Design
-                </h2>
-                <p className="text-white/60 leading-relaxed mb-8">
-                  At Paralight Group, we bridge the gap between technical innovation and manufacturing excellence. 
-                  By designing and producing our own products in-house, we deliver high-performance lighting solutions 
-                  built with meticulous precision.
-                </p>
-                
-                <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-display font-bold text-[#00A8E8]">100%</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider mt-1">In-House</div>
-                  </div>
-                  <div className="w-px h-12 bg-white/20" />
-                  <div className="text-center">
-                    <div className="text-3xl font-display font-bold text-[#ECAA00]">500+</div>
-                    <div className="text-xs text-white/40 uppercase tracking-wider mt-1">SKUs</div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+            {/* Image 2 - Bottom Left - Living Room */}
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="absolute bottom-0 left-0 w-[35%] lg:w-[30%] z-20"
+            >
+              <img
+                src="/images/showcase-2.png"
+                alt="Modern living room lighting"
+                className="w-full h-auto rounded-lg shadow-2xl grayscale"
+                loading="eager"
+              />
+            </motion.div>
 
-            {/* Right Images Grid */}
-            <div className="lg:col-span-8 relative h-[500px] lg:h-[600px]">
-              <motion.div
-                initial={{ opacity: 0, y: 30, rotate: -3 }}
-                whileInView={{ opacity: 1, y: 0, rotate: -3 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="absolute top-0 left-[5%] w-[45%] z-20 shadow-2xl"
-              >
-                <img src="/images/showcase-3.png" alt="Design sketching" className="w-full h-auto rounded-lg" loading="eager" />
-              </motion.div>
+            {/* Image 1 - Top Right - Showroom */}
+            <motion.div
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+              className="absolute top-[2%] right-[-3%] w-[45%] lg:w-[40%] z-10"
+            >
+              <img
+                src="/images/showcase-1.png"
+                alt="Modern showroom"
+                className="w-full h-auto rounded-lg shadow-2xl grayscale"
+                loading="eager"
+              />
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30, rotate: 2 }}
-                whileInView={{ opacity: 1, y: 0, rotate: 2 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="absolute top-[10%] right-0 w-[50%] z-10 shadow-2xl"
-              >
-                <img src="/images/showcase-1.png" alt="Modern showroom" className="w-full h-auto rounded-lg" loading="eager" />
-              </motion.div>
+            {/* Image 4 - Bottom Right - Measuring */}
+            <motion.div
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              className="absolute bottom-[-5%] right-[15%] w-[50%] lg:w-[45%] z-20"
+            >
+              <img
+                src="/images/showcase-4.png"
+                alt="Precision measurement"
+                className="w-full h-auto rounded-lg shadow-2xl grayscale"
+                loading="eager"
+              />
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30, rotate: -1 }}
-                whileInView={{ opacity: 1, y: 0, rotate: -1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                className="absolute bottom-[5%] left-[10%] w-[40%] z-30 shadow-2xl"
-              >
-                <img src="/images/showcase-2.png" alt="Modern living room" className="w-full h-auto rounded-lg" loading="eager" />
-              </motion.div>
+            {/* Center Text Block */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] lg:w-[32%] bg-amber-800/50 backdrop-blur-sm p-6 lg:p-10 z-40 shadow-2xl"
+            >
+              <h2 className="font-display text-2xl lg:text-3xl font-medium text-white mb-3 leading-tight">
+                <span className="italic">In-House Design.</span>
+                <br />
+                World-Class Quality
+              </h2>
+              <p className="text-amber-100/90 text-sm lg:text-base leading-relaxed">
+                At Paralight Group, we bridge the gap between technical
+                innovation and manufacturing excellence. By designing and
+                producing our own products in-house, we deliver high-performance
+                lighting solutions built with meticulous precision.
+              </p>
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30, rotate: 3 }}
-                whileInView={{ opacity: 1, y: 0, rotate: 3 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="absolute bottom-0 right-[5%] w-[50%] z-20 shadow-2xl"
+            {/* Decorative star */}
+            <div className="absolute bottom-6 right-6 text-amber-500/70">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
               >
-                <img src="/images/showcase-4.png" alt="Precision measurement" className="w-full h-auto rounded-lg" loading="eager" />
-              </motion.div>
+                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
+              </svg>
             </div>
           </div>
         </div>
