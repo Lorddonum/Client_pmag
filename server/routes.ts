@@ -9,10 +9,11 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   
-  // Get all products
+  // Get all products (with caching)
   app.get("/api/products", async (req, res) => {
     try {
       const products = await storage.getProducts();
+      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       res.json(products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -20,7 +21,7 @@ export async function registerRoutes(
     }
   });
 
-  // Get single product
+  // Get single product (with caching)
   app.get("/api/products/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -28,6 +29,7 @@ export async function registerRoutes(
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
+      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       res.json(product);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch product" });

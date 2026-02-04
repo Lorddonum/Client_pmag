@@ -126,10 +126,9 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       if (!params?.id) return;
       try {
-        const timestamp = Date.now();
         const [productRes, allProductsRes] = await Promise.all([
-          fetch(`/api/products/${params.id}?t=${timestamp}`),
-          fetch(`/api/products?t=${timestamp}`)
+          fetch(`/api/products/${params.id}`),
+          fetch(`/api/products`)
         ]);
         
         if (productRes.ok) {
