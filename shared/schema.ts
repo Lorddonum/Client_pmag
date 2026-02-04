@@ -53,6 +53,7 @@ export const products = pgTable("products", {
   inputVoltage: text("input_voltage"),
   outputVoltage: text("output_voltage"),
   wallThickness: text("wall_thickness"),
+  cutOutSize: text("cut_out_size"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
 });

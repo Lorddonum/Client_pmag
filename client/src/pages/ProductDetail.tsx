@@ -300,6 +300,7 @@ export default function ProductDetail() {
       // Maglinear-specific specs
       ...(product.brand === "Maglinear" ? [
         { label: "Mounting Track", value: product.mountingTrack },
+        { label: "Cut Out Size", value: product.cutOutSize },
       ] : [])
     ].filter((spec) => spec.value && spec.value.trim() !== "");
   }, [product]);
@@ -308,7 +309,7 @@ export default function ProductDetail() {
   const additionalSpecRows = useMemo(() => {
     if (!product?.technicalSpecs) return [];
     try {
-      return JSON.parse(product.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; wallThickness?: string }>;
+      return JSON.parse(product.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; wallThickness?: string; cutOutSize?: string }>;
     } catch {
       return [];
     }
@@ -333,6 +334,7 @@ export default function ProductDetail() {
       { label: "LED Strip Size", value: row.ledStripSize },
       { label: "Installation Method", value: row.installationMethod },
       { label: "Wall Thickness", value: row.wallThickness },
+      { label: "Cut Out Size", value: row.cutOutSize },
     ].filter((spec) => spec.value && spec.value.trim() !== "");
     
     // Always include Model as the first column, use main model if not specified

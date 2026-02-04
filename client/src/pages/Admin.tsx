@@ -109,6 +109,7 @@ export default function Admin() {
     inputVoltage: "",
     outputVoltage: "",
     wallThickness: "",
+    cutOutSize: "",
     technicalSpecs: ""
   });
 
@@ -326,6 +327,7 @@ export default function Admin() {
       inputVoltage: "",
       outputVoltage: "",
       wallThickness: "",
+      cutOutSize: "",
       technicalSpecs: ""
     });
   };
@@ -371,6 +373,7 @@ export default function Admin() {
       inputVoltage: product.inputVoltage || "",
       outputVoltage: product.outputVoltage || "",
       wallThickness: product.wallThickness || "",
+      cutOutSize: product.cutOutSize || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -417,6 +420,7 @@ export default function Admin() {
       inputVoltage: product.inputVoltage || "",
       outputVoltage: product.outputVoltage || "",
       wallThickness: product.wallThickness || "",
+      cutOutSize: product.cutOutSize || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1006,6 +1010,10 @@ export default function Admin() {
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
                             <input type="text" value={formData.wallThickness} onChange={e => setFormData({...formData, wallThickness: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
                           </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
+                            <input type="text" value={formData.cutOutSize} onChange={e => setFormData({...formData, cutOutSize: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
+                          </div>
                         </>
                       )}
                     </div>
@@ -1014,7 +1022,7 @@ export default function Admin() {
 
                   {/* Additional Specification Rows */}
                   {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string }, rowIndex: number) => (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string }, rowIndex: number) => (
                       <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
@@ -1177,6 +1185,14 @@ export default function Admin() {
                                   setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
                               </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
+                                <input type="text" value={specRow.cutOutSize || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].cutOutSize = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
+                              </div>
                             </>
                           )}
                           {/* Paralight-specific fields in additional rows */}
@@ -1227,7 +1243,7 @@ export default function Admin() {
                       type="button"
                       onClick={() => {
                         const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
-                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '' };
+                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '' };
                         setFormData({...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow])});
                       }}
                       className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
