@@ -19,14 +19,14 @@ export default function ProjectGallery() {
 
   return (
     <section className="h-full overflow-hidden relative flex flex-col">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bottom-[243px]">
         <img
-          src="/gallery/hero-villa.jpg"
+          src="/gallery/hero-villa-cropped.jpg"
           alt="Modern architectural lighting"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/90 via-[#0a1628]/50 to-[#0a1628]/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-[#0a1628]/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/40 via-transparent to-transparent" />
       </div>
 
       <div className="relative z-10 p-8 lg:p-12 lg:pt-16">
