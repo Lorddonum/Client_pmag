@@ -47,7 +47,7 @@ export default function ProjectGallery() {
         </motion.div>
       </div>
 
-      <div className="relative z-10 flex items-end h-[200px] px-4 lg:px-8 pb-4 mt-auto">
+      <div className="relative z-10 flex items-end h-[280px] px-4 lg:px-8 pb-4 mt-auto">
         {applicationCategories.map((category, index) => {
           const isHovered = hoveredIndex === index;
           const isAnyHovered = hoveredIndex !== null;
@@ -66,7 +66,7 @@ export default function ProjectGallery() {
               initial={{ flex: 1, height: 160 }}
               animate={{
                 flex: isHovered ? 4 : isAnyHovered ? 0.5 : 1,
-                height: isHovered ? 200 : 160,
+                height: isHovered ? 280 : 160,
               }}
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               onMouseEnter={() => setHoveredIndex(index)}
