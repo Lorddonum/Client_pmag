@@ -288,96 +288,104 @@ export default function ProductDetail() {
           }}
         />
         
-        {/* Decorative geometric shapes - animated */}
+        {/* Decorative geometric shapes - animated and more visible */}
         <div 
-          className="absolute top-48 left-12 w-24 h-24 border-2 opacity-[0.12]"
+          className="absolute top-48 left-8 w-32 h-32 border-[3px] rounded-sm"
           style={{ 
             borderColor: brandColor,
-            animation: 'floatRotate1 20s ease-in-out infinite'
+            opacity: 0.25,
+            animation: 'floatRotate1 15s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute top-[500px] right-24 w-40 h-40 border-2 opacity-[0.10]"
+          className="absolute top-[400px] right-16 w-48 h-48 border-[3px] rounded-sm"
           style={{ 
             borderColor: brandColor,
-            animation: 'floatRotate2 25s ease-in-out infinite'
+            opacity: 0.20,
+            animation: 'floatRotate2 20s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute bottom-96 left-1/4 w-20 h-20 border-2 opacity-[0.08]"
+          className="absolute bottom-[600px] left-[15%] w-28 h-28 border-[3px] rounded-sm"
           style={{ 
             borderColor: brandColor,
-            animation: 'floatRotate3 18s ease-in-out infinite'
+            opacity: 0.18,
+            animation: 'floatRotate3 12s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute top-[800px] left-20 w-16 h-16 border opacity-[0.10]"
+          className="absolute top-[650px] left-12 w-20 h-20 border-2 rounded-sm"
           style={{ 
             borderColor: brandColor,
-            animation: 'floatRotate4 22s ease-in-out infinite'
+            opacity: 0.22,
+            animation: 'floatRotate4 18s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute bottom-40 right-1/3 w-12 h-12 border opacity-[0.08]"
+          className="absolute bottom-[300px] right-[20%] w-24 h-24 border-2 rounded-sm"
           style={{ 
             borderColor: brandColor,
-            animation: 'floatRotate5 16s ease-in-out infinite'
+            opacity: 0.15,
+            animation: 'floatRotate5 14s ease-in-out infinite'
           }}
         />
         
-        {/* Accent lines - animated */}
+        {/* Accent lines - animated and more visible */}
         <div 
-          className="absolute top-[300px] left-0 w-32 h-[2px] opacity-20"
+          className="absolute top-[280px] left-0 w-48 h-[3px] rounded-r-full"
           style={{ 
             background: `linear-gradient(90deg, ${brandColor}, transparent)`,
-            animation: 'slideRight 8s ease-in-out infinite'
+            opacity: 0.4,
+            animation: 'slideRight 6s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute top-[600px] right-0 w-48 h-[2px] opacity-20"
+          className="absolute top-[550px] right-0 w-64 h-[3px] rounded-l-full"
           style={{ 
             background: `linear-gradient(270deg, ${brandColor}, transparent)`,
-            animation: 'slideLeft 10s ease-in-out infinite'
+            opacity: 0.35,
+            animation: 'slideLeft 8s ease-in-out infinite'
           }}
         />
         <div 
-          className="absolute bottom-[400px] left-0 w-24 h-[2px] opacity-15"
+          className="absolute bottom-[500px] left-0 w-40 h-[3px] rounded-r-full"
           style={{ 
             background: `linear-gradient(90deg, ${brandColor}, transparent)`,
-            animation: 'slideRight 7s ease-in-out infinite'
+            opacity: 0.3,
+            animation: 'slideRight 5s ease-in-out infinite'
           }}
         />
         
         {/* Animation keyframes */}
         <style>{`
           @keyframes floatRotate1 {
-            0%, 100% { transform: rotate(45deg) translateY(0px); }
-            50% { transform: rotate(55deg) translateY(-20px); }
+            0%, 100% { transform: rotate(45deg) translateY(0px) translateX(0px); }
+            50% { transform: rotate(60deg) translateY(-30px) translateX(10px); }
           }
           @keyframes floatRotate2 {
-            0%, 100% { transform: rotate(12deg) translateY(0px) translateX(0px); }
-            33% { transform: rotate(20deg) translateY(-15px) translateX(10px); }
-            66% { transform: rotate(5deg) translateY(10px) translateX(-5px); }
+            0%, 100% { transform: rotate(15deg) translateY(0px) translateX(0px); }
+            33% { transform: rotate(25deg) translateY(-25px) translateX(15px); }
+            66% { transform: rotate(5deg) translateY(15px) translateX(-10px); }
           }
           @keyframes floatRotate3 {
-            0%, 100% { transform: rotate(-12deg) translateY(0px); }
-            50% { transform: rotate(-20deg) translateY(15px); }
+            0%, 100% { transform: rotate(-15deg) translateY(0px); }
+            50% { transform: rotate(-30deg) translateY(25px); }
           }
           @keyframes floatRotate4 {
-            0%, 100% { transform: rotate(30deg) translateX(0px); }
-            50% { transform: rotate(40deg) translateX(15px); }
+            0%, 100% { transform: rotate(30deg) translateX(0px) translateY(0px); }
+            50% { transform: rotate(50deg) translateX(20px) translateY(-15px); }
           }
           @keyframes floatRotate5 {
             0%, 100% { transform: rotate(-20deg) scale(1); }
-            50% { transform: rotate(-10deg) scale(1.1); }
+            50% { transform: rotate(-5deg) scale(1.15); }
           }
           @keyframes slideRight {
-            0%, 100% { transform: translateX(0); opacity: 0.2; }
-            50% { transform: translateX(20px); opacity: 0.35; }
+            0%, 100% { transform: translateX(0); width: 3rem; }
+            50% { transform: translateX(30px); width: 5rem; }
           }
           @keyframes slideLeft {
-            0%, 100% { transform: translateX(0); opacity: 0.2; }
-            50% { transform: translateX(-20px); opacity: 0.35; }
+            0%, 100% { transform: translateX(0); width: 4rem; }
+            50% { transform: translateX(-30px); width: 6rem; }
           }
         `}</style>
         
