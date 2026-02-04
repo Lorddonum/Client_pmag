@@ -271,29 +271,40 @@ export default function Products() {
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-block bg-gray-900/50 rounded-2xl px-10 py-8 border border-white/10">
+            <div className="inline-block bg-[#f5f2ed]/90 rounded-2xl px-10 py-8 border border-white/20 shadow-xl">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-6"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/10 border border-gray-900/10 mb-6"
               >
                 <Sparkles className="w-3.5 h-3.5 text-brand-cyan" />
-                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/80">
+                <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-600">
                   Product Catalog
                 </span>
               </motion.div>
               
-              <h1 className="font-display text-4xl md:text-6xl text-white font-medium mb-5">
+              <h1 className="font-display text-4xl md:text-6xl text-gray-900 font-medium mb-5">
                 {activeBrand === "All" ? (
-                  <>Explore Our <span className="italic font-normal text-brand-cyan">Collection</span></>
+                  <>Explore Our <motion.span 
+                    className="italic font-normal"
+                    animate={{ 
+                      color: hoveredBrand === "Paralight" 
+                        ? "#00A8E8" 
+                        : hoveredBrand === "Maglinear" 
+                          ? "#ECAA00" 
+                          : "#ffffff"
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.1)" }}
+                  >Collection</motion.span></>
                 ) : activeBrand === "Paralight" ? (
                   <>Paralight <span className="italic font-normal text-brand-cyan">Profiles</span></>
                 ) : (
                   <>Maglinear <span className="italic font-normal text-brand-gold">Lighting</span></>
                 )}
               </h1>
-              <p className="text-white/70 text-lg max-w-xl mx-auto">
+              <p className="text-gray-600 text-lg max-w-xl mx-auto">
                 {getPageSubtitle()}
               </p>
             </div>
