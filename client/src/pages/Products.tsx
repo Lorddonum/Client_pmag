@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, Sparkles } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, Sparkles, ArrowLeft, FileText } from "lucide-react";
+import { useLocation } from "wouter";
+import controlIntegrationImg from "@/assets/control-integration.png";
 
 interface Product {
   id: number;
@@ -14,6 +15,9 @@ interface Product {
   subSeries?: string[] | null;
   brand: string;
   category: string;
+  application?: string | null;
+  finish?: string | null;
+  material?: string | null;
   wattage: string | null;
   dimensions: string | null;
   voltage: string | null;
@@ -22,7 +26,20 @@ interface Product {
   cct: string | null;
   beamAngle: string | null;
   image?: string | null;
+  images?: string[] | null;
   catalogueUrl?: string | null;
+  technicalDrawingUrl?: string | null;
+  technicalDrawings?: string[] | null;
+  standardLength?: string | null;
+  diffuserFinish?: string | null;
+  diffuserMaterial?: string | null;
+  accessories?: string | null;
+  ledStripSize?: string | null;
+  installationMethod?: string | null;
+  mountingTrack?: string | null;
+  cutOutSize?: string | null;
+  technicalSpecs?: string | null;
+  accessoriesSpec?: string | null;
 }
 
 export default function Products() {
@@ -36,7 +53,10 @@ export default function Products() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -155,13 +175,93 @@ export default function Products() {
 
   const handleSuggestionClick = (suggestion: typeof suggestions[0]) => {
     if (suggestion.type === 'product' && suggestion.id) {
-      setLocation(`/products/${suggestion.id}`);
+      const product = products.find(p => p.id === suggestion.id);
+      if (product) {
+        setSelectedProduct(product);
+        setSelectedImageIndex(0);
+      }
     } else if (suggestion.type === 'series') {
       setActiveSeries(suggestion.label);
       setSearchQuery('');
     }
     setShowSuggestions(false);
   };
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setSelectedImageIndex(0);
+    setTimeout(() => {
+      detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleBackToGrid = () => {
+    setSelectedProduct(null);
+    setSelectedImageIndex(0);
+  };
+
+  // Calculate specs for selected product
+  const specs = useMemo(() => {
+    if (!selectedProduct) return [];
+    return [
+      { label: "Model", value: selectedProduct.modelNumber },
+      { label: "Wattage", value: selectedProduct.wattage },
+      { label: "Application", value: selectedProduct.application },
+      { label: "Material", value: selectedProduct.material },
+      { label: "Finish", value: selectedProduct.finish },
+      { label: "Dimensions", value: selectedProduct.dimensions },
+      { label: "Voltage", value: selectedProduct.voltage },
+      { label: "Color", value: selectedProduct.color },
+      { label: "CRI", value: selectedProduct.cri },
+      { label: "CCT", value: selectedProduct.cct },
+      { label: "Beam Angle", value: selectedProduct.beamAngle },
+      ...(selectedProduct.brand === "Paralight" ? [
+        { label: "Sub Series", value: (selectedProduct.subSeries || []).join(", ") || null },
+        { label: "Standard Length", value: selectedProduct.standardLength },
+        { label: "Diffuser Finish", value: selectedProduct.diffuserFinish },
+        { label: "Diffuser Material", value: selectedProduct.diffuserMaterial },
+        { label: "Accessories", value: selectedProduct.accessories },
+        { label: "LED Strip Size", value: selectedProduct.ledStripSize },
+        { label: "Installation Method", value: selectedProduct.installationMethod },
+      ] : []),
+      ...(selectedProduct.brand === "Maglinear" ? [
+        { label: "Mounting Track", value: selectedProduct.mountingTrack },
+        { label: "Cut Out Size", value: selectedProduct.cutOutSize },
+      ] : [])
+    ].filter((spec) => spec.value && spec.value.trim() !== "");
+  }, [selectedProduct]);
+
+  const additionalSpecRows = useMemo(() => {
+    if (!selectedProduct?.technicalSpecs) return [];
+    try {
+      return JSON.parse(selectedProduct.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; cutOutSize?: string }>;
+    } catch {
+      return [];
+    }
+  }, [selectedProduct?.technicalSpecs]);
+
+  const getAdditionalRowSpecs = useCallback((row: typeof additionalSpecRows[0], mainModelNumber: string) => {
+    const otherSpecs = [
+      { label: "Wattage", value: row.wattage },
+      { label: "Application", value: row.application },
+      { label: "Finish", value: row.finish },
+      { label: "Material", value: row.material },
+      { label: "Dimensions", value: row.dimensions },
+      { label: "Voltage", value: row.voltage },
+      { label: "Color", value: row.color },
+      { label: "CRI", value: row.cri },
+      { label: "CCT", value: row.cct },
+      { label: "Beam Angle", value: row.beamAngle },
+      { label: "Mounting Track", value: row.mountingTrack },
+      { label: "Cut Out Size", value: row.cutOutSize },
+    ].filter((spec) => spec.value && spec.value.trim() !== "");
+    return [
+      { label: "Model", value: row.model?.trim() || mainModelNumber },
+      ...otherSpecs
+    ];
+  }, []);
+
+  const brandColor = selectedProduct?.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return;
@@ -518,69 +618,333 @@ export default function Products() {
               </motion.div>
             </aside>
 
-            {/* Product grid */}
-            <div className="flex-1">
-              {/* Results header */}
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-sm text-gray-500">
-                  <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
-                </p>
-                
-                {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery) && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {activeSeries !== "All" && (
-                      <button 
-                        onClick={() => setActiveSeries("All")}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
-                      >
-                        {activeSeries}
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                    {activeSubSeries !== "All" && (
-                      <button 
-                        onClick={() => setActiveSubSeries("All")}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
-                      >
-                        {activeSubSeries}
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                    {searchQuery && (
-                      <button 
-                        onClick={() => setSearchQuery("")}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
-                      >
-                        "{searchQuery}"
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+            {/* Product grid or detail view */}
+            <div className="flex-1" ref={detailRef}>
+              <AnimatePresence mode="wait">
+                {selectedProduct ? (
+                  /* Inline Product Detail View */
+                  <motion.div
+                    key="detail"
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    {/* Back button */}
+                    <motion.button
+                      onClick={handleBackToGrid}
+                      className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-900 transition-colors group mb-6"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                      Back to Catalog
+                    </motion.button>
 
-              {isLoading ? (
-                <div className="flex justify-center py-40">
-                  <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-brand-cyan" />
-                    <p className="text-sm text-gray-400">Loading products...</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                  <AnimatePresence mode="popLayout">
-                    {filteredProducts.map((product, index) => (
-                      <motion.div 
-                        key={product.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.3, delay: Math.min(index * 0.02, 0.3) }}
-                        className="group"
-                        data-testid={`product-card-${product.id}`}
+                    {/* Product header */}
+                    <motion.div 
+                      className="flex items-center gap-3 mb-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 }}
+                    >
+                      <span
+                        className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase text-white rounded"
+                        style={{ backgroundColor: brandColor }}
                       >
-                        <Link href={`/products/${product.id}`}>
+                        {selectedProduct.brand}
+                      </span>
+                      {(selectedProduct.series || []).map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="bg-gray-900 text-white px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase rounded"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </motion.div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                      {/* Left column - Images */}
+                      <motion.div 
+                        className="space-y-6"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <div>
+                          <h1 className="font-display text-3xl md:text-4xl text-gray-900 font-medium mb-2">
+                            {selectedProduct.name}
+                          </h1>
+                          <p className="text-sm text-gray-400 tracking-wide">
+                            {selectedProduct.modelNumber}
+                          </p>
+                        </div>
+
+                        {/* Main image */}
+                        {(() => {
+                          const allImages = [
+                            selectedProduct.image,
+                            ...(selectedProduct.images || [])
+                          ].filter(Boolean) as string[];
+                          const currentImage = allImages[selectedImageIndex] || selectedProduct.image;
+
+                          return (
+                            <>
+                              <div className="aspect-square max-w-md mx-auto bg-white border border-gray-100 relative overflow-hidden rounded-2xl shadow-lg">
+                                <div className="w-full h-full flex items-center justify-center p-8">
+                                  {currentImage ? (
+                                    <img
+                                      src={currentImage}
+                                      alt={selectedProduct.name}
+                                      className="max-w-full max-h-full object-contain"
+                                    />
+                                  ) : (
+                                    <Package className="w-24 h-24 text-gray-200" />
+                                  )}
+                                </div>
+                              </div>
+
+                              {allImages.length > 1 && (
+                                <div className="flex gap-2 overflow-x-auto pb-2">
+                                  {allImages.map((img, index) => (
+                                    <button
+                                      key={index}
+                                      onClick={() => setSelectedImageIndex(index)}
+                                      className={`flex-shrink-0 w-16 h-16 border-2 rounded overflow-hidden transition-all ${
+                                        selectedImageIndex === index 
+                                          ? 'border-gray-900' 
+                                          : 'border-gray-200 hover:border-gray-400'
+                                      }`}
+                                    >
+                                      <img 
+                                        src={img} 
+                                        alt={`${selectedProduct.name} ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+
+                        {/* Description */}
+                        <div className="pt-4">
+                          <p className="text-gray-600 leading-relaxed text-sm mb-6">
+                            {selectedProduct.description}
+                          </p>
+                          <a
+                            href={selectedProduct.catalogueUrl || undefined}
+                            download={`${selectedProduct.name}-Catalogue.pdf`}
+                            className={`inline-flex items-center gap-3 text-xs uppercase tracking-widest transition-all ${
+                              !selectedProduct.catalogueUrl
+                                ? "text-gray-300 cursor-not-allowed"
+                                : "text-gray-500 hover:text-gray-900"
+                            }`}
+                            onClick={(e) => !selectedProduct.catalogueUrl && e.preventDefault()}
+                          >
+                            <FileText className="w-4 h-4" />
+                            {selectedProduct.catalogueUrl
+                              ? "Download Catalogue"
+                              : "Catalogue Not Available"}
+                          </a>
+                        </div>
+                      </motion.div>
+
+                      {/* Right column - Specs */}
+                      <motion.div 
+                        className="space-y-8"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        {selectedProduct.brand !== "Paralight" && (
+                          <div className="bg-gray-50 border border-gray-100 p-6 rounded-xl">
+                            <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-4 text-center">
+                              Control Integration
+                            </h3>
+                            <img 
+                              src={controlIntegrationImg} 
+                              alt="Control Integration" 
+                              className="w-full max-w-xl mx-auto object-contain"
+                            />
+                          </div>
+                        )}
+
+                        {/* Technical Specifications */}
+                        <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                          <div 
+                            className="p-4 border-b"
+                            style={{ borderColor: `${brandColor}20`, background: `linear-gradient(135deg, ${brandColor}08 0%, transparent 100%)` }}
+                          >
+                            <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-600 font-bold text-center">
+                              Technical Specifications
+                            </h3>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+                            {specs.map((spec, i) => (
+                              <div
+                                key={spec.label}
+                                className={`p-4 ${i < specs.length - (specs.length % 4 || 4) ? "border-b" : ""} ${(i + 1) % 4 !== 0 ? "border-r" : ""} border-gray-100`}
+                              >
+                                <p className="text-[9px] uppercase tracking-widest text-gray-400 mb-1">
+                                  {spec.label}
+                                </p>
+                                <p className="text-xs font-medium text-gray-900 break-words">
+                                  {spec.value}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Additional Specification Rows */}
+                          {additionalSpecRows.map((row, rowIndex) => {
+                            const rowSpecs = getAdditionalRowSpecs(row, selectedProduct.modelNumber);
+                            if (rowSpecs.length === 0) return null;
+                            return (
+                              <div key={rowIndex} className="border-t border-gray-100">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+                                  {rowSpecs.map((spec, i) => (
+                                    <div
+                                      key={`${rowIndex}-${spec.label}`}
+                                      className={`p-4 ${i < rowSpecs.length - (rowSpecs.length % 4 || 4) ? "border-b" : ""} ${(i + 1) % 4 !== 0 ? "border-r" : ""} border-gray-100`}
+                                    >
+                                      <p className="text-[9px] uppercase tracking-widest text-gray-400 mb-1">
+                                        {spec.label}
+                                      </p>
+                                      <p className="text-xs font-medium text-gray-900 break-words">
+                                        {spec.value}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Technical Drawing */}
+                        <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                          <div 
+                            className="p-4 border-b"
+                            style={{ borderColor: `${brandColor}20`, background: `linear-gradient(135deg, ${brandColor}08 0%, transparent 100%)` }}
+                          >
+                            <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-600 font-bold text-center">
+                              Technical Drawing
+                            </h3>
+                          </div>
+                          <div className="p-4 bg-gradient-to-br from-gray-50 to-white">
+                            {(() => {
+                              const allDrawings = [
+                                selectedProduct.technicalDrawingUrl,
+                                ...(selectedProduct.technicalDrawings || [])
+                              ].filter(Boolean) as string[];
+
+                              if (allDrawings.length === 0) {
+                                return (
+                                  <div className="flex items-center justify-center h-32">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                                      Technical drawing available upon request
+                                    </p>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <div className={`grid gap-3 ${allDrawings.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                                  {allDrawings.map((drawing, index) => (
+                                    <div 
+                                      key={index}
+                                      className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2"
+                                    >
+                                      <img
+                                        src={drawing}
+                                        alt={`Technical Drawing ${index + 1}`}
+                                        className="max-w-full max-h-full object-contain"
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  /* Product Grid View */
+                  <motion.div
+                    key="grid"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Results header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <p className="text-sm text-gray-500">
+                        <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
+                      </p>
+                      
+                      {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery) && (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {activeSeries !== "All" && (
+                            <button 
+                              onClick={() => setActiveSeries("All")}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                              {activeSeries}
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                          {activeSubSeries !== "All" && (
+                            <button 
+                              onClick={() => setActiveSubSeries("All")}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                              {activeSubSeries}
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                          {searchQuery && (
+                            <button 
+                              onClick={() => setSearchQuery("")}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
+                            >
+                              "{searchQuery}"
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {isLoading ? (
+                      <div className="flex justify-center py-40">
+                        <div className="flex flex-col items-center gap-4">
+                          <Loader2 className="w-8 h-8 animate-spin text-brand-cyan" />
+                          <p className="text-sm text-gray-400">Loading products...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <AnimatePresence mode="popLayout">
+                          {filteredProducts.map((product, index) => (
+                            <motion.div 
+                              key={product.id}
+                              layout
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.3, delay: Math.min(index * 0.02, 0.3) }}
+                              className="group"
+                              data-testid={`product-card-${product.id}`}
+                              onClick={() => handleProductClick(product)}
+                            >
                           <motion.div 
                             whileHover={{ y: -8 }}
                             transition={{ duration: 0.3 }}
@@ -654,30 +1018,31 @@ export default function Products() {
                               </div>
                             </div>
                           </motion.div>
-                        </Link>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                    {filteredProducts.length === 0 && !isLoading && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="col-span-full text-center py-24 bg-white rounded-2xl border border-gray-100 shadow-sm"
+                      >
+                        <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                          <Package className="w-8 h-8 text-gray-300" />
+                        </div>
+                        <p className="text-sm text-gray-500 font-medium">No products found</p>
+                        <p className="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
                       </motion.div>
-                    ))}
-                  </AnimatePresence>
-                  {filteredProducts.length === 0 && !isLoading && (
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="col-span-full text-center py-24 bg-white rounded-2xl border border-gray-100 shadow-sm"
-                    >
-                      <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
-                        <Package className="w-8 h-8 text-gray-300" />
-                      </div>
-                      <p className="text-sm text-gray-500 font-medium">No products found</p>
-                      <p className="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
-                    </motion.div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </main>
-      <Footer />
+      </div>
     </div>
-  );
+  <Footer />
+</div>
+);
 }
