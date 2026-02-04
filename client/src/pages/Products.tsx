@@ -210,7 +210,7 @@ export default function Products() {
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <motion.img
-                src="/attached_assets/image_1770192888904.png"
+                src="/paralight-hero.png"
                 alt="Paralight Aluminum Profiles"
                 className="absolute inset-0 w-full h-full object-cover"
                 animate={{ 
@@ -237,7 +237,7 @@ export default function Products() {
               transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <motion.img
-                src="/attached_assets/image_1770193231637.png"
+                src="/maglinear-hero.png"
                 alt="Maglinear Track Lighting"
                 className="absolute inset-0 w-full h-full object-cover"
                 animate={{ 
