@@ -521,12 +521,22 @@ export default function ProductDetail() {
 
               {/* Packaging Method - Paralight Only */}
               {product.brand === "Paralight" && (
-                <div className="mt-6">
-                  <img 
-                    src="/packaging-method.png" 
-                    alt="Packaging Method"
-                    className="w-full max-w-2xl mx-auto"
-                  />
+                <div className="mt-6 bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
+                  <div 
+                    className="p-4 border-b"
+                    style={{ borderColor: `${brandColor}20`, background: `linear-gradient(135deg, ${brandColor}08 0%, transparent 100%)` }}
+                  >
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-600 font-bold text-center">
+                      Packaging Method
+                    </h3>
+                  </div>
+                  <div className="p-4 bg-gradient-to-br from-gray-50 to-white">
+                    <img 
+                      src="/packaging-method.png" 
+                      alt="Packaging Method"
+                      className="w-full max-w-2xl mx-auto"
+                    />
+                  </div>
                 </div>
               )}
             </div>
