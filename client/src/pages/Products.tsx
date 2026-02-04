@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, Sparkles, ArrowLeft, FileText } from "lucide-react";
+import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, Sparkles, ArrowLeft, FileText, HelpCircle } from "lucide-react";
 import { useLocation } from "wouter";
 import controlIntegrationImg from "@/assets/control-integration.png";
 
@@ -62,6 +62,7 @@ export default function Products() {
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const [, setLocation] = useLocation();
@@ -507,150 +508,236 @@ export default function Products() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="sticky top-28"
               >
-                {/* Mobile filter toggle */}
-                <button 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden flex items-center gap-2 text-sm font-medium text-gray-700 mb-6 px-5 py-3.5 bg-white rounded-xl shadow-md border border-gray-100 w-full justify-center"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  {showFilters ? 'Hide Filters' : 'Show Filters'}
-                </button>
-
-                <div className={`bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden ${showFilters ? 'block' : 'hidden lg:block'}`}>
-                  {/* Search header */}
-                  <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800" ref={searchContainerRef}>
-                    <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                      <Search className="w-4 h-4 text-brand-cyan" />
-                      Find Products
-                    </h3>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search by name or model..."
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          setShowSuggestions(true);
-                          setHighlightedIndex(-1);
-                        }}
-                        onFocus={() => setShowSuggestions(true)}
-                        onKeyDown={handleKeyDown}
-                        data-testid="search-input"
-                        className="w-full px-4 py-3 text-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-brand-cyan transition-all"
-                      />
-                    </div>
-                    {showSuggestions && suggestions.length > 0 && (
-                      <div className="absolute left-0 right-0 mt-2 mx-6 bg-white border border-gray-100 shadow-2xl z-50 overflow-hidden rounded-xl">
-                        {suggestions.map((suggestion, index) => (
-                          <button
-                            key={`${suggestion.type}-${suggestion.label}-${index}`}
-                            onClick={() => handleSuggestionClick(suggestion)}
-                            className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${
-                              highlightedIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
-                            }`}
-                            data-testid={`suggestion-${index}`}
-                          >
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">{suggestion.label}</p>
-                              {suggestion.sublabel && (
-                                <p className="text-xs text-gray-400 truncate">{suggestion.sublabel}</p>
+                <AnimatePresence mode="wait">
+                  {selectedProduct ? (
+                    /* FAQ Section - shown when viewing product detail */
+                    <motion.div
+                      key="faq"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden"
+                    >
+                      <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800">
+                        <h3 className="text-white font-medium flex items-center gap-2">
+                          <HelpCircle className="w-4 h-4 text-brand-cyan" />
+                          Frequently Asked Questions
+                        </h3>
+                      </div>
+                      <div className="p-4 space-y-2">
+                        {[
+                          {
+                            question: "What is the minimum order quantity?",
+                            answer: "Our minimum order quantity varies by product. For aluminum profiles, the MOQ is typically 100 meters. For magnetic track lighting, the MOQ is 50 units. Please contact us for specific product requirements."
+                          },
+                          {
+                            question: "What are the lead times?",
+                            answer: "Standard lead times are 2-3 weeks for stock items and 4-6 weeks for custom orders. Rush orders may be available upon request with additional fees."
+                          },
+                          {
+                            question: "Do you offer custom lengths?",
+                            answer: "Yes, we offer custom cutting services for aluminum profiles. Please specify your required lengths when placing an order. Custom lengths may affect pricing and lead times."
+                          },
+                          {
+                            question: "What warranty do you provide?",
+                            answer: "All our products come with a 3-year manufacturer warranty covering defects in materials and workmanship. LED components are warranted for 50,000 hours of operation."
+                          },
+                          {
+                            question: "How can I request a sample?",
+                            answer: "Samples are available for evaluation. Please contact our sales team at inquiry@paralight.cc with your requirements. Sample costs may apply but are often credited towards bulk orders."
+                          },
+                          {
+                            question: "Do you ship internationally?",
+                            answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
+                          }
+                        ].map((faq, index) => (
+                          <div key={index} className="border border-gray-100 rounded-xl overflow-hidden">
+                            <button
+                              onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                              className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors"
+                              data-testid={`faq-${index}`}
+                            >
+                              <span className="text-sm font-medium text-gray-900">{faq.question}</span>
+                              <ChevronDown 
+                                className={`w-4 h-4 text-gray-400 transition-transform ${expandedFaq === index ? 'rotate-180' : ''}`}
+                              />
+                            </button>
+                            <AnimatePresence>
+                              {expandedFaq === index && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <p className="px-4 pb-4 text-sm text-gray-600 leading-relaxed">
+                                    {faq.answer}
+                                  </p>
+                                </motion.div>
                               )}
-                            </div>
-                            <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
-                          </button>
+                            </AnimatePresence>
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </div>
-
-                  {/* Series filter with nested sub-series */}
-                  <div className="p-6">
-                    <h3 className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-400 mb-4">Product Series</h3>
-                    <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
-                      {/* All Series */}
-                      <button
-                        onClick={() => { setActiveSeries("All"); setActiveSubSeries("All"); }}
-                        data-testid="filter-series-all"
-                        className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
-                          activeSeries === "All" 
-                            ? "bg-gray-900 text-white font-medium"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
+                    </motion.div>
+                  ) : (
+                    /* Filters Section - shown when viewing product grid */
+                    <motion.div
+                      key="filters"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {/* Mobile filter toggle */}
+                      <button 
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="lg:hidden flex items-center gap-2 text-sm font-medium text-gray-700 mb-6 px-5 py-3.5 bg-white rounded-xl shadow-md border border-gray-100 w-full justify-center"
                       >
-                        All Series
+                        <SlidersHorizontal className="w-4 h-4" />
+                        {showFilters ? 'Hide Filters' : 'Show Filters'}
                       </button>
-                      
-                      {/* Series with nested sub-series */}
-                      {seriesList.map(series => {
-                        const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
-                        const seriesSubSeries = Array.from(new Set(
-                          seriesProducts.flatMap(p => p.subSeries || []).filter((s): s is string => !!s)
-                        ));
-                        const hasCyan = seriesProducts.some(p => p.brand === "Paralight");
-                        const isSeriesActive = activeSeries === series;
-                        
-                        return (
-                          <div key={series}>
-                            {/* Series button */}
+
+                      <div className={`bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden ${showFilters ? 'block' : 'hidden lg:block'}`}>
+                        {/* Search header */}
+                        <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800" ref={searchContainerRef}>
+                          <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                            <Search className="w-4 h-4 text-brand-cyan" />
+                            Find Products
+                          </h3>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Search by name or model..."
+                              value={searchQuery}
+                              onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setShowSuggestions(true);
+                                setHighlightedIndex(-1);
+                              }}
+                              onFocus={() => setShowSuggestions(true)}
+                              onKeyDown={handleKeyDown}
+                              data-testid="search-input"
+                              className="w-full px-4 py-3 text-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-brand-cyan/50 focus:border-brand-cyan transition-all"
+                            />
+                          </div>
+                          {showSuggestions && suggestions.length > 0 && (
+                            <div className="absolute left-0 right-0 mt-2 mx-6 bg-white border border-gray-100 shadow-2xl z-50 overflow-hidden rounded-xl">
+                              {suggestions.map((suggestion, index) => (
+                                <button
+                                  key={`${suggestion.type}-${suggestion.label}-${index}`}
+                                  onClick={() => handleSuggestionClick(suggestion)}
+                                  className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${
+                                    highlightedIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                  }`}
+                                  data-testid={`suggestion-${index}`}
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 truncate">{suggestion.label}</p>
+                                    {suggestion.sublabel && (
+                                      <p className="text-xs text-gray-400 truncate">{suggestion.sublabel}</p>
+                                    )}
+                                  </div>
+                                  <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Series filter with nested sub-series */}
+                        <div className="p-6">
+                          <h3 className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-400 mb-4">Product Series</h3>
+                          <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                            {/* All Series */}
                             <button
-                              onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
-                              data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
-                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between ${
-                                isSeriesActive && activeSubSeries === "All"
-                                  ? hasCyan ? "bg-brand-cyan text-white font-medium" : "bg-brand-gold text-gray-900 font-medium"
-                                  : isSeriesActive 
-                                    ? hasCyan ? "bg-brand-cyan/10 text-brand-cyan font-medium" : "bg-brand-gold/10 text-brand-gold font-medium"
-                                    : "text-gray-600 hover:bg-gray-50"
+                              onClick={() => { setActiveSeries("All"); setActiveSubSeries("All"); }}
+                              data-testid="filter-series-all"
+                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
+                                activeSeries === "All" 
+                                  ? "bg-gray-900 text-white font-medium"
+                                  : "text-gray-600 hover:bg-gray-50"
                               }`}
                             >
-                              <span className="flex items-center gap-2">
-                                <span className={`w-1.5 h-1.5 rounded-full ${
-                                  isSeriesActive && activeSubSeries === "All" 
-                                    ? "bg-white" 
-                                    : hasCyan ? "bg-brand-cyan" : "bg-brand-gold"
-                                }`} />
-                                {series}
-                              </span>
-                              <span className={`text-xs ${
-                                isSeriesActive && activeSubSeries === "All" 
-                                  ? hasCyan ? "text-white/70" : "text-gray-900/50" 
-                                  : "text-gray-400"
-                              }`}>
-                                {seriesProducts.length}
-                              </span>
+                              All Series
                             </button>
                             
-                            {/* Nested sub-series (show when series is active and has sub-series) */}
-                            {isSeriesActive && seriesSubSeries.length > 0 && (
-                              <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-3">
-                                {seriesSubSeries.map(subSeriesItem => {
-                                  const subSeriesCount = seriesProducts.filter(p => (p.subSeries || []).includes(subSeriesItem)).length;
-                                  return (
-                                    <button
-                                      key={subSeriesItem}
-                                      onClick={() => setActiveSubSeries(subSeriesItem)}
-                                      data-testid={`filter-subseries-${subSeriesItem.toLowerCase().replace(/\s+/g, '-')}`}
-                                      className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
-                                        activeSubSeries === subSeriesItem 
-                                          ? "bg-gray-900 text-white font-medium"
-                                          : "text-gray-500 hover:bg-gray-50"
-                                      }`}
-                                    >
-                                      <span>{subSeriesItem}</span>
-                                      <span className={`text-xs ${activeSubSeries === subSeriesItem ? "text-white/70" : "text-gray-400"}`}>
-                                        {subSeriesCount}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            )}
+                            {/* Series with nested sub-series */}
+                            {seriesList.map(series => {
+                              const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
+                              const seriesSubSeries = Array.from(new Set(
+                                seriesProducts.flatMap(p => p.subSeries || []).filter((s): s is string => !!s)
+                              ));
+                              const hasCyan = seriesProducts.some(p => p.brand === "Paralight");
+                              const isSeriesActive = activeSeries === series;
+                              
+                              return (
+                                <div key={series}>
+                                  {/* Series button */}
+                                  <button
+                                    onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
+                                    data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
+                                    className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between ${
+                                      isSeriesActive && activeSubSeries === "All"
+                                        ? hasCyan ? "bg-brand-cyan text-white font-medium" : "bg-brand-gold text-gray-900 font-medium"
+                                        : isSeriesActive 
+                                          ? hasCyan ? "bg-brand-cyan/10 text-brand-cyan font-medium" : "bg-brand-gold/10 text-brand-gold font-medium"
+                                          : "text-gray-600 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <span className="flex items-center gap-2">
+                                      <span className={`w-1.5 h-1.5 rounded-full ${
+                                        isSeriesActive && activeSubSeries === "All" 
+                                          ? "bg-white" 
+                                          : hasCyan ? "bg-brand-cyan" : "bg-brand-gold"
+                                      }`} />
+                                      {series}
+                                    </span>
+                                    <span className={`text-xs ${
+                                      isSeriesActive && activeSubSeries === "All" 
+                                        ? hasCyan ? "text-white/70" : "text-gray-900/50" 
+                                        : "text-gray-400"
+                                    }`}>
+                                      {seriesProducts.length}
+                                    </span>
+                                  </button>
+                                  
+                                  {/* Nested sub-series (show when series is active and has sub-series) */}
+                                  {isSeriesActive && seriesSubSeries.length > 0 && (
+                                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-3">
+                                      {seriesSubSeries.map(subSeriesItem => {
+                                        const subSeriesCount = seriesProducts.filter(p => (p.subSeries || []).includes(subSeriesItem)).length;
+                                        return (
+                                          <button
+                                            key={subSeriesItem}
+                                            onClick={() => setActiveSubSeries(subSeriesItem)}
+                                            data-testid={`filter-subseries-${subSeriesItem.toLowerCase().replace(/\s+/g, '-')}`}
+                                            className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
+                                              activeSubSeries === subSeriesItem 
+                                                ? "bg-gray-900 text-white font-medium"
+                                                : "text-gray-500 hover:bg-gray-50"
+                                            }`}
+                                          >
+                                            <span>{subSeriesItem}</span>
+                                            <span className={`text-xs ${activeSubSeries === subSeriesItem ? "text-white/70" : "text-gray-400"}`}>
+                                              {subSeriesCount}
+                                            </span>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </aside>
 
