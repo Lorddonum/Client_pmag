@@ -197,62 +197,60 @@ export default function Products() {
       
       {/* Hero section */}
       <section className="pt-32 pb-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-        {/* Split image background for "All Products" view */}
-        {activeBrand === "All" && (
-          <div className="absolute inset-0 flex">
-            {/* Paralight image - left half */}
-            <motion.div 
-              className="relative overflow-hidden"
-              initial={{ flex: 1 }}
+        {/* Split image background */}
+        <div className="absolute inset-0 flex overflow-hidden">
+          {/* Paralight image - left half */}
+          <motion.div 
+            className="relative overflow-hidden"
+            initial={{ flex: 1 }}
+            animate={{ 
+              flex: activeBrand === "Paralight" ? 10 : activeBrand === "Maglinear" ? 0 : hoveredBrand === "Paralight" ? 1.3 : hoveredBrand === "Maglinear" ? 0.7 : 1 
+            }}
+            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <motion.img
+              src="/paralight-hero.png"
+              alt="Paralight Aluminum Profiles"
+              className="absolute inset-0 w-full h-full object-cover"
               animate={{ 
-                flex: hoveredBrand === "Paralight" ? 1.3 : hoveredBrand === "Maglinear" ? 0.7 : 1 
+                filter: activeBrand === "Maglinear" ? "brightness(0.3)" : activeBrand === "Paralight" ? "brightness(0.7)" : hoveredBrand === "Maglinear" ? "brightness(0.4)" : hoveredBrand === "Paralight" ? "brightness(0.8)" : "brightness(0.6)"
               }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <motion.img
-                src="/paralight-hero.png"
-                alt="Paralight Aluminum Profiles"
-                className="absolute inset-0 w-full h-full object-cover"
-                animate={{ 
-                  filter: hoveredBrand === "Maglinear" ? "brightness(0.4)" : hoveredBrand === "Paralight" ? "brightness(0.8)" : "brightness(0.6)"
-                }}
-                transition={{ duration: 0.5 }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-gray-900/60 to-transparent" />
-              <motion.div 
-                className="absolute inset-0 bg-brand-cyan/20"
-                animate={{ opacity: hoveredBrand === "Paralight" ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
-            
-            {/* Maglinear image - right half */}
+              transition={{ duration: 0.5 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-gray-900/60 to-transparent" />
             <motion.div 
-              className="relative overflow-hidden"
-              initial={{ flex: 1 }}
+              className="absolute inset-0 bg-brand-cyan/20"
+              animate={{ opacity: activeBrand === "Paralight" || hoveredBrand === "Paralight" ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+          
+          {/* Maglinear image - right half */}
+          <motion.div 
+            className="relative overflow-hidden"
+            initial={{ flex: 1 }}
+            animate={{ 
+              flex: activeBrand === "Maglinear" ? 10 : activeBrand === "Paralight" ? 0 : hoveredBrand === "Maglinear" ? 1.3 : hoveredBrand === "Paralight" ? 0.7 : 1 
+            }}
+            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <motion.img
+              src="/maglinear-hero.png"
+              alt="Maglinear Track Lighting"
+              className="absolute inset-0 w-full h-full object-cover"
               animate={{ 
-                flex: hoveredBrand === "Maglinear" ? 1.3 : hoveredBrand === "Paralight" ? 0.7 : 1 
+                filter: activeBrand === "Paralight" ? "brightness(0.3)" : activeBrand === "Maglinear" ? "brightness(0.7)" : hoveredBrand === "Paralight" ? "brightness(0.4)" : hoveredBrand === "Maglinear" ? "brightness(0.8)" : "brightness(0.6)"
               }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <motion.img
-                src="/maglinear-hero.png"
-                alt="Maglinear Track Lighting"
-                className="absolute inset-0 w-full h-full object-cover"
-                animate={{ 
-                  filter: hoveredBrand === "Paralight" ? "brightness(0.4)" : hoveredBrand === "Maglinear" ? "brightness(0.8)" : "brightness(0.6)"
-                }}
-                transition={{ duration: 0.5 }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-l from-gray-900/80 via-gray-900/60 to-transparent" />
-              <motion.div 
-                className="absolute inset-0 bg-brand-gold/20"
-                animate={{ opacity: hoveredBrand === "Maglinear" ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
-          </div>
-        )}
+              transition={{ duration: 0.5 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-l from-gray-900/80 via-gray-900/60 to-transparent" />
+            <motion.div 
+              className="absolute inset-0 bg-brand-gold/20"
+              animate={{ opacity: activeBrand === "Maglinear" || hoveredBrand === "Maglinear" ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.div>
+        </div>
         
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
