@@ -275,16 +275,16 @@ export default function Products() {
               </span>
             </motion.div>
             
-            <h1 className="font-display text-4xl md:text-6xl text-white font-medium mb-5">
+            <h1 className="font-display text-4xl md:text-6xl text-white font-medium mb-5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
               {activeBrand === "All" ? (
                 <>Explore Our <span className="italic font-normal text-brand-cyan">Collection</span></>
               ) : activeBrand === "Paralight" ? (
                 <>Paralight <span className="italic font-normal text-brand-cyan">Profiles</span></>
               ) : (
-                <>Maglinear <span className="italic font-normal text-brand-gold">Track</span></>
+                <>Maglinear <span className="italic font-normal text-brand-gold">Lighting</span></>
               )}
             </h1>
-            <p className="text-white/50 text-lg max-w-xl mx-auto">
+            <p className="text-white/70 text-lg max-w-xl mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">
               {getPageSubtitle()}
             </p>
             
