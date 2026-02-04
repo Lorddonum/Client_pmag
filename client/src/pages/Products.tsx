@@ -199,10 +199,20 @@ export default function Products() {
       <section className="pt-32 pb-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
         {/* Split image background */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Paralight image - base layer (left half in split, full when active) */}
+          {/* Paralight image */}
           <motion.div 
             className="absolute inset-0 w-full h-full"
-            style={{ clipPath: activeBrand === "All" ? "inset(0 50% 0 0)" : "none" }}
+            animate={{ 
+              clipPath: activeBrand === "All" 
+                ? "inset(0 50% 0 0)" 
+                : activeBrand === "Paralight" 
+                  ? "inset(0 0% 0 0)" 
+                  : "inset(0 100% 0 0)"
+            }}
+            transition={{ 
+              duration: 0.6, 
+              ease: [0.4, 0, 0.2, 1]
+            }}
           >
             <img
               src="/paralight-hero.png"
@@ -212,14 +222,20 @@ export default function Products() {
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-transparent to-gray-900/60" />
           </motion.div>
           
-          {/* Maglinear image - sliding overlay */}
+          {/* Maglinear image */}
           <motion.div 
             className="absolute inset-0 w-full h-full"
             animate={{ 
-              x: activeBrand === "Paralight" ? "100%" : "0%"
+              clipPath: activeBrand === "All" 
+                ? "inset(0 0 0 50%)" 
+                : activeBrand === "Maglinear" 
+                  ? "inset(0 0 0 0%)" 
+                  : "inset(0 0 0 100%)"
             }}
-            style={{ clipPath: activeBrand === "All" ? "inset(0 0 0 50%)" : "none" }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ 
+              duration: 0.6, 
+              ease: [0.4, 0, 0.2, 1]
+            }}
           >
             <img
               src="/maglinear-hero.png"
