@@ -31,19 +31,49 @@ export default function ProjectGallery() {
 
       <div className="relative z-10 p-8 lg:p-12 lg:pt-24">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-lg"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-white font-medium leading-tight">
-            <span className="italic font-normal">Industry</span> Applications
-          </h2>
-          <p className="text-gray-300 mt-4 text-sm lg:text-base leading-relaxed">
+          <motion.h2 
+            className="font-display text-3xl md:text-4xl lg:text-5xl text-white font-medium leading-tight"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
+            <motion.span 
+              className="italic font-normal inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              Industry
+            </motion.span>{" "}
+            <motion.span
+              className="inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              Applications
+            </motion.span>
+          </motion.h2>
+          <motion.p 
+            className="text-gray-300 mt-4 text-sm lg:text-base leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
             Featuring hundreds of LED linear lighting aluminum profile models with 
             extensive stock of premium materials. The range covers all dimensions, 
             from compact precision components to large-scale profiles.
-          </p>
+          </motion.p>
         </motion.div>
       </div>
 

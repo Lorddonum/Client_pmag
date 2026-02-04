@@ -28,7 +28,7 @@ interface FloatingShape {
 function FloatingShapes({ brandColor }: { brandColor: string }) {
   const [shapes, setShapes] = useState<FloatingShape[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const initialShapes: FloatingShape[] = Array.from({ length: 12 }, (_, i) => ({
@@ -652,6 +652,9 @@ export default function ProductDetail() {
             </div>
 
             <div className="space-y-8">
+              {/* Spacer to align with product image (matches title section height) */}
+              <div className="h-[76px] hidden lg:block" aria-hidden="true" />
+              
               {product.brand !== "Paralight" && (
                 <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
                   <h3 className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold mb-4 text-center">
