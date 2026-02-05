@@ -443,7 +443,7 @@ export default function Products() {
                 {activeBrand === "All" ? (
                   <>Explore Our <span className="italic font-normal text-white">Collection</span></>
                 ) : activeBrand === "Paralight" ? (
-                  <>Paralight <span className="italic font-normal" style={{ color: '#4dc9f0' }}>Profiles</span></>
+                  <>Paralight <span className="italic font-normal text-brand-cyan">Profiles</span></>
                 ) : (
                   <>Maglinear <span className="italic font-normal text-brand-gold">Lighting</span></>
                 )}
