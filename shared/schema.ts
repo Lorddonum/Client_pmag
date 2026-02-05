@@ -59,6 +59,7 @@ export const products = pgTable("products", {
   threeCct: text("three_cct"),
   protectionRating: text("protection_rating"),
   bluetoothVersion: text("bluetooth_version"),
+  adjustableAngle: text("adjustable_angle"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
 });
