@@ -412,13 +412,17 @@ export default function Products() {
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-block rounded-3xl px-16 py-12" style={{
-              background: 'radial-gradient(ellipse at center, rgba(245, 242, 237, 0.65) 0%, rgba(245, 242, 237, 0.35) 30%, rgba(245, 242, 237, 0.1) 55%, rgba(245, 242, 237, 0.02) 75%, transparent 100%)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)'
-            }}>
+            <div className="inline-block px-16 py-12 relative">
+              <div 
+                className="absolute inset-0 -z-10"
+                style={{
+                  background: 'rgba(245, 240, 232, 0.55)',
+                  backdropFilter: 'blur(18px)',
+                  WebkitBackdropFilter: 'blur(18px)',
+                  maskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.15) 70%, transparent 90%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 0%, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.15) 70%, transparent 90%)',
+                }}
+              />
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
