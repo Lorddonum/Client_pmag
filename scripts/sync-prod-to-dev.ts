@@ -3,6 +3,21 @@ import pg from 'pg';
 const prodUrl = process.env.CUSTOM_DATABASE_URL;
 const devUrl = 'postgresql://postgres:password@helium/heliumdb?sslmode=disable';
 
+function parseArray(val: any): string[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    if (val === '{{}}' || val === '{}') return [];
+    try {
+      const parsed = val.replace(/^\{|\}$/g, '').split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+      return parsed.filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 async function syncProdToDev() {
   const prodClient = new pg.Client({ connectionString: prodUrl });
   const devClient = new pg.Client({ connectionString: devUrl });
@@ -23,8 +38,14 @@ async function syncProdToDev() {
     
     // Insert each product with array conversion
     for (const p of products) {
-      const seriesArray = p.series ? [p.series] : [];
-      const subSeriesArray = p.sub_series ? [p.sub_series] : [];
+      let seriesArray = parseArray(p.series);
+      let subSeriesArray = parseArray(p.sub_series);
+      
+      // Replace LED Panel Lights with Spotlights
+      seriesArray = seriesArray.map(s => s === 'LED Panel Lights' ? 'Spotlights' : s);
+      
+      const imagesArray = parseArray(p.images);
+      const technicalDrawingsArray = parseArray(p.technical_drawings);
       
       await devClient.query(`
         INSERT INTO products (
@@ -44,8 +65,8 @@ async function syncProdToDev() {
       `, [
         p.id, p.name, p.model_number, p.description, seriesArray, p.brand,
         p.application, p.finish, p.material, p.wattage, p.dimensions, p.voltage,
-        p.color, p.cri, p.cct, p.beam_angle, p.image, p.images,
-        p.catalogue_url, p.technical_drawing_url, p.technical_drawings, subSeriesArray,
+        p.color, p.cri, p.cct, p.beam_angle, p.image, imagesArray,
+        p.catalogue_url, p.technical_drawing_url, technicalDrawingsArray, subSeriesArray,
         p.standard_length, p.diffuser_finish, p.diffuser_material, p.accessories,
         p.led_strip_size, p.installation_method, p.packaging_method_a_desc, p.packaging_method_a_spec,
         p.packaging_method_b_desc, p.packaging_method_b_spec, p.accessories_spec,
