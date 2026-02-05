@@ -301,7 +301,7 @@ export default function Products() {
 
   const getPageSubtitle = () => {
     if (activeBrand === "All") return (
-      <span style={{ color: '#a89a82' }}>LED Aluminum Profiles & Magnetic Track Lighting</span>
+      <span style={{ color: '#d4c9b8' }}>LED Aluminum Profiles & Magnetic Track Lighting</span>
     );
     if (activeBrand === "Paralight") return "Premium LED Aluminum Profiles";
     return "Magnetic Track Lighting & Commercial Lights Systems";
