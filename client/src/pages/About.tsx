@@ -1042,17 +1042,17 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-[#00A8E8]/20 flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-[#00A8E8]" />
+              <div className="flex items-center gap-4 mb-10">
+                <div className="w-14 h-14 rounded-xl bg-[#00A8E8]/20 flex items-center justify-center">
+                  <CheckCircle className="w-7 h-7 text-[#00A8E8]" />
                 </div>
                 <div>
-                  <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Quality Assurance</span>
-                  <h3 className="font-display text-2xl text-white font-bold">Certifications</h3>
+                  <span className="text-[#00A8E8] text-sm font-semibold uppercase tracking-widest">Quality Assurance</span>
+                  <h3 className="font-display text-3xl text-white font-bold">Certifications</h3>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-5">
                 {[
                   { name: "High-tech Enterprise", desc: "Recognized innovation leader" },
                   { name: "CB / BIS / RoHS / CE", desc: "International compliance" },
@@ -1065,11 +1065,11 @@ export default function About() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition-all group"
+                    className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all group"
                   >
-                    <CheckCircle className="w-5 h-5 text-[#00A8E8] mb-3 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-medium text-white text-sm mb-1">{cert.name}</h4>
-                    <p className="text-xs text-white/40">{cert.desc}</p>
+                    <CheckCircle className="w-7 h-7 text-[#00A8E8] mb-4 group-hover:scale-110 transition-transform" />
+                    <h4 className="font-semibold text-white text-base mb-2">{cert.name}</h4>
+                    <p className="text-sm text-white/50">{cert.desc}</p>
                   </motion.div>
                 ))}
               </div>
@@ -1081,13 +1081,13 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-[#ECAA00]/20 flex items-center justify-center">
-                  <Award className="w-5 h-5 text-[#ECAA00]" />
+              <div className="flex items-center gap-4 mb-10">
+                <div className="w-14 h-14 rounded-xl bg-[#ECAA00]/20 flex items-center justify-center">
+                  <Award className="w-7 h-7 text-[#ECAA00]" />
                 </div>
                 <div>
-                  <span className="text-[#ECAA00] text-xs font-semibold uppercase tracking-widest">Recognition</span>
-                  <h3 className="font-display text-2xl text-white font-bold">Official Certificates</h3>
+                  <span className="text-[#ECAA00] text-sm font-semibold uppercase tracking-widest">Recognition</span>
+                  <h3 className="font-display text-3xl text-white font-bold">Official Certificates</h3>
                 </div>
               </div>
 
