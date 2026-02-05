@@ -1,5 +1,205 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+
+// Physics-based bouncing circles component
+interface Circle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  color: string;
+}
+
+function BouncingCircles() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const circlesRef = useRef<Circle[]>([]);
+  const animationRef = useRef<number>();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Initialize circles with various sizes
+    const colors = [
+      'rgba(139, 115, 85, 0.25)',   // brown
+      'rgba(210, 180, 140, 0.25)',  // tan
+      'rgba(160, 130, 109, 0.2)',   // medium brown
+      'rgba(196, 167, 125, 0.22)', // light beige
+      'rgba(139, 115, 85, 0.18)',   // lighter brown
+    ];
+
+    const initCircles = () => {
+      const circles: Circle[] = [];
+      // Large circles
+      for (let i = 0; i < 3; i++) {
+        circles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2,
+          radius: 80 + Math.random() * 60,
+          color: colors[i % colors.length]
+        });
+      }
+      // Medium circles
+      for (let i = 0; i < 5; i++) {
+        circles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 1.8,
+          vy: (Math.random() - 0.5) * 1.8,
+          radius: 40 + Math.random() * 30,
+          color: colors[(i + 1) % colors.length]
+        });
+      }
+      // Small circles
+      for (let i = 0; i < 8; i++) {
+        circles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 2.5,
+          vy: (Math.random() - 0.5) * 2.5,
+          radius: 15 + Math.random() * 20,
+          color: colors[(i + 2) % colors.length]
+        });
+      }
+      return circles;
+    };
+
+    circlesRef.current = initCircles();
+
+    const checkCollision = (c1: Circle, c2: Circle) => {
+      const dx = c2.x - c1.x;
+      const dy = c2.y - c1.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance < c1.radius + c2.radius;
+    };
+
+    const resolveCollision = (c1: Circle, c2: Circle) => {
+      const dx = c2.x - c1.x;
+      const dy = c2.y - c1.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance === 0) return;
+
+      // Normal vector
+      const nx = dx / distance;
+      const ny = dy / distance;
+
+      // Relative velocity
+      const dvx = c1.vx - c2.vx;
+      const dvy = c1.vy - c2.vy;
+
+      // Relative velocity along normal
+      const dvn = dvx * nx + dvy * ny;
+
+      // Don't resolve if velocities are separating
+      if (dvn > 0) return;
+
+      // Mass proportional to radius squared
+      const m1 = c1.radius * c1.radius;
+      const m2 = c2.radius * c2.radius;
+
+      // Impulse scalar
+      const impulse = (2 * dvn) / (m1 + m2);
+
+      // Update velocities
+      c1.vx -= impulse * m2 * nx * 0.8;
+      c1.vy -= impulse * m2 * ny * 0.8;
+      c2.vx += impulse * m1 * nx * 0.8;
+      c2.vy += impulse * m1 * ny * 0.8;
+
+      // Separate circles to prevent overlap
+      const overlap = (c1.radius + c2.radius - distance) / 2;
+      c1.x -= overlap * nx;
+      c1.y -= overlap * ny;
+      c2.x += overlap * nx;
+      c2.y += overlap * ny;
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const circles = circlesRef.current;
+
+      // Update positions and check wall collisions
+      for (const circle of circles) {
+        circle.x += circle.vx;
+        circle.y += circle.vy;
+
+        // Bounce off walls
+        if (circle.x - circle.radius < 0) {
+          circle.x = circle.radius;
+          circle.vx *= -0.9;
+        }
+        if (circle.x + circle.radius > canvas.width) {
+          circle.x = canvas.width - circle.radius;
+          circle.vx *= -0.9;
+        }
+        if (circle.y - circle.radius < 0) {
+          circle.y = circle.radius;
+          circle.vy *= -0.9;
+        }
+        if (circle.y + circle.radius > canvas.height) {
+          circle.y = canvas.height - circle.radius;
+          circle.vy *= -0.9;
+        }
+      }
+
+      // Check circle-to-circle collisions
+      for (let i = 0; i < circles.length; i++) {
+        for (let j = i + 1; j < circles.length; j++) {
+          if (checkCollision(circles[i], circles[j])) {
+            resolveCollision(circles[i], circles[j]);
+          }
+        }
+      }
+
+      // Draw circles with blur effect
+      for (const circle of circles) {
+        ctx.beginPath();
+        const gradient = ctx.createRadialGradient(
+          circle.x, circle.y, 0,
+          circle.x, circle.y, circle.radius
+        );
+        gradient.addColorStop(0, circle.color);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ filter: 'blur(40px)' }}
+    />
+  );
+}
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, ChevronLeft, Sparkles, ArrowLeft, FileText, HelpCircle, Zap, Ruler, Palette, Sun, Eye, Layers, Box, Settings, Download, Image, Info, ListChecks, Wrench, Check, Mail, Phone } from "lucide-react";
@@ -589,84 +789,8 @@ export default function Products() {
           />
         </div>
 
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <motion.div 
-            className="absolute w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#8B7355]/35 via-[#A0826D]/18 to-transparent blur-3xl"
-            initial={{ x: 0, y: 0, scale: 1 }}
-            animate={{ 
-              x: [0, 100, 0],
-              y: [0, 60, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ 
-              duration: 12,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut"
-            }}
-            style={{ top: '0%', left: '-20%' }}
-          />
-          <motion.div 
-            className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#D2B48C]/35 via-[#C4A77D]/18 to-transparent blur-3xl"
-            initial={{ x: 0, y: 0, scale: 1 }}
-            animate={{ 
-              x: [0, -80, 0],
-              y: [0, 80, 0],
-              scale: [1, 1.25, 1],
-            }}
-            transition={{ 
-              duration: 14,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              delay: 1
-            }}
-            style={{ top: '30%', right: '-15%' }}
-          />
-          <motion.div 
-            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#A0826D]/30 via-[#8B7355]/15 to-transparent blur-3xl"
-            initial={{ x: 0, y: 0, scale: 1 }}
-            animate={{ 
-              x: [0, 120, 0],
-              y: [0, -70, 0],
-              scale: [1, 1.3, 1],
-            }}
-            transition={{ 
-              duration: 16,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              delay: 2
-            }}
-            style={{ bottom: '5%', left: '20%' }}
-          />
-          {/* Rotating circle accents */}
-          <motion.div 
-            className="absolute w-[300px] h-[300px] rounded-full border-2 border-[#8B7355]/35"
-            initial={{ rotate: 0 }}
-            animate={{ rotate: 360 }}
-            transition={{ 
-              duration: 20,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "linear"
-            }}
-            style={{ top: '15%', right: '15%' }}
-          />
-          <motion.div 
-            className="absolute w-[220px] h-[220px] rounded-full border-2 border-[#D2B48C]/35"
-            initial={{ rotate: 360 }}
-            animate={{ rotate: 0 }}
-            transition={{ 
-              duration: 18,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "linear"
-            }}
-            style={{ bottom: '25%', left: '8%' }}
-          />
-        </div>
+        {/* Physics-based Bouncing Circles */}
+        <BouncingCircles />
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
           <div className={`flex flex-col lg:flex-row gap-10 ${selectedProduct ? 'lg:block' : ''}`}>
             {/* Sidebar - hidden when product is selected */}
