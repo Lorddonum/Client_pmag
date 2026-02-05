@@ -322,8 +322,8 @@ export default function Products() {
               opacity: activeBrand === "All" && !hoveredBrand ? 1 : 0
             }}
             transition={{ 
-              duration: 0.4, 
-              ease: [0.4, 0, 0.2, 1]
+              duration: 0.15, 
+              ease: "linear"
             }}
           >
             <img
@@ -353,8 +353,8 @@ export default function Products() {
                     : "polygon(0 0, 0% 0, 0% 100%, 0 100%)"
             }}
             transition={{ 
-              duration: 0.4, 
-              ease: [0.4, 0, 0.2, 1]
+              duration: 0.15, 
+              ease: "linear"
             }}
           >
             <img
@@ -384,8 +384,8 @@ export default function Products() {
                     : "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)"
             }}
             transition={{ 
-              duration: 0.4, 
-              ease: [0.4, 0, 0.2, 1]
+              duration: 0.15, 
+              ease: "linear"
             }}
           >
             <img
