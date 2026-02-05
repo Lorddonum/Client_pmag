@@ -1272,14 +1272,14 @@ export default function Products() {
                             className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-gray-100/50"
                           >
                             {/* Image container */}
-                            <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+                            <div className="aspect-square bg-gray-100 relative overflow-hidden">
                               {product.image ? (
                                 <img 
                                   src={product.image} 
                                   alt={product.name} 
                                   loading="lazy"
                                   decoding="async"
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
+                                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out" 
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
