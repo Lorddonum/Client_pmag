@@ -2,12 +2,24 @@ import { type User, type InsertUser, type Product, type InsertProduct, users, pr
 import { db } from "./db";
 import { eq, ne, or, sql } from "drizzle-orm";
 
+// Lightweight product type for grid view (no large image arrays)
+export interface ProductGridItem {
+  id: number;
+  name: string;
+  modelNumber: string;
+  brand: string;
+  series: string[];
+  subSeries: string[] | null;
+  image: string | null;
+}
+
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   getProducts(): Promise<Product[]>;
+  getProductsForGrid(): Promise<ProductGridItem[]>;
   getProduct(id: number): Promise<Product | undefined>;
   getRelatedProducts(productId: number, limit?: number): Promise<Product[]>;
   createProduct(product: InsertProduct): Promise<Product>;
@@ -33,6 +45,19 @@ export class DatabaseStorage implements IStorage {
 
   async getProducts(): Promise<Product[]> {
     return await db.select().from(products);
+  }
+
+  // Optimized query for grid view - only selects essential fields
+  async getProductsForGrid(): Promise<ProductGridItem[]> {
+    return await db.select({
+      id: products.id,
+      name: products.name,
+      modelNumber: products.modelNumber,
+      brand: products.brand,
+      series: products.series,
+      subSeries: products.subSeries,
+      image: products.image,
+    }).from(products);
   }
 
   async getProduct(id: number): Promise<Product | undefined> {
