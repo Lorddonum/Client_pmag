@@ -551,6 +551,32 @@ export default function Products() {
       </section>
 
       <main className="py-16 bg-gradient-to-b from-[#f5f2ed] via-[#faf8f5] to-white min-h-screen relative overflow-hidden">
+        {/* Textured Background Layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Subtle dot pattern */}
+          <div 
+            className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`,
+              backgroundSize: '24px 24px'
+            }}
+          />
+          {/* Noise texture overlay */}
+          <div 
+            className="absolute inset-0 opacity-[0.015]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            }}
+          />
+          {/* Diagonal lines pattern */}
+          <div 
+            className="absolute inset-0 opacity-[0.02]"
+            style={{
+              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 40px, #00A8E8 40px, #00A8E8 41px)`,
+            }}
+          />
+        </div>
+
         {/* Animated Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div 
@@ -595,6 +621,33 @@ export default function Products() {
               repeat: Infinity,
               ease: "easeInOut",
               delay: 6
+            }}
+          />
+          {/* Additional floating shapes */}
+          <motion.div 
+            className="absolute w-[200px] h-[200px] rounded-full border border-[#00A8E8]/10"
+            style={{ top: '20%', right: '20%' }}
+            animate={{ 
+              rotate: [0, 360],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              duration: 40,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+          <motion.div 
+            className="absolute w-[150px] h-[150px] rounded-full border border-[#ECAA00]/10"
+            style={{ bottom: '30%', left: '10%' }}
+            animate={{ 
+              rotate: [360, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ 
+              duration: 35,
+              repeat: Infinity,
+              ease: "linear"
             }}
           />
         </div>
