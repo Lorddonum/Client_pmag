@@ -356,7 +356,7 @@ export default function Products() {
             }}
           >
             <img
-              src="/paralight-hero.png"
+              src="/paralight-hero.jpg"
               alt="Paralight Aluminum Profiles"
               className="absolute inset-0 w-full h-full object-cover scale-125"
             />
