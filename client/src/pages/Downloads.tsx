@@ -162,11 +162,11 @@ export default function Downloads() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-gradient-to-br from-[#0a1628] to-[#0d1f38] rounded-2xl border border-white/10 overflow-hidden"
+        className="bg-[#e8e2d8] rounded-2xl border border-gray-200 overflow-hidden shadow-sm"
       >
         <div 
           className="p-8 border-b border-white/10"
-          style={{ background: `linear-gradient(135deg, ${color}15 0%, transparent 100%)` }}
+          style={{ background: `linear-gradient(180deg, #c4bcaf 0%, #e8e2d8 100%)` }}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
@@ -175,8 +175,8 @@ export default function Downloads() {
                 style={{ backgroundColor: color }}
               />
               <div>
-                <h2 className="text-2xl font-display font-bold text-white">{brand}</h2>
-                <p className="text-sm text-white/50 mt-1">{tagline}</p>
+                <h2 className="text-2xl font-display font-bold text-gray-900">{brand}</h2>
+                <p className="text-sm text-gray-600 mt-1">{tagline}</p>
               </div>
             </div>
             <div 
