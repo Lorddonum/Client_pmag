@@ -787,36 +787,6 @@ export default function Products() {
                       </div>
                     </div>
 
-                    {/* Quick Specs Bar */}
-                    <motion.div 
-                      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15 }}
-                    >
-                      {[
-                        { icon: Zap, label: "Power", value: selectedProduct.wattage },
-                        { icon: Ruler, label: "Dimensions", value: selectedProduct.dimensions },
-                        { icon: Sun, label: "CCT", value: selectedProduct.cct },
-                        { icon: Eye, label: "CRI", value: selectedProduct.cri },
-                        { icon: Layers, label: "Beam Angle", value: selectedProduct.beamAngle },
-                        { icon: Settings, label: "Voltage", value: selectedProduct.voltage },
-                      ].filter(item => item.value).map((item, idx) => (
-                        <div 
-                          key={idx}
-                          className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all"
-                        >
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${brandColor}15` }}>
-                              <item.icon className="w-4 h-4" style={{ color: brandColor }} />
-                            </div>
-                          </div>
-                          <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium block mb-1">{item.label}</span>
-                          <p className="text-base font-bold text-gray-900">{item.value}</p>
-                        </div>
-                      ))}
-                    </motion.div>
-
                     {/* Tab Navigation */}
                     <div className="bg-gray-50 rounded-xl p-1.5 mb-10 inline-flex gap-1">
                       {[
