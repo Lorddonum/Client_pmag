@@ -976,19 +976,22 @@ export default function Products() {
                             <div className="overflow-x-auto max-w-full">
                               <table className="w-full">
                                 <tbody>
-                                  {specs.map((spec, i) => (
-                                    <tr key={spec.label} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                      <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
-                                        {spec.label}
-                                      </td>
-                                      <td className="px-4 py-3 text-sm text-gray-900 font-medium whitespace-nowrap" colSpan={additionalSpecRows.length > 0 ? additionalSpecRows.length : 1}>
-                                        {spec.value}
-                                      </td>
-                                    </tr>
-                                  ))}
                                   {(() => {
-                                    if (additionalSpecRows.length === 0) return null;
+                                    if (additionalSpecRows.length === 0) {
+                                      // No additional rows - show specs normally
+                                      return specs.map((spec, i) => (
+                                        <tr key={spec.label} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                          <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
+                                            {spec.label}
+                                          </td>
+                                          <td className="px-4 py-3 text-sm text-gray-900 font-medium whitespace-nowrap">
+                                            {spec.value}
+                                          </td>
+                                        </tr>
+                                      ));
+                                    }
                                     
+                                    // Has additional rows - build unified column table
                                     const allLabels = new Set<string>();
                                     additionalSpecRows.forEach(row => {
                                       const rowSpecs = getAdditionalRowSpecs(row, selectedProduct.modelNumber);
@@ -998,7 +1001,7 @@ export default function Products() {
                                     const labelArray = Array.from(allLabels);
                                     
                                     return labelArray.map((label, labelIdx) => (
-                                      <tr key={label} className={(specs.length + labelIdx) % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                      <tr key={label} className={labelIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                         <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
                                           {label}
                                         </td>
