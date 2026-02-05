@@ -972,14 +972,14 @@ export default function Products() {
                               </h3>
                             </div>
                             <div className="overflow-x-auto">
-                              <table className="w-full">
+                              <table className="w-full min-w-max">
                                 <tbody>
                                   {specs.map((spec, i) => (
                                     <tr key={spec.label} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                      <td className="px-6 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium w-1/4 border-r border-gray-100">
+                                      <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
                                         {spec.label}
                                       </td>
-                                      <td className="px-6 py-3 text-sm text-gray-900 font-medium" colSpan={additionalSpecRows.length > 0 ? additionalSpecRows.length : 1}>
+                                      <td className="px-4 py-3 text-sm text-gray-900 font-medium whitespace-nowrap" colSpan={additionalSpecRows.length > 0 ? additionalSpecRows.length : 1}>
                                         {spec.value}
                                       </td>
                                     </tr>
@@ -997,14 +997,14 @@ export default function Products() {
                                     
                                     return labelArray.map((label, labelIdx) => (
                                       <tr key={label} className={(specs.length + labelIdx) % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                        <td className="px-6 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium w-1/4 border-r border-gray-100">
+                                        <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
                                           {label}
                                         </td>
                                         {additionalSpecRows.map((row, colIdx) => {
                                           const rowSpecs = getAdditionalRowSpecs(row, selectedProduct.modelNumber);
                                           const spec = rowSpecs.find(s => s.label === label);
                                           return (
-                                            <td key={colIdx} className="px-6 py-3 text-sm text-gray-900 font-medium border-l border-gray-100 first:border-l-0">
+                                            <td key={colIdx} className="px-4 py-3 text-sm text-gray-900 font-medium whitespace-nowrap border-l border-gray-100" style={{ minWidth: '100px' }}>
                                               {spec?.value || '-'}
                                             </td>
                                           );
