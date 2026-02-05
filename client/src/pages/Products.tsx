@@ -15,6 +15,7 @@ function BouncingCircles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const circlesRef = useRef<Circle[]>([]);
   const animationRef = useRef<number>();
+  const dimensionsRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -83,13 +84,21 @@ function BouncingCircles() {
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
+      // Store CSS dimensions for physics calculations
+      dimensionsRef.current = { width: rect.width, height: rect.height };
+      // Set canvas internal resolution to match CSS size (1:1 mapping)
       canvas.width = rect.width;
       canvas.height = rect.height;
-      // Reinitialize circles based on new size
-      circlesRef.current = initCircles(canvas.width, canvas.height);
+      // Reinitialize circles based on size
+      circlesRef.current = initCircles(rect.width, rect.height);
     };
+    
+    // Use ResizeObserver to detect container size changes
+    const resizeObserver = new ResizeObserver(() => {
+      resizeCanvas();
+    });
+    resizeObserver.observe(canvas);
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
     const resolveCollision = (c1: Circle, c2: Circle) => {
       const dx = c2.x - c1.x;
@@ -138,7 +147,8 @@ function BouncingCircles() {
     };
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const { width, height } = dimensionsRef.current;
+      ctx.clearRect(0, 0, width, height);
 
       const circles = circlesRef.current;
 
@@ -164,16 +174,16 @@ function BouncingCircles() {
           circle.x = circle.radius;
           circle.vx = Math.abs(circle.vx) * 0.8;
         }
-        if (circle.x + circle.radius > canvas.width) {
-          circle.x = canvas.width - circle.radius;
+        if (circle.x + circle.radius > width) {
+          circle.x = width - circle.radius;
           circle.vx = -Math.abs(circle.vx) * 0.8;
         }
         if (circle.y - circle.radius < 0) {
           circle.y = circle.radius;
           circle.vy = Math.abs(circle.vy) * 0.8;
         }
-        if (circle.y + circle.radius > canvas.height) {
-          circle.y = canvas.height - circle.radius;
+        if (circle.y + circle.radius > height) {
+          circle.y = height - circle.radius;
           circle.vy = -Math.abs(circle.vy) * 0.8;
         }
 
@@ -196,7 +206,7 @@ function BouncingCircles() {
     animate();
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      resizeObserver.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
