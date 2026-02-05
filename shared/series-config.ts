@@ -56,7 +56,7 @@ export const MAGLINEAR_SERIES = {
     "BeltLight Accessories"
   ],
   "Downlights": [],
-  "LED Panel Lights": [],
+  "Spotlights": [],
   "Linear Pendant Lights": [],
   "Ring Pendant Lights": [],
   "Ultra Thin Tracks Series": [
