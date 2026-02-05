@@ -545,7 +545,7 @@ export default function Products() {
               >
                 <AnimatePresence mode="wait">
                   {selectedProduct ? (
-                    /* FAQ Section - shown when viewing product detail */
+                    /* FAQ Section - Dialogue Style */
                     <motion.div
                       key="faq"
                       initial={{ opacity: 0, x: -20 }}
@@ -560,7 +560,7 @@ export default function Products() {
                           Frequently Asked Questions
                         </h3>
                       </div>
-                      <div className="p-4 space-y-2">
+                      <div className="p-4 space-y-4 max-h-[500px] overflow-y-auto">
                         {[
                           {
                             question: "What is the minimum order quantity?",
@@ -587,32 +587,22 @@ export default function Products() {
                             answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
                           }
                         ].map((faq, index) => (
-                          <div key={index} className="border border-gray-100 rounded-xl overflow-hidden">
-                            <button
-                              onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                              className="w-full px-4 py-3 text-left flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors"
-                              data-testid={`faq-${index}`}
-                            >
-                              <span className="text-sm font-medium text-gray-900">{faq.question}</span>
-                              <ChevronDown 
-                                className={`w-4 h-4 text-gray-400 transition-transform ${expandedFaq === index ? 'rotate-180' : ''}`}
-                              />
-                            </button>
-                            <AnimatePresence>
-                              {expandedFaq === index && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: "auto", opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="overflow-hidden"
-                                >
-                                  <p className="px-4 pb-4 text-sm text-gray-600 leading-relaxed">
-                                    {faq.answer}
-                                  </p>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                          <div key={index} className="space-y-2" data-testid={`faq-${index}`}>
+                            {/* Question bubble - right aligned like user message */}
+                            <div className="flex justify-end">
+                              <div className="max-w-[85%] bg-brand-cyan text-white px-4 py-2.5 rounded-2xl rounded-br-md shadow-sm">
+                                <p className="text-sm font-medium">{faq.question}</p>
+                              </div>
+                            </div>
+                            {/* Answer bubble - left aligned like support response */}
+                            <div className="flex justify-start items-start gap-2">
+                              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span className="text-xs text-white font-semibold">P</span>
+                              </div>
+                              <div className="max-w-[85%] bg-gray-100 text-gray-700 px-4 py-2.5 rounded-2xl rounded-bl-md">
+                                <p className="text-sm leading-relaxed">{faq.answer}</p>
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
