@@ -16,7 +16,6 @@ const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Products = lazy(() => import("./pages/Products"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Downloads = lazy(() => import("./pages/Downloads"));
 
 // Loading fallback component
@@ -42,7 +41,6 @@ function Router() {
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={Admin} />
       <Route path="/products" component={Products} />
-      <Route path="/products/:id" component={ProductDetail} />
       <Route path="/downloads" component={Downloads} />
       <Route component={NotFound} />
     </Switch>
