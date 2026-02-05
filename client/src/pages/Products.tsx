@@ -90,52 +90,50 @@ function BouncingCircles() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const checkCollision = (c1: Circle, c2: Circle) => {
-      const dx = c2.x - c1.x;
-      const dy = c2.y - c1.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      return distance < c1.radius + c2.radius;
-    };
-
     const resolveCollision = (c1: Circle, c2: Circle) => {
       const dx = c2.x - c1.x;
       const dy = c2.y - c1.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance === 0) return;
+      const minDist = c1.radius + c2.radius;
+      
+      // No collision
+      if (distance >= minDist || distance === 0) return;
 
       // Normal vector
       const nx = dx / distance;
       const ny = dy / distance;
 
-      // Relative velocity
+      // Separate circles first (prevent overlap)
+      const overlap = minDist - distance;
+      const separationRatio1 = c2.radius / (c1.radius + c2.radius);
+      const separationRatio2 = c1.radius / (c1.radius + c2.radius);
+      
+      c1.x -= overlap * nx * separationRatio1;
+      c1.y -= overlap * ny * separationRatio1;
+      c2.x += overlap * nx * separationRatio2;
+      c2.y += overlap * ny * separationRatio2;
+
+      // Relative velocity along collision normal
       const dvx = c1.vx - c2.vx;
       const dvy = c1.vy - c2.vy;
-
-      // Relative velocity along normal
       const dvn = dvx * nx + dvy * ny;
 
-      // Don't resolve if velocities are separating
+      // Only resolve if approaching
       if (dvn > 0) return;
 
-      // Mass proportional to radius squared
-      const m1 = c1.radius * c1.radius;
-      const m2 = c2.radius * c2.radius;
+      // Mass proportional to radius
+      const m1 = c1.radius;
+      const m2 = c2.radius;
+      const restitution = 0.7;
 
       // Impulse scalar
-      const impulse = (2 * dvn) / (m1 + m2);
+      const impulse = (-(1 + restitution) * dvn) / (1/m1 + 1/m2);
 
-      // Update velocities
-      c1.vx -= impulse * m2 * nx * 0.8;
-      c1.vy -= impulse * m2 * ny * 0.8;
-      c2.vx += impulse * m1 * nx * 0.8;
-      c2.vy += impulse * m1 * ny * 0.8;
-
-      // Separate circles to prevent overlap
-      const overlap = (c1.radius + c2.radius - distance) / 2;
-      c1.x -= overlap * nx;
-      c1.y -= overlap * ny;
-      c2.x += overlap * nx;
-      c2.y += overlap * ny;
+      // Apply impulse
+      c1.vx += (impulse / m1) * nx;
+      c1.vy += (impulse / m1) * ny;
+      c2.vx -= (impulse / m2) * nx;
+      c2.vy -= (impulse / m2) * ny;
     };
 
     const animate = () => {
@@ -143,37 +141,44 @@ function BouncingCircles() {
 
       const circles = circlesRef.current;
 
-      // Update positions and check wall collisions
+      // Update positions
       for (const circle of circles) {
         circle.x += circle.vx;
         circle.y += circle.vy;
-
-        // Bounce off walls
-        if (circle.x - circle.radius < 0) {
-          circle.x = circle.radius;
-          circle.vx *= -0.9;
-        }
-        if (circle.x + circle.radius > canvas.width) {
-          circle.x = canvas.width - circle.radius;
-          circle.vx *= -0.9;
-        }
-        if (circle.y - circle.radius < 0) {
-          circle.y = circle.radius;
-          circle.vy *= -0.9;
-        }
-        if (circle.y + circle.radius > canvas.height) {
-          circle.y = canvas.height - circle.radius;
-          circle.vy *= -0.9;
-        }
       }
 
-      // Check circle-to-circle collisions
-      for (let i = 0; i < circles.length; i++) {
-        for (let j = i + 1; j < circles.length; j++) {
-          if (checkCollision(circles[i], circles[j])) {
+      // Multiple collision resolution passes for stability
+      for (let pass = 0; pass < 3; pass++) {
+        // Check circle-to-circle collisions
+        for (let i = 0; i < circles.length; i++) {
+          for (let j = i + 1; j < circles.length; j++) {
             resolveCollision(circles[i], circles[j]);
           }
         }
+      }
+
+      // Wall collisions with smooth bounce
+      for (const circle of circles) {
+        if (circle.x - circle.radius < 0) {
+          circle.x = circle.radius;
+          circle.vx = Math.abs(circle.vx) * 0.8;
+        }
+        if (circle.x + circle.radius > canvas.width) {
+          circle.x = canvas.width - circle.radius;
+          circle.vx = -Math.abs(circle.vx) * 0.8;
+        }
+        if (circle.y - circle.radius < 0) {
+          circle.y = circle.radius;
+          circle.vy = Math.abs(circle.vy) * 0.8;
+        }
+        if (circle.y + circle.radius > canvas.height) {
+          circle.y = canvas.height - circle.radius;
+          circle.vy = -Math.abs(circle.vy) * 0.8;
+        }
+
+        // Add small random force to keep circles moving
+        if (Math.abs(circle.vx) < 0.1) circle.vx += (Math.random() - 0.5) * 0.05;
+        if (Math.abs(circle.vy) < 0.1) circle.vy += (Math.random() - 0.5) * 0.05;
       }
 
       // Draw circles with blur effect
