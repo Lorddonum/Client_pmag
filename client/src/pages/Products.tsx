@@ -217,6 +217,7 @@ function BouncingCircles() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ filter: 'blur(40px)' }}
     />
   );
 }
