@@ -24,7 +24,7 @@ export default function Hero() {
     <section className="relative h-full flex items-center justify-center overflow-hidden">
       {/* Background Slideshow */}
       <div className="absolute inset-0">
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false}>
           <motion.img
             key={currentIndex}
             src={heroImages[currentIndex]}
@@ -33,7 +33,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/80" />
