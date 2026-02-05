@@ -63,6 +63,7 @@ export default function Products() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const [, setLocation] = useLocation();
@@ -814,14 +815,24 @@ export default function Products() {
 
                           return (
                             <>
-                              <div className="aspect-square max-w-md mx-auto bg-white border border-gray-100 relative overflow-hidden rounded-2xl shadow-lg">
+                              <div 
+                                className="aspect-square max-w-md mx-auto bg-white border border-gray-100 relative overflow-hidden rounded-2xl shadow-lg cursor-pointer group"
+                                onClick={() => currentImage && setLightboxImage(currentImage)}
+                              >
                                 <div className="w-full h-full flex items-center justify-center p-8">
                                   {currentImage ? (
-                                    <img
-                                      src={currentImage}
-                                      alt={selectedProduct.name}
-                                      className="max-w-full max-h-full object-contain"
-                                    />
+                                    <>
+                                      <img
+                                        src={currentImage}
+                                        alt={selectedProduct.name}
+                                        className="max-w-full max-h-full object-contain"
+                                      />
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                        <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium bg-black/50 px-3 py-1 rounded">
+                                          Click to enlarge
+                                        </span>
+                                      </div>
+                                    </>
                                   ) : (
                                     <Package className="w-24 h-24 text-gray-200" />
                                   )}
@@ -995,13 +1006,19 @@ export default function Products() {
                                   {allDrawings.map((drawing, index) => (
                                     <div 
                                       key={index}
-                                      className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2"
+                                      className="h-44 bg-white border border-gray-100 rounded flex items-center justify-center p-2 cursor-pointer group relative"
+                                      onClick={() => setLightboxImage(drawing)}
                                     >
                                       <img
                                         src={drawing}
                                         alt={`Technical Drawing ${index + 1}`}
                                         className="max-w-full max-h-full object-contain"
                                       />
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center rounded">
+                                        <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium bg-black/50 px-2 py-1 rounded">
+                                          Click to enlarge
+                                        </span>
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
@@ -1356,6 +1373,35 @@ export default function Products() {
     </div>
   </main>
   <Footer />
+  
+  {/* Lightbox for enlarged image viewing */}
+  <AnimatePresence>
+    {lightboxImage && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
+        onClick={() => setLightboxImage(null)}
+      >
+        <button
+          onClick={() => setLightboxImage(null)}
+          className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
+        >
+          <X className="w-8 h-8" />
+        </button>
+        <motion.img
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          src={lightboxImage}
+          alt="Enlarged view"
+          className="max-w-full max-h-full object-contain"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </motion.div>
+    )}
+  </AnimatePresence>
 </div>
 );
 }
