@@ -82,8 +82,9 @@ function BouncingCircles() {
     };
 
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
       // Reinitialize circles based on new size
       circlesRef.current = initCircles(canvas.width, canvas.height);
     };
@@ -181,17 +182,11 @@ function BouncingCircles() {
         if (Math.abs(circle.vy) < 0.1) circle.vy += (Math.random() - 0.5) * 0.05;
       }
 
-      // Draw circles with blur effect
+      // Draw circles
       for (const circle of circles) {
         ctx.beginPath();
-        const gradient = ctx.createRadialGradient(
-          circle.x, circle.y, 0,
-          circle.x, circle.y, circle.radius
-        );
-        gradient.addColorStop(0, circle.color);
-        gradient.addColorStop(1, 'transparent');
-        ctx.fillStyle = gradient;
         ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = circle.color;
         ctx.fill();
       }
 
