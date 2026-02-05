@@ -301,11 +301,7 @@ export default function Products() {
 
   const getPageSubtitle = () => {
     if (activeBrand === "All") return (
-      <>
-        <span className="text-brand-gold">LED Aluminum Profiles</span>
-        <span className="text-gray-600"> & </span>
-        <span className="text-brand-cyan">Magnetic Track Lighting Collection</span>
-      </>
+      <span className="text-brand-gold">LED Aluminum Profiles & Magnetic Track Lighting</span>
     );
     if (activeBrand === "Paralight") return "Premium LED Aluminum Profiles";
     return "Magnetic Track Lighting & Commercial Lights Systems";
@@ -445,18 +441,7 @@ export default function Products() {
               
               <h1 className="font-display text-4xl md:text-6xl text-gray-900 font-medium mb-5">
                 {activeBrand === "All" ? (
-                  <>Explore Our <motion.span 
-                    className="italic font-normal"
-                    animate={{ 
-                      color: hoveredBrand === "Paralight" 
-                        ? "#00A8E8" 
-                        : hoveredBrand === "Maglinear" 
-                          ? "#ECAA00" 
-                          : "#ffffff"
-                    }}
-                    transition={{ duration: 0.3 }}
-                    style={{ textShadow: "0 1px 2px rgba(0,0,0,0.1)" }}
-                  >Collection</motion.span></>
+                  <>Explore Our <span className="italic font-normal text-brand-cyan">Collection</span></>
                 ) : activeBrand === "Paralight" ? (
                   <>Paralight <span className="italic font-normal text-brand-cyan">Profiles</span></>
                 ) : (
