@@ -52,6 +52,8 @@ interface Product {
   cutOutSize?: string | null;
   oneCct?: string | null;
   threeCct?: string | null;
+  protectionRating?: string | null;
+  bluetoothVersion?: string | null;
   technicalSpecs?: string | null;
   accessoriesSpec?: string | null;
   packagingMethodADesc?: string | null;
@@ -268,6 +270,8 @@ export default function Products() {
         { label: "1 CCT", value: selectedProduct.oneCct },
         { label: "3 CCT", value: selectedProduct.threeCct },
         { label: "Installation Method", value: selectedProduct.installationMethod },
+        { label: "Protection Rating", value: selectedProduct.protectionRating },
+        { label: "Bluetooth Version", value: selectedProduct.bluetoothVersion },
       ] : [])
     ].filter((spec) => spec.value && spec.value.trim() !== "");
   }, [selectedProduct]);
@@ -275,7 +279,7 @@ export default function Products() {
   const additionalSpecRows = useMemo(() => {
     if (!selectedProduct?.technicalSpecs) return [];
     try {
-      return JSON.parse(selectedProduct.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; installationMethod?: string }>;
+      return JSON.parse(selectedProduct.technicalSpecs) as Array<{ model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; installationMethod?: string; protectionRating?: string; bluetoothVersion?: string }>;
     } catch {
       return [];
     }
@@ -298,6 +302,8 @@ export default function Products() {
       { label: "1 CCT", value: row.oneCct },
       { label: "3 CCT", value: row.threeCct },
       { label: "Installation Method", value: row.installationMethod },
+      { label: "Protection Rating", value: row.protectionRating },
+      { label: "Bluetooth Version", value: row.bluetoothVersion },
     ].filter((spec) => spec.value && spec.value.trim() !== "");
     return [
       { label: "Model", value: row.model?.trim() || mainModelNumber },

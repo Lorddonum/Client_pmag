@@ -54,6 +54,8 @@ interface Product {
   cutOutSize?: string | null;
   oneCct?: string | null;
   threeCct?: string | null;
+  protectionRating?: string | null;
+  bluetoothVersion?: string | null;
   // Technical Specifications (JSON string for table data)
   technicalSpecs?: string | null;
 }
@@ -118,6 +120,8 @@ export default function Admin() {
     cutOutSize: "",
     oneCct: "",
     threeCct: "",
+    protectionRating: "",
+    bluetoothVersion: "",
     technicalSpecs: ""
   });
 
@@ -339,6 +343,8 @@ export default function Admin() {
       cutOutSize: "",
       oneCct: "",
       threeCct: "",
+      protectionRating: "",
+      bluetoothVersion: "",
       technicalSpecs: ""
     });
   };
@@ -388,6 +394,8 @@ export default function Admin() {
       cutOutSize: product.cutOutSize || "",
       oneCct: product.oneCct || "",
       threeCct: product.threeCct || "",
+      protectionRating: product.protectionRating || "",
+      bluetoothVersion: product.bluetoothVersion || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -438,6 +446,8 @@ export default function Admin() {
       cutOutSize: product.cutOutSize || "",
       oneCct: product.oneCct || "",
       threeCct: product.threeCct || "",
+      protectionRating: product.protectionRating || "",
+      bluetoothVersion: product.bluetoothVersion || "",
       technicalSpecs: product.technicalSpecs || ""
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1043,6 +1053,14 @@ export default function Admin() {
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
                             <input type="text" value={formData.installationMethod} onChange={e => setFormData({...formData, installationMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Surface Mount, Recessed" />
                           </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
+                            <input type="text" value={formData.protectionRating} onChange={e => setFormData({...formData, protectionRating: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
+                            <input type="text" value={formData.bluetoothVersion} onChange={e => setFormData({...formData, bluetoothVersion: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
+                          </div>
                         </>
                       )}
                     </div>
@@ -1051,7 +1069,7 @@ export default function Admin() {
 
                   {/* Additional Specification Rows */}
                   {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string; oneCct?: string; threeCct?: string }, rowIndex: number) => (
+                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; protectionRating?: string; bluetoothVersion?: string }, rowIndex: number) => (
                       <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
@@ -1245,6 +1263,22 @@ export default function Admin() {
                                   specs[rowIndex].installationMethod = e.target.value;
                                   setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Recessed/Surface" />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
+                                <input type="text" value={specRow.protectionRating || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].protectionRating = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
+                                <input type="text" value={specRow.bluetoothVersion || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].bluetoothVersion = e.target.value;
+                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
                               </div>
                             </>
                           )}

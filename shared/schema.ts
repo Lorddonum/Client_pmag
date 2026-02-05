@@ -57,6 +57,8 @@ export const products = pgTable("products", {
   cutOutSize: text("cut_out_size"),
   oneCct: text("one_cct"),
   threeCct: text("three_cct"),
+  protectionRating: text("protection_rating"),
+  bluetoothVersion: text("bluetooth_version"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
 });
