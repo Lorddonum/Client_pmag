@@ -546,70 +546,7 @@ export default function Products() {
                 className="sticky top-28"
               >
                 <AnimatePresence mode="wait">
-                  {selectedProduct ? (
-                    /* FAQ Section - Dialogue Style */
-                    <motion.div
-                      key="faq"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden"
-                    >
-                      <div className="p-6 bg-gradient-to-r from-gray-900 to-gray-800">
-                        <h3 className="text-white font-medium flex items-center gap-2">
-                          <HelpCircle className="w-4 h-4 text-brand-cyan" />
-                          Frequently Asked Questions
-                        </h3>
-                      </div>
-                      <div className="p-4 space-y-4 max-h-[500px] overflow-y-auto">
-                        {[
-                          {
-                            question: "What is the minimum order quantity?",
-                            answer: "Our minimum order quantity varies by product. For aluminum profiles, the MOQ is typically 100 meters. For magnetic track lighting, the MOQ is 50 units. Please contact us for specific product requirements."
-                          },
-                          {
-                            question: "What are the lead times?",
-                            answer: "Standard lead times are 2-3 weeks for stock items and 4-6 weeks for custom orders. Rush orders may be available upon request with additional fees."
-                          },
-                          {
-                            question: "Do you offer custom lengths?",
-                            answer: "Yes, we offer custom cutting services for aluminum profiles. Please specify your required lengths when placing an order. Custom lengths may affect pricing and lead times."
-                          },
-                          {
-                            question: "What warranty do you provide?",
-                            answer: "All our products come with a 3-year manufacturer warranty covering defects in materials and workmanship. LED components are warranted for 50,000 hours of operation."
-                          },
-                          {
-                            question: "How can I request a sample?",
-                            answer: "Samples are available for evaluation. Please contact our sales team at inquiry@paralight.cc with your requirements. Sample costs may apply but are often credited towards bulk orders."
-                          },
-                          {
-                            question: "Do you ship internationally?",
-                            answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
-                          }
-                        ].map((faq, index) => (
-                          <div key={index} className="space-y-2" data-testid={`faq-${index}`}>
-                            {/* Question bubble - right aligned like user message */}
-                            <div className="flex justify-end">
-                              <div className="max-w-[85%] bg-brand-cyan text-white px-4 py-2.5 rounded-2xl rounded-br-md shadow-sm">
-                                <p className="text-sm font-medium">{faq.question}</p>
-                              </div>
-                            </div>
-                            {/* Answer bubble - left aligned like support response */}
-                            <div className="flex justify-start items-start gap-2">
-                              <div className="w-7 h-7 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <span className="text-xs text-white font-semibold">P</span>
-                              </div>
-                              <div className="max-w-[85%] bg-gray-100 text-gray-700 px-4 py-2.5 rounded-2xl rounded-bl-md">
-                                <p className="text-sm leading-relaxed">{faq.answer}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  ) : (
+                  {!selectedProduct && (
                     /* Filters Section - shown when viewing product grid */
                     <motion.div
                       key="filters"
@@ -1376,6 +1313,80 @@ export default function Products() {
                         </motion.div>
                       );
                     })()}
+
+                    {/* FAQ Section - Accordion Style */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="mt-16 border-t border-gray-200 pt-12"
+                    >
+                      <div className="flex items-center gap-3 mb-8">
+                        <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
+                        <h2 className="text-xl font-display font-semibold text-gray-900">Frequently Asked Questions</h2>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          {
+                            question: "What is the minimum order quantity?",
+                            answer: "Our minimum order quantity varies by product. For aluminum profiles, the MOQ is typically 100 meters. For magnetic track lighting, the MOQ is 50 units. Please contact us for specific product requirements."
+                          },
+                          {
+                            question: "What are the lead times?",
+                            answer: "Standard lead times are 2-3 weeks for stock items and 4-6 weeks for custom orders. Rush orders may be available upon request with additional fees."
+                          },
+                          {
+                            question: "Do you offer custom lengths?",
+                            answer: "Yes, we offer custom cutting services for aluminum profiles. Please specify your required lengths when placing an order. Custom lengths may affect pricing and lead times."
+                          },
+                          {
+                            question: "What warranty do you provide?",
+                            answer: "All our products come with a 3-year manufacturer warranty covering defects in materials and workmanship. LED components are warranted for 50,000 hours of operation."
+                          },
+                          {
+                            question: "How can I request a sample?",
+                            answer: "Samples are available for evaluation. Please contact our sales team at inquiry@paralight.cc with your requirements. Sample costs may apply but are often credited towards bulk orders."
+                          },
+                          {
+                            question: "Do you ship internationally?",
+                            answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
+                          }
+                        ].map((faq, index) => (
+                          <div 
+                            key={index} 
+                            className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden"
+                            data-testid={`faq-${index}`}
+                          >
+                            <button
+                              onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                              className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-100 transition-colors"
+                            >
+                              <span className="text-sm font-medium text-gray-900">{faq.question}</span>
+                              <ChevronDown 
+                                className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${expandedFaq === index ? 'rotate-180' : ''}`}
+                              />
+                            </button>
+                            <AnimatePresence>
+                              {expandedFaq === index && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-5 pb-4 pt-0">
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                      {faq.answer}
+                                    </p>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
                   </motion.div>
                 ) : (
                   /* Product Grid View */
