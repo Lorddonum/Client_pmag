@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, ChevronLeft, Sparkles, ArrowLeft, FileText, HelpCircle, Zap, Ruler, Palette, Sun, Eye, Layers, Box, Settings, Download, Image, Info, ListChecks, Wrench } from "lucide-react";
+import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, ChevronLeft, Sparkles, ArrowLeft, FileText, HelpCircle, Zap, Ruler, Palette, Sun, Eye, Layers, Box, Settings, Download, Image, Info, ListChecks, Wrench, Check, Mail, Phone } from "lucide-react";
 import { useLocation } from "wouter";
 import controlIntegrationImg from "@/assets/control-integration.png";
 
@@ -1304,18 +1304,21 @@ export default function Products() {
                       );
                     })()}
 
-                    {/* FAQ Section - Accordion Style */}
+                    {/* FAQ & Custom Request Section */}
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
                       className="mt-16 border-t border-gray-200 pt-12"
                     >
-                      <div className="flex items-center gap-3 mb-8">
-                        <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
-                        <h2 className="text-xl font-display font-semibold text-gray-900">Frequently Asked Questions</h2>
-                      </div>
-                      <div className="space-y-3 max-w-2xl">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        {/* Left: FAQ */}
+                        <div>
+                          <div className="flex items-center gap-3 mb-8">
+                            <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
+                            <h2 className="text-xl font-display font-semibold text-gray-900">Frequently Asked Questions</h2>
+                          </div>
+                          <div className="space-y-3">
                         {[
                           {
                             question: "What is the minimum order quantity?",
@@ -1379,6 +1382,72 @@ export default function Products() {
                             </AnimatePresence>
                           </div>
                         ))}
+                          </div>
+                        </div>
+
+                        {/* Right: Custom Request */}
+                        <div>
+                          <div className="flex items-center gap-3 mb-8">
+                            <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
+                            <h2 className="text-xl font-display font-semibold text-gray-900">Request Custom Solution</h2>
+                          </div>
+                          <div 
+                            className="rounded-2xl p-6 border-2 border-dashed"
+                            style={{ borderColor: `${brandColor}40`, backgroundColor: `${brandColor}05` }}
+                          >
+                            <div className="text-center mb-6">
+                              <div 
+                                className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+                                style={{ backgroundColor: `${brandColor}15` }}
+                              >
+                                <Wrench className="w-8 h-8" style={{ color: brandColor }} />
+                              </div>
+                              <h3 className="text-lg font-semibold text-gray-900 mb-2">Need a Custom Version?</h3>
+                              <p className="text-sm text-gray-600 leading-relaxed">
+                                We can customize this product to meet your specific requirements. Whether you need different dimensions, finishes, or technical specifications, our engineering team is ready to help.
+                              </p>
+                            </div>
+                            
+                            <div className="space-y-3 mb-6">
+                              {[
+                                "Custom lengths and dimensions",
+                                "Special finishes and colors",
+                                "Modified technical specifications",
+                                "Bulk order configurations",
+                                "OEM/ODM partnerships"
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-3 text-sm text-gray-700">
+                                  <div 
+                                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                    style={{ backgroundColor: `${brandColor}20` }}
+                                  >
+                                    <Check className="w-3 h-3" style={{ color: brandColor }} />
+                                  </div>
+                                  {item}
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              <a
+                                href={`mailto:inquiry@paralight.cc?subject=Custom Request: ${selectedProduct?.name || 'Product'}&body=Hi,%0D%0A%0D%0AI'm interested in a custom version of ${selectedProduct?.name || 'your product'} (Model: ${selectedProduct?.modelNumber || ''}).%0D%0A%0D%0AMy requirements:%0D%0A- %0D%0A%0D%0APlease contact me to discuss further.%0D%0A%0D%0AThank you.`}
+                                className="w-full py-3 px-4 rounded-xl text-white font-medium text-sm text-center transition-all hover:opacity-90 flex items-center justify-center gap-2"
+                                style={{ backgroundColor: brandColor }}
+                              >
+                                <Mail className="w-4 h-4" />
+                                Email Custom Request
+                              </a>
+                              <a
+                                href="tel:+8618128259727"
+                                className="w-full py-3 px-4 rounded-xl border-2 font-medium text-sm text-center transition-all hover:bg-gray-50 flex items-center justify-center gap-2"
+                                style={{ borderColor: brandColor, color: brandColor }}
+                              >
+                                <Phone className="w-4 h-4" />
+                                Call: +86 181 2825 9727
+                              </a>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   </motion.div>
