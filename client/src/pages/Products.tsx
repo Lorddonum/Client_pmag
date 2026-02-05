@@ -554,47 +554,47 @@ export default function Products() {
         {/* Animated Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div 
-            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-brand-cyan/5 to-transparent blur-3xl"
-            style={{ top: '10%', left: '-10%' }}
+            className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#00A8E8]/15 via-[#00A8E8]/8 to-transparent blur-3xl"
+            style={{ top: '5%', left: '-15%' }}
             animate={{ 
-              x: [0, 50, 0],
-              y: [0, 30, 0],
-              scale: [1, 1.1, 1],
+              x: [0, 80, 0],
+              y: [0, 50, 0],
+              scale: [1, 1.15, 1],
             }}
             transition={{ 
-              duration: 20,
+              duration: 18,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           />
           <motion.div 
-            className="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-br from-brand-gold/5 to-transparent blur-3xl"
-            style={{ top: '40%', right: '-5%' }}
+            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#ECAA00]/15 via-[#ECAA00]/8 to-transparent blur-3xl"
+            style={{ top: '35%', right: '-10%' }}
             animate={{ 
-              x: [0, -40, 0],
-              y: [0, 50, 0],
-              scale: [1, 1.15, 1],
+              x: [0, -60, 0],
+              y: [0, 70, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ 
+              duration: 22,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 3
+            }}
+          />
+          <motion.div 
+            className="absolute w-[450px] h-[450px] rounded-full bg-gradient-to-br from-[#00A8E8]/10 via-[#00A8E8]/5 to-transparent blur-3xl"
+            style={{ bottom: '10%', left: '25%' }}
+            animate={{ 
+              x: [0, 100, 0],
+              y: [0, -60, 0],
+              scale: [1, 1.25, 1],
             }}
             transition={{ 
               duration: 25,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: 2
-            }}
-          />
-          <motion.div 
-            className="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-br from-brand-cyan/3 to-transparent blur-3xl"
-            style={{ bottom: '20%', left: '30%' }}
-            animate={{ 
-              x: [0, 60, 0],
-              y: [0, -40, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ 
-              duration: 30,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 5
+              delay: 6
             }}
           />
         </div>
