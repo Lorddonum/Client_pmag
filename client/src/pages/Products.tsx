@@ -553,26 +553,34 @@ export default function Products() {
       <main className="py-16 bg-gradient-to-b from-[#f5f2ed] via-[#faf8f5] to-white min-h-screen relative overflow-hidden">
         {/* Textured Background Layer */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Subtle dot pattern */}
+          {/* Dot grid pattern */}
           <div 
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
-              backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`,
-              backgroundSize: '24px 24px'
+              backgroundImage: `radial-gradient(circle, #9ca3af 1.5px, transparent 1.5px)`,
+              backgroundSize: '32px 32px'
             }}
           />
-          {/* Noise texture overlay */}
+          {/* Cross pattern */}
           <div 
-            className="absolute inset-0 opacity-[0.015]"
+            className="absolute inset-0 opacity-[0.04]"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              backgroundImage: `
+                linear-gradient(to right, #00A8E8 1px, transparent 1px),
+                linear-gradient(to bottom, #00A8E8 1px, transparent 1px)
+              `,
+              backgroundSize: '80px 80px'
             }}
           />
-          {/* Diagonal lines pattern */}
+          {/* Gradient mesh */}
           <div 
-            className="absolute inset-0 opacity-[0.02]"
+            className="absolute inset-0"
             style={{
-              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 40px, #00A8E8 40px, #00A8E8 41px)`,
+              background: `
+                radial-gradient(ellipse at 20% 30%, rgba(0, 168, 232, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 60%, rgba(236, 170, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(0, 168, 232, 0.05) 0%, transparent 40%)
+              `
             }}
           />
         </div>
@@ -580,72 +588,70 @@ export default function Products() {
         {/* Animated Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <motion.div 
-            className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#00A8E8]/15 via-[#00A8E8]/8 to-transparent blur-3xl"
-            style={{ top: '5%', left: '-15%' }}
+            className="absolute w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#00A8E8]/25 via-[#00A8E8]/12 to-transparent blur-3xl"
+            style={{ top: '0%', left: '-20%' }}
             animate={{ 
-              x: [0, 80, 0],
-              y: [0, 50, 0],
-              scale: [1, 1.15, 1],
+              x: [0, 100, 0],
+              y: [0, 60, 0],
+              scale: [1, 1.2, 1],
             }}
             transition={{ 
-              duration: 18,
+              duration: 15,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           />
           <motion.div 
-            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#ECAA00]/15 via-[#ECAA00]/8 to-transparent blur-3xl"
-            style={{ top: '35%', right: '-10%' }}
+            className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#ECAA00]/25 via-[#ECAA00]/12 to-transparent blur-3xl"
+            style={{ top: '30%', right: '-15%' }}
             animate={{ 
-              x: [0, -60, 0],
-              y: [0, 70, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ 
-              duration: 22,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 3
-            }}
-          />
-          <motion.div 
-            className="absolute w-[450px] h-[450px] rounded-full bg-gradient-to-br from-[#00A8E8]/10 via-[#00A8E8]/5 to-transparent blur-3xl"
-            style={{ bottom: '10%', left: '25%' }}
-            animate={{ 
-              x: [0, 100, 0],
-              y: [0, -60, 0],
+              x: [0, -80, 0],
+              y: [0, 80, 0],
               scale: [1, 1.25, 1],
             }}
             transition={{ 
-              duration: 25,
+              duration: 18,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: 6
+              delay: 2
             }}
           />
-          {/* Additional floating shapes */}
           <motion.div 
-            className="absolute w-[200px] h-[200px] rounded-full border border-[#00A8E8]/10"
-            style={{ top: '20%', right: '20%' }}
+            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#00A8E8]/20 via-[#00A8E8]/10 to-transparent blur-3xl"
+            style={{ bottom: '5%', left: '20%' }}
             animate={{ 
-              rotate: [0, 360],
-              scale: [1, 1.1, 1],
+              x: [0, 120, 0],
+              y: [0, -70, 0],
+              scale: [1, 1.3, 1],
             }}
             transition={{ 
-              duration: 40,
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 4
+            }}
+          />
+          {/* Rotating circle accents */}
+          <motion.div 
+            className="absolute w-[250px] h-[250px] rounded-full border-2 border-[#00A8E8]/20"
+            style={{ top: '15%', right: '15%' }}
+            animate={{ 
+              rotate: [0, 360],
+            }}
+            transition={{ 
+              duration: 30,
               repeat: Infinity,
               ease: "linear"
             }}
           />
           <motion.div 
-            className="absolute w-[150px] h-[150px] rounded-full border border-[#ECAA00]/10"
-            style={{ bottom: '30%', left: '10%' }}
+            className="absolute w-[180px] h-[180px] rounded-full border-2 border-[#ECAA00]/20"
+            style={{ bottom: '25%', left: '8%' }}
             animate={{ 
               rotate: [360, 0],
-              scale: [1, 1.2, 1],
             }}
             transition={{ 
-              duration: 35,
+              duration: 25,
               repeat: Infinity,
               ease: "linear"
             }}
