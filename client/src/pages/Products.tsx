@@ -538,9 +538,9 @@ export default function Products() {
 
       <main className="py-16 bg-gradient-to-b from-[#f5f2ed] via-[#faf8f5] to-white min-h-screen">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="flex flex-col lg:flex-row gap-10">
-            {/* Sidebar */}
-            <aside className="lg:w-80 shrink-0">
+          <div className={`flex flex-col lg:flex-row gap-10 ${selectedProduct ? 'lg:block' : ''}`}>
+            {/* Sidebar - hidden when product is selected */}
+            <aside className={`lg:w-80 shrink-0 ${selectedProduct ? 'hidden' : ''}`}>
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
