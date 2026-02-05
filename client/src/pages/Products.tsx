@@ -81,6 +81,8 @@ export default function Products() {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [currentDrawingIndex, setCurrentDrawingIndex] = useState(0);
   const [activeDetailTab, setActiveDetailTab] = useState<'overview' | 'specs' | 'drawings' | 'accessories'>('overview');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PRODUCTS_PER_PAGE = 12;
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const [, setLocation] = useLocation();
@@ -164,6 +166,18 @@ export default function Products() {
         (p.subSeries || []).some(s => s.toLowerCase().includes(query))
       );
     });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeBrand, activeSeries, activeSubSeries, searchQuery]);
 
   useEffect(() => {
     setActiveSeries("All");
@@ -1510,7 +1524,8 @@ export default function Products() {
                     {/* Results header */}
                     <div className="flex items-center justify-between mb-6">
                       <p className="text-sm text-gray-500">
-                        <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
+                        Showing <span className="font-medium text-gray-900">{paginatedProducts.length}</span> of <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
+                        {totalPages > 1 && <span className="ml-2 text-gray-400">(Page {currentPage} of {totalPages})</span>}
                       </p>
                       
                       {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery) && (
@@ -1556,7 +1571,7 @@ export default function Products() {
                     ) : (
                       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                         <AnimatePresence mode="popLayout">
-                          {filteredProducts.map((product, index) => (
+                          {paginatedProducts.map((product, index) => (
                             <motion.div 
                               key={product.id}
                               layout
@@ -1658,6 +1673,93 @@ export default function Products() {
                       </motion.div>
                     )}
                   </div>
+                )}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && !isLoading && filteredProducts.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-10 flex items-center justify-center gap-2"
+                  >
+                    {/* Previous Button */}
+                    <button
+                      onClick={() => {
+                        setCurrentPage(p => Math.max(1, p - 1));
+                        window.scrollTo({ top: 400, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === 1}
+                      className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                        currentPage === 1
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                      }`}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Previous
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className="flex items-center gap-1">
+                      {(() => {
+                        const pages: (number | string)[] = [];
+                        const showEllipsisStart = currentPage > 3;
+                        const showEllipsisEnd = currentPage < totalPages - 2;
+                        
+                        if (totalPages <= 7) {
+                          for (let i = 1; i <= totalPages; i++) pages.push(i);
+                        } else {
+                          pages.push(1);
+                          if (showEllipsisStart) pages.push('...');
+                          
+                          const start = Math.max(2, currentPage - 1);
+                          const end = Math.min(totalPages - 1, currentPage + 1);
+                          for (let i = start; i <= end; i++) pages.push(i);
+                          
+                          if (showEllipsisEnd) pages.push('...');
+                          pages.push(totalPages);
+                        }
+                        
+                        return pages.map((page, idx) => (
+                          page === '...' ? (
+                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
+                          ) : (
+                            <button
+                              key={page}
+                              onClick={() => {
+                                setCurrentPage(page as number);
+                                window.scrollTo({ top: 400, behavior: 'smooth' });
+                              }}
+                              className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
+                                currentPage === page
+                                  ? 'bg-gray-900 text-white shadow-md'
+                                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          )
+                        ));
+                      })()}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={() => {
+                        setCurrentPage(p => Math.min(totalPages, p + 1));
+                        window.scrollTo({ top: 400, behavior: 'smooth' });
+                      }}
+                      disabled={currentPage === totalPages}
+                      className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                        currentPage === totalPages
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                      }`}
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </motion.div>
                 )}
               </motion.div>
             )}
