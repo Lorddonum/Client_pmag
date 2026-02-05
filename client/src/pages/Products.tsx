@@ -536,8 +536,55 @@ export default function Products() {
         </div>
       </section>
 
-      <main className="py-16 bg-gradient-to-b from-[#f5f2ed] via-[#faf8f5] to-white min-h-screen">
-        <div className="container mx-auto px-6 lg:px-12">
+      <main className="py-16 bg-gradient-to-b from-[#f5f2ed] via-[#faf8f5] to-white min-h-screen relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <motion.div 
+            className="absolute w-[500px] h-[500px] rounded-full bg-gradient-to-br from-brand-cyan/5 to-transparent blur-3xl"
+            style={{ top: '10%', left: '-10%' }}
+            animate={{ 
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-br from-brand-gold/5 to-transparent blur-3xl"
+            style={{ top: '40%', right: '-5%' }}
+            animate={{ 
+              x: [0, -40, 0],
+              y: [0, 50, 0],
+              scale: [1, 1.15, 1],
+            }}
+            transition={{ 
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 2
+            }}
+          />
+          <motion.div 
+            className="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-br from-brand-cyan/3 to-transparent blur-3xl"
+            style={{ bottom: '20%', left: '30%' }}
+            animate={{ 
+              x: [0, 60, 0],
+              y: [0, -40, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ 
+              duration: 30,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 5
+            }}
+          />
+        </div>
+        <div className="container mx-auto px-6 lg:px-12 relative z-10">
           <div className={`flex flex-col lg:flex-row gap-10 ${selectedProduct ? 'lg:block' : ''}`}>
             {/* Sidebar - hidden when product is selected */}
             <aside className={`lg:w-80 shrink-0 ${selectedProduct ? 'hidden' : ''}`}>
