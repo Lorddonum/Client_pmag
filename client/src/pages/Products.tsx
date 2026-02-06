@@ -1298,6 +1298,29 @@ export default function Products() {
                               </p>
                             </div>
 
+                            {/* Key Features */}
+                            <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                              <h3 className="text-base font-bold text-gray-900 uppercase tracking-wide mb-5 flex items-center gap-2">
+                                <div className="w-1.5 h-5 rounded-full" style={{ backgroundColor: brandColor }} />
+                                Key Features
+                              </h3>
+                              <div className="grid grid-cols-2 gap-4">
+                                {[
+                                  { label: "Application", value: selectedProduct.application },
+                                  { label: "Material", value: selectedProduct.material },
+                                  { label: "Finish", value: selectedProduct.finish },
+                                  { label: "Color Options", value: selectedProduct.color },
+                                  { label: "Standard Length", value: selectedProduct.standardLength },
+                                  { label: "Installation", value: selectedProduct.installationMethod },
+                                ].filter(item => item.value).map((item, idx) => (
+                                  <div key={idx} className="flex flex-col p-3 bg-white rounded-lg border border-gray-100">
+                                    <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium mb-1">{item.label}</span>
+                                    <span className="text-sm font-medium text-gray-900">{item.value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
                             {/* Packaging Information - Paralight only */}
                             {selectedProduct.brand === "Paralight" && (selectedProduct.packagingMethodADesc || selectedProduct.packagingMethodBDesc) && (
                               <div className="border border-gray-200 rounded-xl overflow-hidden">
@@ -1342,29 +1365,6 @@ export default function Products() {
                                 </div>
                               </div>
                             )}
-
-                            {/* Key Features */}
-                            <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-                              <h3 className="text-base font-bold text-gray-900 uppercase tracking-wide mb-5 flex items-center gap-2">
-                                <div className="w-1.5 h-5 rounded-full" style={{ backgroundColor: brandColor }} />
-                                Key Features
-                              </h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {[
-                                  { label: "Application", value: selectedProduct.application },
-                                  { label: "Material", value: selectedProduct.material },
-                                  { label: "Finish", value: selectedProduct.finish },
-                                  { label: "Color Options", value: selectedProduct.color },
-                                  { label: "Standard Length", value: selectedProduct.standardLength },
-                                  { label: "Installation", value: selectedProduct.installationMethod },
-                                ].filter(item => item.value).map((item, idx) => (
-                                  <div key={idx} className="flex flex-col p-3 bg-white rounded-lg border border-gray-100">
-                                    <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium mb-1">{item.label}</span>
-                                    <span className="text-sm font-medium text-gray-900">{item.value}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
 
                             {/* Control Integration - Maglinear only */}
                             {selectedProduct.brand !== "Paralight" && (
