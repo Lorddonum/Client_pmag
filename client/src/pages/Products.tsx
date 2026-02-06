@@ -223,7 +223,7 @@ function BouncingCircles() {
 }
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, ChevronLeft, Sparkles, ArrowLeft, FileText, HelpCircle, Zap, Ruler, Palette, Sun, Eye, Layers, Box, Settings, Download, Image, Info, ListChecks, Wrench, Check, Mail, Phone } from "lucide-react";
+import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRight, ChevronDown, ChevronLeft, Sparkles, ArrowLeft, FileText, HelpCircle, Zap, Ruler, Palette, Sun, Eye, Layers, Box, Settings, Download, Image, Info, ListChecks, Wrench, Check, Mail, Phone, Flame } from "lucide-react";
 import { useLocation } from "wouter";
 import controlIntegrationImg from "@/assets/control-integration.png";
 
@@ -236,6 +236,7 @@ interface ProductGridItem {
   series: string[];
   subSeries?: string[] | null;
   image?: string | null;
+  hotSelling?: boolean | null;
 }
 
 // Full product type for detail view
@@ -290,6 +291,7 @@ export default function Products() {
   const [activeSeries, setActiveSeries] = useState<string>("All");
   const [activeSubSeries, setActiveSubSeries] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [hotSellingOnly, setHotSellingOnly] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -378,6 +380,7 @@ export default function Products() {
 
   const filteredProducts = seriesFilteredProducts
     .filter(p => activeSubSeries === "All" || (p.subSeries || []).includes(activeSubSeries))
+    .filter(p => !hotSellingOnly || p.hotSelling)
     .filter(p => {
       if (!searchQuery.trim()) return true;
       const query = searchQuery.toLowerCase();
@@ -399,7 +402,7 @@ export default function Products() {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeBrand, activeSeries, activeSubSeries, searchQuery]);
+  }, [activeBrand, activeSeries, activeSubSeries, searchQuery, hotSellingOnly]);
 
   useEffect(() => {
     setActiveSeries("All");
@@ -913,6 +916,21 @@ export default function Products() {
                               }`}
                             >
                               All Series
+                            </button>
+
+                            <button
+                              onClick={() => setHotSellingOnly(!hotSellingOnly)}
+                              data-testid="filter-hot-selling"
+                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all mt-1 ${
+                                hotSellingOnly
+                                  ? "bg-orange-500 text-white font-medium"
+                                  : "text-gray-600 hover:bg-orange-50 border border-dashed border-orange-200"
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <Flame className="w-4 h-4" />
+                                Hot Selling
+                              </span>
                             </button>
 
                             {/* Paralight Brand Group */}
@@ -1855,7 +1873,7 @@ export default function Products() {
                         {totalPages > 1 && <span className="ml-2 text-gray-400">(Page {currentPage} of {totalPages})</span>}
                       </p>
                       
-                      {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery) && (
+                      {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery || hotSellingOnly) && (
                         <div className="flex items-center gap-2 flex-wrap">
                           {activeSeries !== "All" && (
                             <button 
@@ -1881,6 +1899,16 @@ export default function Products() {
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
                             >
                               "{searchQuery}"
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                          {hotSellingOnly && (
+                            <button 
+                              onClick={() => setHotSellingOnly(false)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full hover:bg-orange-200 transition-colors"
+                            >
+                              <Flame className="w-3 h-3" />
+                              Hot Selling
                               <X className="w-3 h-3" />
                             </button>
                           )}

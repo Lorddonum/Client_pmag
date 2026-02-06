@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, serial, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, serial, index, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -62,6 +62,8 @@ export const products = pgTable("products", {
   adjustableAngle: text("adjustable_angle"),
   // Technical Specifications (JSON string for table data)
   technicalSpecs: text("technical_specs"),
+  // Hot Selling flag
+  hotSelling: boolean("hot_selling").default(false),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

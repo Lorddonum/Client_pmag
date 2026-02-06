@@ -124,7 +124,8 @@ export default function Admin() {
     protectionRating: "",
     bluetoothVersion: "",
     adjustableAngle: "",
-    technicalSpecs: ""
+    technicalSpecs: "",
+    hotSelling: false
   });
 
   const availableSeries = useMemo(() => {
@@ -348,7 +349,8 @@ export default function Admin() {
       protectionRating: "",
       bluetoothVersion: "",
       adjustableAngle: "",
-      technicalSpecs: ""
+      technicalSpecs: "",
+      hotSelling: false
     });
   };
 
@@ -400,7 +402,8 @@ export default function Admin() {
       protectionRating: product.protectionRating || "",
       bluetoothVersion: product.bluetoothVersion || "",
       adjustableAngle: product.adjustableAngle || "",
-      technicalSpecs: product.technicalSpecs || ""
+      technicalSpecs: product.technicalSpecs || "",
+      hotSelling: product.hotSelling || false
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -453,7 +456,8 @@ export default function Admin() {
       protectionRating: product.protectionRating || "",
       bluetoothVersion: product.bluetoothVersion || "",
       adjustableAngle: product.adjustableAngle || "",
-      technicalSpecs: product.technicalSpecs || ""
+      technicalSpecs: product.technicalSpecs || "",
+      hotSelling: product.hotSelling || false
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -694,6 +698,16 @@ export default function Admin() {
                         <option value="Paralight">Paralight</option>
                         <option value="Maglinear">Maglinear Lighting</option>
                       </select>
+                      <label className="flex items-center gap-3 mt-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          data-testid="checkbox-hot-selling"
+                          checked={formData.hotSelling}
+                          onChange={(e) => setFormData({...formData, hotSelling: e.target.checked})}
+                          className="w-4 h-4 rounded border-gray-300 text-[#00A8E8] focus:ring-[#00A8E8]/20 cursor-pointer"
+                        />
+                        <span className="text-xs font-bold uppercase tracking-widest text-orange-500 group-hover:text-orange-600 transition-colors">Hot Selling</span>
+                      </label>
                     </div>
                     {formData.brand === "Maglinear" ? (
                     <div className="space-y-2">

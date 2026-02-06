@@ -11,6 +11,7 @@ export interface ProductGridItem {
   series: string[];
   subSeries: string[] | null;
   image: string | null;
+  hotSelling: boolean | null;
 }
 
 export interface IStorage {
@@ -57,6 +58,7 @@ export class DatabaseStorage implements IStorage {
       series: products.series,
       subSeries: products.subSeries,
       image: products.image,
+      hotSelling: products.hotSelling,
     }).from(products);
   }
 
