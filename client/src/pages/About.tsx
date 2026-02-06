@@ -481,16 +481,26 @@ function ShowcaseSection() {
   phaseRef.current = phase;
 
   useEffect(() => {
-    if (isInView && phase === "idle") {
-      const scrollContainer = sectionRef.current?.closest('.snap-y') as HTMLElement | null;
-      if (scrollContainer && sectionRef.current) {
+    if (!isInView || phase !== "idle") return;
+
+    const scrollContainer = sectionRef.current?.closest('.snap-y') as HTMLElement | null;
+    if (!scrollContainer || !sectionRef.current) return;
+
+    const lockScroll = () => {
+      if (sectionRef.current) {
+        scrollContainer.style.scrollSnapType = 'none';
         scrollContainer.scrollTop = sectionRef.current.offsetTop;
         scrollContainer.style.overflow = 'hidden';
       }
-      animatingRef.current = true;
-      setPhase("circle");
-      setTimeout(() => { animatingRef.current = false; }, 1200);
-    }
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(lockScroll);
+    });
+
+    animatingRef.current = true;
+    setPhase("circle");
+    setTimeout(() => { animatingRef.current = false; }, 1200);
   }, [isInView]);
 
   useEffect(() => {
@@ -515,6 +525,7 @@ function ShowcaseSection() {
           const scrollContainer = section.closest('.snap-y') as HTMLElement | null;
           if (scrollContainer) {
             setTimeout(() => {
+              scrollContainer.style.scrollSnapType = 'y mandatory';
               scrollContainer.style.overflow = 'auto';
               animatingRef.current = false;
             }, 800);
