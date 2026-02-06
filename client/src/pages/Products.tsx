@@ -293,6 +293,7 @@ export default function Products() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [expandedFilterBrand, setExpandedFilterBrand] = useState<{ paralight: boolean; maglinear: boolean }>({ paralight: true, maglinear: true });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
@@ -888,11 +889,9 @@ export default function Products() {
                           )}
                         </div>
 
-                        {/* Series filter with nested sub-series */}
+                        {/* Series filter with brand groups */}
                         <div className="p-6">
-                          <h3 className="text-[11px] font-bold tracking-[0.15em] uppercase text-gray-400 mb-4">Product Series</h3>
-                          <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
-                            {/* All Series */}
+                          <div className="space-y-1 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                             <button
                               onClick={() => { setActiveSeries("All"); setActiveSubSeries("All"); }}
                               data-testid="filter-series-all"
@@ -904,75 +903,135 @@ export default function Products() {
                             >
                               All Series
                             </button>
-                            
-                            {/* Series with nested sub-series */}
-                            {seriesList.map(series => {
-                              const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
-                              const seriesSubSeries = Array.from(new Set(
-                                seriesProducts.flatMap(p => p.subSeries || []).filter((s): s is string => !!s)
-                              ));
-                              const hasCyan = seriesProducts.some(p => p.brand === "Paralight");
-                              const isSeriesActive = activeSeries === series;
-                              
+
+                            {/* Paralight Brand Group */}
+                            {(() => {
+                              const paralightSeries = seriesList.filter(s => 
+                                brandFilteredProducts.some(p => (p.series || []).includes(s) && p.brand === "Paralight")
+                              );
+                              if (paralightSeries.length === 0) return null;
                               return (
-                                <div key={series}>
-                                  {/* Series button */}
+                                <div className="mt-3">
                                   <button
-                                    onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
-                                    data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
-                                    className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all flex items-center justify-between ${
-                                      isSeriesActive && activeSubSeries === "All"
-                                        ? hasCyan ? "bg-brand-cyan text-white font-medium" : "bg-brand-gold text-gray-900 font-medium"
-                                        : isSeriesActive 
-                                          ? hasCyan ? "bg-brand-cyan/10 text-brand-cyan font-medium" : "bg-brand-gold/10 text-brand-gold font-medium"
-                                          : "text-gray-600 hover:bg-gray-50"
-                                    }`}
+                                    onClick={() => setExpandedFilterBrand(prev => ({ ...prev, paralight: !prev.paralight }))}
+                                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#00A8E8]/8 hover:bg-[#00A8E8]/12 transition-colors"
+                                    data-testid="filter-brand-paralight-toggle"
                                   >
-                                    <span className="flex items-center gap-2">
-                                      <span className={`w-1.5 h-1.5 rounded-full ${
-                                        isSeriesActive && activeSubSeries === "All" 
-                                          ? "bg-white" 
-                                          : hasCyan ? "bg-brand-cyan" : "bg-brand-gold"
-                                      }`} />
-                                      {series}
+                                    <span className="flex items-center gap-2.5">
+                                      <div className="w-2.5 h-2.5 rounded-full bg-[#00A8E8]" />
+                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#00A8E8]">Paralight</span>
                                     </span>
-                                    <span className={`text-xs ${
-                                      isSeriesActive && activeSubSeries === "All" 
-                                        ? hasCyan ? "text-white/70" : "text-gray-900/50" 
-                                        : "text-gray-400"
-                                    }`}>
-                                      {seriesProducts.length}
-                                    </span>
+                                    <ChevronDown className={`w-4 h-4 text-[#00A8E8] transition-transform duration-200 ${expandedFilterBrand.paralight ? '' : '-rotate-90'}`} />
                                   </button>
-                                  
-                                  {/* Nested sub-series (show when series is active and has sub-series) */}
-                                  {isSeriesActive && seriesSubSeries.length > 0 && (
-                                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-100 pl-3">
-                                      {seriesSubSeries.map(subSeriesItem => {
-                                        const subSeriesCount = seriesProducts.filter(p => (p.subSeries || []).includes(subSeriesItem)).length;
+                                  {expandedFilterBrand.paralight && (
+                                    <div className="mt-1 space-y-0.5 border-l-2 border-[#00A8E8]/20 ml-4 pl-2">
+                                      {paralightSeries.map(series => {
+                                        const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
+                                        const isSeriesActive = activeSeries === series;
                                         return (
-                                          <button
-                                            key={subSeriesItem}
-                                            onClick={() => setActiveSubSeries(subSeriesItem)}
-                                            data-testid={`filter-subseries-${subSeriesItem.toLowerCase().replace(/\s+/g, '-')}`}
-                                            className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
-                                              activeSubSeries === subSeriesItem 
-                                                ? "bg-gray-900 text-white font-medium"
-                                                : "text-gray-500 hover:bg-gray-50"
-                                            }`}
-                                          >
-                                            <span>{subSeriesItem}</span>
-                                            <span className={`text-xs ${activeSubSeries === subSeriesItem ? "text-white/70" : "text-gray-400"}`}>
-                                              {subSeriesCount}
-                                            </span>
-                                          </button>
+                                          <div key={series}>
+                                            <button
+                                              onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
+                                              data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
+                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
+                                                isSeriesActive
+                                                  ? "bg-[#00A8E8] text-white font-medium"
+                                                  : "text-gray-600 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <span className="truncate pr-2">{series}</span>
+                                              <span className={`text-xs flex-shrink-0 ${isSeriesActive ? "text-white/70" : "text-gray-400"}`}>
+                                                {seriesProducts.length}
+                                              </span>
+                                            </button>
+                                          </div>
                                         );
                                       })}
                                     </div>
                                   )}
                                 </div>
                               );
-                            })}
+                            })()}
+
+                            {/* Maglinear Brand Group */}
+                            {(() => {
+                              const maglinearSeries = seriesList.filter(s => 
+                                brandFilteredProducts.some(p => (p.series || []).includes(s) && p.brand === "Maglinear Lighting")
+                              );
+                              if (maglinearSeries.length === 0) return null;
+                              return (
+                                <div className="mt-3">
+                                  <button
+                                    onClick={() => setExpandedFilterBrand(prev => ({ ...prev, maglinear: !prev.maglinear }))}
+                                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#ECAA00]/8 hover:bg-[#ECAA00]/12 transition-colors"
+                                    data-testid="filter-brand-maglinear-toggle"
+                                  >
+                                    <span className="flex items-center gap-2.5">
+                                      <div className="w-2.5 h-2.5 rounded-full bg-[#ECAA00]" />
+                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#ECAA00]">Maglinear Lighting</span>
+                                    </span>
+                                    <ChevronDown className={`w-4 h-4 text-[#ECAA00] transition-transform duration-200 ${expandedFilterBrand.maglinear ? '' : '-rotate-90'}`} />
+                                  </button>
+                                  {expandedFilterBrand.maglinear && (
+                                    <div className="mt-1 space-y-0.5 border-l-2 border-[#ECAA00]/20 ml-4 pl-2">
+                                      {maglinearSeries.map(series => {
+                                        const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
+                                        const seriesSubSeries = Array.from(new Set(
+                                          seriesProducts.flatMap(p => p.subSeries || []).filter((s): s is string => !!s)
+                                        ));
+                                        const isSeriesActive = activeSeries === series;
+                                        return (
+                                          <div key={series}>
+                                            <button
+                                              onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
+                                              data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
+                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
+                                                isSeriesActive && activeSubSeries === "All"
+                                                  ? "bg-[#ECAA00] text-gray-900 font-medium"
+                                                  : isSeriesActive
+                                                    ? "bg-[#ECAA00]/10 text-[#ECAA00] font-medium"
+                                                    : "text-gray-600 hover:bg-gray-50"
+                                              }`}
+                                            >
+                                              <span className="truncate pr-2">{series}</span>
+                                              <span className={`text-xs flex-shrink-0 ${
+                                                isSeriesActive && activeSubSeries === "All" ? "text-gray-900/50" : "text-gray-400"
+                                              }`}>
+                                                {seriesProducts.length}
+                                              </span>
+                                            </button>
+                                            {isSeriesActive && seriesSubSeries.length > 0 && (
+                                              <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-gray-100 pl-2">
+                                                {seriesSubSeries.map(subSeriesItem => {
+                                                  const subSeriesCount = seriesProducts.filter(p => (p.subSeries || []).includes(subSeriesItem)).length;
+                                                  return (
+                                                    <button
+                                                      key={subSeriesItem}
+                                                      onClick={() => setActiveSubSeries(subSeriesItem)}
+                                                      data-testid={`filter-subseries-${subSeriesItem.toLowerCase().replace(/\s+/g, '-')}`}
+                                                      className={`w-full text-left px-3 py-1.5 text-xs rounded-lg transition-all flex items-center justify-between ${
+                                                        activeSubSeries === subSeriesItem 
+                                                          ? "bg-gray-900 text-white font-medium"
+                                                          : "text-gray-500 hover:bg-gray-50"
+                                                      }`}
+                                                    >
+                                                      <span>{subSeriesItem}</span>
+                                                      <span className={`text-xs ${activeSubSeries === subSeriesItem ? "text-white/70" : "text-gray-400"}`}>
+                                                        {subSeriesCount}
+                                                      </span>
+                                                    </button>
+                                                  );
+                                                })}
+                                              </div>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
                       </div>
