@@ -250,7 +250,7 @@ export default function Downloads() {
   const grouped = groupBySeries(filteredProducts);
 
   return (
-    <div className="min-h-screen bg-[#1a1610] text-white selection:bg-[#00A8E8] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#3d3428] text-white selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       
       <div className="relative pt-32 pb-24">
