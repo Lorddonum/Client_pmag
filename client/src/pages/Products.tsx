@@ -1197,8 +1197,8 @@ export default function Products() {
 
                             {/* Control Integration - Maglinear only */}
                             {selectedProduct.brand !== "Paralight" && (
-                              <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white shadow-lg">
-                                <h3 className="text-base font-bold uppercase tracking-wide mb-5 flex items-center gap-2">
+                              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                                <h3 className="text-base font-bold text-gray-900 uppercase tracking-wide mb-5 flex items-center gap-2">
                                   <div className="w-1.5 h-5 rounded-full bg-[#ECAA00]" />
                                   Control Integration
                                 </h3>
