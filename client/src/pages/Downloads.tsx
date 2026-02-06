@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { FileText, Download, Loader2, FolderOpen, Search } from "lucide-react";
+import { FileText, Download, Loader2, FolderOpen, Search, ArrowRight, BookOpen, Layers, X } from "lucide-react";
 
 interface Product {
   id: number;
@@ -12,6 +12,7 @@ interface Product {
   brand: string;
   category: string;
   catalogueUrl: string | null;
+  image: string | null;
 }
 
 export default function Downloads() {
@@ -19,6 +20,7 @@ export default function Downloads() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeBrand, setActiveBrand] = useState<"all" | "Paralight" | "Maglinear">("all");
+  const [activeSeries, setActiveSeries] = useState<string>("all");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,192 +39,55 @@ export default function Downloads() {
     fetchProducts();
   }, []);
 
-  const filteredProducts = products.filter(p => {
-    const matchesBrand = activeBrand === "all" || p.brand === activeBrand;
-    const matchesSearch = searchQuery === "" || 
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.modelNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.series && p.series.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())));
-    return matchesBrand && matchesSearch;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => {
+      const matchesBrand = activeBrand === "all" || p.brand === activeBrand;
+      const matchesSeries = activeSeries === "all" || (p.series || []).includes(activeSeries);
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = query === "" || 
+        p.name.toLowerCase().includes(query) ||
+        p.modelNumber.toLowerCase().includes(query) ||
+        (p.series || []).some(s => s.toLowerCase().includes(query));
+      return matchesBrand && matchesSearch && matchesSeries;
+    });
+  }, [products, activeBrand, activeSeries, searchQuery]);
 
-  const paralightProducts = filteredProducts.filter(p => p.brand === "Paralight");
-  const maglinearProducts = filteredProducts.filter(p => p.brand === "Maglinear");
+  const allSeries = useMemo(() => {
+    const brandProducts = activeBrand === "all" 
+      ? products 
+      : products.filter(p => p.brand === activeBrand);
+    return Array.from(new Set(brandProducts.flatMap(p => p.series || []))).sort();
+  }, [products, activeBrand]);
+
+  const paralightCount = products.filter(p => p.brand === "Paralight").length;
+  const maglinearCount = products.filter(p => p.brand === "Maglinear").length;
 
   const groupBySeries = (prods: Product[]) => {
     return prods.reduce((acc, product) => {
       const seriesKey = product.series && product.series.length > 0 ? product.series[0] : "Other";
-      if (!acc[seriesKey]) {
-        acc[seriesKey] = [];
-      }
+      if (!acc[seriesKey]) acc[seriesKey] = [];
       acc[seriesKey].push(product);
       return acc;
     }, {} as Record<string, Product[]>);
   };
 
-  const paralightBySeries = groupBySeries(paralightProducts);
-  const maglinearBySeries = groupBySeries(maglinearProducts);
-
-  const CatalogueCard = ({ product, index }: { product: Product; index: number }) => {
-    const brandColor = product.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
-    
-    return (
-      <motion.a
-        href={product.catalogueUrl || "#"}
-        download={`${product.name}-Catalogue.pdf`}
-        data-testid={`download-${product.id}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05 }}
-        className="group relative flex items-center gap-5 p-5 bg-[#f5f2ed] border border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-300 hover:bg-[#ebe6de] overflow-hidden shadow-sm"
-      >
-        <div 
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ background: `linear-gradient(135deg, ${brandColor}15 0%, transparent 50%)` }}
-        />
-        
-        <div 
-          className="relative w-12 h-12 flex items-center justify-center shrink-0 rounded-xl transition-all duration-300 group-hover:scale-110"
-          style={{ backgroundColor: `${brandColor}20` }}
-        >
-          <FileText className="w-5 h-5 transition-colors duration-300" style={{ color: brandColor }} />
-        </div>
-        
-        <div className="relative flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-gray-900 truncate group-hover:text-gray-700 transition-colors">
-            {product.name}
-          </h3>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-              {product.modelNumber}
-            </span>
-            {product.series && product.series.length > 0 && (
-              <>
-                <span className="w-1 h-1 rounded-full bg-gray-400" />
-                <span className="text-[10px] uppercase tracking-wider" style={{ color: brandColor }}>
-                  {product.series[0]}
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-        
-        <div className="relative flex items-center gap-2 text-gray-400 group-hover:text-gray-600 transition-colors">
-          <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-            Download
-          </span>
-          <div 
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-            style={{ backgroundColor: `${brandColor}20` }}
-          >
-            <Download className="w-4 h-4 transition-colors" style={{ color: brandColor }} />
-          </div>
-        </div>
-      </motion.a>
-    );
-  };
-
-  const SeriesSection = ({ series, products: prods, brandColor }: { series: string; products: Product[]; brandColor: string }) => (
-    <div className="mb-10">
-      <div className="flex items-center gap-3 mb-5">
-        <div 
-          className="w-8 h-8 rounded-lg flex items-center justify-center"
-          style={{ backgroundColor: `${brandColor}20` }}
-        >
-          <FolderOpen className="w-4 h-4" style={{ color: brandColor }} />
-        </div>
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900">{series}</h3>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider">{prods.length} catalogue{prods.length !== 1 ? 's' : ''}</p>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {prods.map((product, idx) => (
-          <CatalogueCard key={product.id} product={product} index={idx} />
-        ))}
-      </div>
-    </div>
-  );
-
-  const BrandSection = ({ 
-    brand, 
-    tagline, 
-    color, 
-    productsBySeries 
-  }: { 
-    brand: string; 
-    tagline: string; 
-    color: string; 
-    productsBySeries: Record<string, Product[]>;
-  }) => {
-    const totalProducts = Object.values(productsBySeries).flat().length;
-    
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-[#e8e2d8] rounded-2xl border border-gray-200 overflow-hidden shadow-sm"
-      >
-        <div 
-          className="p-8 border-b border-white/10"
-          style={{ background: `linear-gradient(180deg, #c4bcaf 0%, #e8e2d8 100%)` }}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div 
-                className="w-1.5 h-14 rounded-full"
-                style={{ backgroundColor: color }}
-              />
-              <div>
-                <h2 className="text-2xl font-display font-bold text-gray-900">{brand}</h2>
-                <p className="text-sm text-gray-600 mt-1">{tagline}</p>
-              </div>
-            </div>
-            <div 
-              className="px-4 py-2 rounded-full text-xs font-medium"
-              style={{ backgroundColor: `${color}20`, color }}
-            >
-              {totalProducts} file{totalProducts !== 1 ? 's' : ''}
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-8 bg-[#e8e2d8]">
-          {Object.keys(productsBySeries).length === 0 ? (
-            <div className="text-center py-16">
-              <div 
-                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                style={{ backgroundColor: `${color}15` }}
-              >
-                <FileText className="w-7 h-7" style={{ color }} />
-              </div>
-              <p className="text-sm text-gray-600">No catalogues available</p>
-              <p className="text-xs text-gray-400 mt-1">Check back soon for updates</p>
-            </div>
-          ) : (
-            Object.entries(productsBySeries).map(([series, prods]) => (
-              <SeriesSection key={series} series={series} products={prods} brandColor={color} />
-            ))
-          )}
-        </div>
-      </motion.div>
-    );
-  };
+  const grouped = groupBySeries(filteredProducts);
 
   return (
     <div className="min-h-screen bg-[#060d18] text-white selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
       
       <div className="relative pt-32 pb-24">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#00A8E8]/10 rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#ECAA00]/10 rounded-full blur-[150px]" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#00A8E8]/8 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#ECAA00]/8 rounded-full blur-[150px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/[0.02] rounded-full blur-[200px]" />
         </div>
         
         <main className="relative z-10">
           <div className="container mx-auto px-6 lg:px-12">
-            <div className="max-w-4xl mb-16">
+            {/* Hero Section */}
+            <div className="mb-16">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -249,67 +114,122 @@ export default function Downloads() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-lg text-white/50 leading-relaxed max-w-2xl"
+                className="text-lg text-white/50 leading-relaxed max-w-2xl mb-10"
               >
                 Access product catalogues, specifications, and technical documentation for our complete range of architectural lighting solutions.
               </motion.p>
+
+              {/* Stats Row */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="flex flex-wrap gap-4"
+              >
+                <div className="flex items-center gap-3 px-5 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <BookOpen className="w-4 h-4 text-[#00A8E8]" />
+                  <div>
+                    <span className="text-lg font-bold text-white">{products.length}</span>
+                    <span className="text-xs text-white/40 ml-2">Total Catalogues</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 px-5 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="w-2 h-2 rounded-full bg-[#00A8E8]" />
+                  <div>
+                    <span className="text-lg font-bold text-white">{paralightCount}</span>
+                    <span className="text-xs text-white/40 ml-2">Paralight</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 px-5 py-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
+                  <div className="w-2 h-2 rounded-full bg-[#ECAA00]" />
+                  <div>
+                    <span className="text-lg font-bold text-white">{maglinearCount}</span>
+                    <span className="text-xs text-white/40 ml-2">Maglinear Lighting</span>
+                  </div>
+                </div>
+              </motion.div>
             </div>
 
+            {/* Filters */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="flex flex-col md:flex-row gap-4 mb-12"
+              transition={{ delay: 0.2 }}
+              className="bg-white/[0.03] rounded-2xl border border-white/10 p-6 mb-10 backdrop-blur-sm"
             >
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="text"
-                  placeholder="Search catalogues..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00A8E8] focus:ring-2 focus:ring-[#00A8E8]/20 transition-all backdrop-blur-sm"
-                  data-testid="input-search-downloads"
-                />
+              <div className="flex flex-col lg:flex-row gap-4">
+                {/* Search */}
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, model number, or series..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#00A8E8]/50 focus:ring-1 focus:ring-[#00A8E8]/20 transition-all"
+                    data-testid="input-search-downloads"
+                  />
+                  {searchQuery && (
+                    <button 
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                    >
+                      <X className="w-3 h-3 text-white/60" />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Brand Filter */}
+                <div className="flex items-center gap-1.5 p-1 bg-white/5 border border-white/10 rounded-xl">
+                  {[
+                    { key: "all" as const, label: "All", color: "bg-white text-gray-900" },
+                    { key: "Paralight" as const, label: "Paralight", color: "bg-[#00A8E8] text-white" },
+                    { key: "Maglinear" as const, label: "Maglinear", color: "bg-[#ECAA00] text-white" },
+                  ].map(b => (
+                    <button
+                      key={b.key}
+                      onClick={() => { setActiveBrand(b.key); setActiveSeries("all"); }}
+                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                        activeBrand === b.key ? b.color : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                      }`}
+                      data-testid={`filter-${b.key}`}
+                    >
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              
-              <div className="flex items-center gap-2 p-1.5 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm">
-                <button
-                  onClick={() => setActiveBrand("all")}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    activeBrand === "all" 
-                      ? "bg-white text-gray-900" 
-                      : "text-white/50 hover:text-white hover:bg-white/10"
-                  }`}
-                  data-testid="filter-all"
-                >
-                  All Brands
-                </button>
-                <button
-                  onClick={() => setActiveBrand("Paralight")}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    activeBrand === "Paralight" 
-                      ? "bg-[#00A8E8] text-white" 
-                      : "text-white/50 hover:text-[#00A8E8] hover:bg-[#00A8E8]/10"
-                  }`}
-                  data-testid="filter-paralight"
-                >
-                  Paralight
-                </button>
-                <button
-                  onClick={() => setActiveBrand("Maglinear")}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    activeBrand === "Maglinear" 
-                      ? "bg-[#ECAA00] text-white" 
-                      : "text-white/50 hover:text-[#ECAA00] hover:bg-[#ECAA00]/10"
-                  }`}
-                  data-testid="filter-maglinear"
-                >
-                  Maglinear Lighting
-                </button>
-              </div>
+
+              {/* Series pills */}
+              {allSeries.length > 1 && (
+                <div className="mt-4 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] uppercase tracking-widest text-white/30 mr-1">Series:</span>
+                    <button
+                      onClick={() => setActiveSeries("all")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        activeSeries === "all" ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                      }`}
+                    >
+                      All
+                    </button>
+                    {allSeries.map(s => (
+                      <button
+                        key={s}
+                        onClick={() => setActiveSeries(s)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                          activeSeries === s ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
 
+            {/* Content */}
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-40">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00A8E8]/20 to-[#ECAA00]/20 flex items-center justify-center mb-4">
@@ -321,34 +241,128 @@ export default function Downloads() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-40 bg-[#0a1628]/50 rounded-2xl border border-white/10 backdrop-blur-sm"
+                className="text-center py-32 bg-white/[0.02] rounded-2xl border border-white/10 backdrop-blur-sm"
               >
                 <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-9 h-9 text-white/30" />
+                  <FileText className="w-9 h-9 text-white/20" />
                 </div>
-                <p className="text-lg font-medium text-white mb-2">No catalogues found</p>
+                <p className="text-lg font-medium text-white/80 mb-2">No catalogues found</p>
                 <p className="text-sm text-white/40">
                   {searchQuery ? "Try adjusting your search terms" : "Check back soon for updates"}
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {(activeBrand === "all" || activeBrand === "Paralight") && (
-                  <BrandSection 
-                    brand="Paralight" 
-                    tagline="LED Aluminum Profiles" 
-                    color="#00A8E8" 
-                    productsBySeries={paralightBySeries} 
-                  />
-                )}
-                {(activeBrand === "all" || activeBrand === "Maglinear") && (
-                  <BrandSection 
-                    brand="Maglinear Lighting" 
-                    tagline="Magnetic Track Lighting" 
-                    color="#ECAA00" 
-                    productsBySeries={maglinearBySeries} 
-                  />
-                )}
+              <div className="space-y-8">
+                <AnimatePresence mode="wait">
+                  {Object.entries(grouped).map(([series, prods], sIdx) => {
+                    const brandColor = prods[0]?.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
+                    const brandName = prods[0]?.brand === "Maglinear" ? "Maglinear Lighting" : prods[0]?.brand;
+                    
+                    return (
+                      <motion.div
+                        key={series}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ delay: sIdx * 0.05 }}
+                        className="bg-white/[0.03] rounded-2xl border border-white/10 overflow-hidden backdrop-blur-sm"
+                      >
+                        {/* Series header */}
+                        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div 
+                              className="w-10 h-10 rounded-xl flex items-center justify-center"
+                              style={{ backgroundColor: `${brandColor}15` }}
+                            >
+                              <FolderOpen className="w-4 h-4" style={{ color: brandColor }} />
+                            </div>
+                            <div>
+                              <h3 className="text-base font-semibold text-white">{series}</h3>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span 
+                                  className="text-[10px] uppercase tracking-widest font-medium"
+                                  style={{ color: brandColor }}
+                                >
+                                  {brandName}
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-white/20" />
+                                <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                                  {prods.length} file{prods.length !== 1 ? 's' : ''}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <Layers className="w-4 h-4 text-white/15" />
+                        </div>
+                        
+                        {/* Product rows */}
+                        <div className="divide-y divide-white/5">
+                          {prods.map((product, idx) => (
+                            <motion.a
+                              key={product.id}
+                              href={product.catalogueUrl || "#"}
+                              download={`${product.name}-Catalogue.pdf`}
+                              data-testid={`download-${product.id}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: idx * 0.03 }}
+                              className="group flex items-center gap-4 px-6 py-4 hover:bg-white/[0.03] transition-all"
+                            >
+                              {/* Product image thumbnail */}
+                              <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                {product.image ? (
+                                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <FileText className="w-5 h-5 text-white/20" />
+                                )}
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-medium text-white/90 group-hover:text-white truncate transition-colors">
+                                  {product.name}
+                                </h4>
+                                <span className="text-[10px] text-white/30 uppercase tracking-wider font-mono">
+                                  {product.modelNumber}
+                                </span>
+                              </div>
+                              
+                              <div className="flex items-center gap-3 opacity-50 group-hover:opacity-100 transition-opacity">
+                                <span className="text-[10px] uppercase tracking-wider text-white/40 hidden sm:block">
+                                  PDF
+                                </span>
+                                <div 
+                                  className="w-9 h-9 rounded-lg flex items-center justify-center transition-all group-hover:scale-110"
+                                  style={{ backgroundColor: `${brandColor}15` }}
+                                >
+                                  <Download className="w-4 h-4" style={{ color: brandColor }} />
+                                </div>
+                              </div>
+                            </motion.a>
+                          ))}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+
+                {/* Bottom info */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4"
+                >
+                  <p className="text-xs text-white/25">
+                    Showing {filteredProducts.length} of {products.length} catalogues
+                  </p>
+                  <a 
+                    href="/contact" 
+                    className="flex items-center gap-2 text-xs text-white/40 hover:text-[#00A8E8] transition-colors group"
+                  >
+                    Need a custom specification sheet?
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </a>
+                </motion.div>
               </div>
             )}
           </div>
