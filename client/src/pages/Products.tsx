@@ -1271,15 +1271,15 @@ export default function Products() {
 
                             {/* Packaging Method Image - Paralight only */}
                             {selectedProduct.brand === "Paralight" && (
-                              <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-                                <h3 className="text-base font-bold text-gray-900 uppercase tracking-wide mb-5 flex items-center gap-2">
-                                  <div className="w-1.5 h-5 rounded-full" style={{ backgroundColor: brandColor }} />
+                              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                                <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                  <div className="w-1 h-4 rounded-full" style={{ backgroundColor: brandColor }} />
                                   Packaging Method
                                 </h3>
                                 <img 
                                   src="/packaging-method.png" 
                                   alt="Packaging Method" 
-                                  className="max-w-full h-auto mx-auto rounded-lg"
+                                  className="max-w-[85%] h-auto mx-auto rounded-lg"
                                 />
                               </div>
                             )}
