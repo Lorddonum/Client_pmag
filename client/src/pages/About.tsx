@@ -849,7 +849,7 @@ export default function About() {
               transition={{ duration: 1 }}
               className="absolute inset-0"
             >
-              <img src={coreTeamImg} alt="Paralight Core Team" className="w-full h-full object-cover opacity-80" />
+              <img src="/core-team.jpg" alt="Paralight Core Team" className="w-full h-full object-cover opacity-80" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/80 via-[#0a1628]/40 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
             </motion.div>
