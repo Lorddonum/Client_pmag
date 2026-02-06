@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimation, useInView as useFramerInView } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import chairmanImg from "@/assets/chairman-situ.png";
@@ -46,7 +46,7 @@ import {
   Target,
   Zap,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ExhibitionEvent {
   name: string;
@@ -468,6 +468,251 @@ function HonorsSlideshow() {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function ShowcaseSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const isInView = useFramerInView(sectionRef, { once: true, amount: 0.2 });
+  const [phase, setPhase] = useState<"circle" | "splitting" | "revealed">("circle");
+
+  useEffect(() => {
+    if (isInView) {
+      const splitTimer = setTimeout(() => setPhase("splitting"), 1800);
+      const revealTimer = setTimeout(() => setPhase("revealed"), 3200);
+      return () => {
+        clearTimeout(splitTimer);
+        clearTimeout(revealTimer);
+      };
+    }
+  }, [isInView]);
+
+  const circleImages = [
+    "/images/showcase-1.png",
+    "/images/showcase-2.png",
+    "/images/showcase-3.png",
+    "/images/showcase-4.png",
+  ];
+
+  return (
+    <section
+      ref={sectionRef}
+      className="py-24 overflow-hidden relative"
+      style={{ backgroundColor: '#c4b49a', minHeight: '900px' }}
+    >
+      <div className="absolute inset-0" style={{
+        backgroundImage: `
+          repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(160,140,110,0.15) 2px, rgba(160,140,110,0.15) 4px),
+          repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(180,160,130,0.1) 2px, rgba(180,160,130,0.1) 4px),
+          radial-gradient(ellipse at 20% 50%, rgba(200,185,160,0.4) 0%, transparent 70%),
+          radial-gradient(ellipse at 80% 50%, rgba(185,170,140,0.3) 0%, transparent 70%),
+          linear-gradient(180deg, rgba(210,195,170,0.3) 0%, transparent 30%, transparent 70%, rgba(170,155,130,0.3) 100%)
+        `
+      }} />
+
+      <div className="container mx-auto px-8 lg:px-12 relative z-10">
+        <div className="relative h-[700px] lg:h-[800px]">
+
+          {/* === CIRCLE SPLIT INTRO ANIMATION === */}
+          {phase !== "revealed" && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center">
+              {/* Left half of circle */}
+              <motion.div
+                className="absolute"
+                style={{
+                  width: 'min(500px, 70vw)',
+                  height: 'min(500px, 70vw)',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  clipPath: 'inset(0 50% 0 0)',
+                }}
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={
+                  phase === "circle"
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : { y: 300, opacity: 0 }
+                }
+                transition={
+                  phase === "circle"
+                    ? { duration: 1.2, ease: "easeOut" }
+                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                }
+              >
+                <div className="w-full h-full relative">
+                  <img src={circleImages[0]} alt="" className="absolute top-0 left-0 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[2]} alt="" className="absolute top-0 left-1/2 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[1]} alt="" className="absolute top-1/2 left-0 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[3]} alt="" className="absolute top-1/2 left-1/2 w-1/2 h-1/2 object-cover" />
+                  <div className="absolute inset-0 bg-[#c4b49a]/30" />
+                </div>
+              </motion.div>
+
+              {/* Right half of circle */}
+              <motion.div
+                className="absolute"
+                style={{
+                  width: 'min(500px, 70vw)',
+                  height: 'min(500px, 70vw)',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  clipPath: 'inset(0 0 0 50%)',
+                }}
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={
+                  phase === "circle"
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : { y: -300, opacity: 0 }
+                }
+                transition={
+                  phase === "circle"
+                    ? { duration: 1.2, ease: "easeOut" }
+                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                }
+              >
+                <div className="w-full h-full relative">
+                  <img src={circleImages[0]} alt="" className="absolute top-0 left-0 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[2]} alt="" className="absolute top-0 left-1/2 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[1]} alt="" className="absolute top-1/2 left-0 w-1/2 h-1/2 object-cover" />
+                  <img src={circleImages[3]} alt="" className="absolute top-1/2 left-1/2 w-1/2 h-1/2 object-cover" />
+                  <div className="absolute inset-0 bg-[#c4b49a]/30" />
+                </div>
+              </motion.div>
+
+              {/* Text overlay on circle */}
+              <motion.div
+                className="absolute z-10 text-center pointer-events-none"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={
+                  phase === "circle"
+                    ? { opacity: 1, scale: 1 }
+                    : { opacity: 0, scale: 0.8 }
+                }
+                transition={
+                  phase === "circle"
+                    ? { duration: 0.8, delay: 0.6 }
+                    : { duration: 0.6 }
+                }
+              >
+                <h2 className="font-display text-4xl lg:text-6xl font-bold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                  <span className="italic">In-House Design.</span>
+                  <br />
+                  <span className="text-3xl lg:text-5xl">World-Class Quality</span>
+                </h2>
+              </motion.div>
+
+              {/* Frame hints behind circle - left */}
+              <motion.div
+                className="absolute border-2 border-[#8b7a60]/30 rounded-lg"
+                style={{ width: 'min(280px, 38vw)', height: 'min(350px, 48vw)', left: '8%', top: '15%' }}
+                initial={{ opacity: 0 }}
+                animate={phase === "circle" ? { opacity: 0.5 } : { opacity: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+              />
+              {/* Frame hints behind circle - right */}
+              <motion.div
+                className="absolute border-2 border-[#8b7a60]/30 rounded-lg"
+                style={{ width: 'min(280px, 38vw)', height: 'min(350px, 48vw)', right: '8%', top: '15%' }}
+                initial={{ opacity: 0 }}
+                animate={phase === "circle" ? { opacity: 0.5 } : { opacity: 0 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+              />
+            </div>
+          )}
+
+          {/* === REVEALED CONTENT (existing showcase images) === */}
+          {/* Image 3 - Top Left - Sketching */}
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute top-[-3%] left-[5%] w-[45%] lg:w-[40%] z-30"
+          >
+            <img
+              src="/images/showcase-3.png"
+              alt="Design sketching"
+              className="w-full h-auto rounded-lg shadow-2xl grayscale"
+              loading="eager"
+            />
+          </motion.div>
+
+          {/* Image 2 - Bottom Left - Living Room */}
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="absolute bottom-0 left-0 w-[35%] lg:w-[30%] z-20"
+          >
+            <img
+              src="/images/showcase-2.png"
+              alt="Modern living room lighting"
+              className="w-full h-auto rounded-lg shadow-2xl grayscale"
+              loading="eager"
+            />
+          </motion.div>
+
+          {/* Image 1 - Top Right - Showroom */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            className="absolute top-[2%] right-[-3%] w-[45%] lg:w-[40%] z-10"
+          >
+            <img
+              src="/images/showcase-1.png"
+              alt="Modern showroom"
+              className="w-full h-auto rounded-lg shadow-2xl grayscale"
+              loading="eager"
+            />
+          </motion.div>
+
+          {/* Image 4 - Bottom Right - Measuring */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            className="absolute bottom-[-5%] right-[15%] w-[50%] lg:w-[45%] z-20"
+          >
+            <img
+              src="/images/showcase-4.png"
+              alt="Precision measurement"
+              className="w-full h-auto rounded-lg shadow-2xl grayscale"
+              loading="eager"
+            />
+          </motion.div>
+
+          {/* Center Text Block */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={phase === "revealed" ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] lg:w-[32%] bg-[#f5efe6]/85 backdrop-blur-sm p-6 lg:p-10 z-40 shadow-2xl border border-[#d4c9b8]"
+          >
+            <h2 className="font-display text-2xl lg:text-3xl font-medium text-[#3d3428] mb-3 leading-tight">
+              <span className="italic">In-House Design.</span>
+              <br />
+              World-Class Quality
+            </h2>
+            <p className="text-[#6b5d4d] text-sm lg:text-base leading-relaxed">
+              At Paralight Group, we bridge the gap between technical
+              innovation and manufacturing excellence. By designing and
+              producing our own products in-house, we deliver high-performance
+              lighting solutions built with meticulous precision.
+            </p>
+          </motion.div>
+
+          {/* Decorative star */}
+          <motion.div
+            className="absolute bottom-6 right-6 text-[#8b7a60]/50"
+            animate={phase === "revealed" ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
+            </svg>
+          </motion.div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -989,118 +1234,8 @@ export default function About() {
         `}</style>
       </section>
 
-      {/* Showcase Animation Section */}
-      <section className="py-24 overflow-hidden relative" style={{ backgroundColor: '#c4b49a' }}>
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(160,140,110,0.15) 2px, rgba(160,140,110,0.15) 4px),
-            repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(180,160,130,0.1) 2px, rgba(180,160,130,0.1) 4px),
-            radial-gradient(ellipse at 20% 50%, rgba(200,185,160,0.4) 0%, transparent 70%),
-            radial-gradient(ellipse at 80% 50%, rgba(185,170,140,0.3) 0%, transparent 70%),
-            linear-gradient(180deg, rgba(210,195,170,0.3) 0%, transparent 30%, transparent 70%, rgba(170,155,130,0.3) 100%)
-          `
-        }} />
-        <div className="container mx-auto px-8 lg:px-12 relative z-10">
-          <div className="relative h-[700px] lg:h-[800px]">
-            {/* Image 3 - Top Left - Sketching */}
-            <motion.div
-              initial={{ opacity: 0, x: -100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute top-[-3%] left-[5%] w-[45%] lg:w-[40%] z-30"
-            >
-              <img
-                src="/images/showcase-3.png"
-                alt="Design sketching"
-                className="w-full h-auto rounded-lg shadow-2xl grayscale"
-                loading="eager"
-              />
-            </motion.div>
-
-            {/* Image 2 - Bottom Left - Living Room */}
-            <motion.div
-              initial={{ opacity: 0, x: -100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="absolute bottom-0 left-0 w-[35%] lg:w-[30%] z-20"
-            >
-              <img
-                src="/images/showcase-2.png"
-                alt="Modern living room lighting"
-                className="w-full h-auto rounded-lg shadow-2xl grayscale"
-                loading="eager"
-              />
-            </motion.div>
-
-            {/* Image 1 - Top Right - Showroom */}
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-              className="absolute top-[2%] right-[-3%] w-[45%] lg:w-[40%] z-10"
-            >
-              <img
-                src="/images/showcase-1.png"
-                alt="Modern showroom"
-                className="w-full h-auto rounded-lg shadow-2xl grayscale"
-                loading="eager"
-              />
-            </motion.div>
-
-            {/* Image 4 - Bottom Right - Measuring */}
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-              className="absolute bottom-[-5%] right-[15%] w-[50%] lg:w-[45%] z-20"
-            >
-              <img
-                src="/images/showcase-4.png"
-                alt="Precision measurement"
-                className="w-full h-auto rounded-lg shadow-2xl grayscale"
-                loading="eager"
-              />
-            </motion.div>
-
-            {/* Center Text Block */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] lg:w-[32%] bg-[#f5efe6]/85 backdrop-blur-sm p-6 lg:p-10 z-40 shadow-2xl border border-[#d4c9b8]"
-            >
-              <h2 className="font-display text-2xl lg:text-3xl font-medium text-[#3d3428] mb-3 leading-tight">
-                <span className="italic">In-House Design.</span>
-                <br />
-                World-Class Quality
-              </h2>
-              <p className="text-[#6b5d4d] text-sm lg:text-base leading-relaxed">
-                At Paralight Group, we bridge the gap between technical
-                innovation and manufacturing excellence. By designing and
-                producing our own products in-house, we deliver high-performance
-                lighting solutions built with meticulous precision.
-              </p>
-            </motion.div>
-
-            {/* Decorative star */}
-            <div className="absolute bottom-6 right-6 text-[#8b7a60]/50">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Showcase Animation Section with Circle Split Intro */}
+      <ShowcaseSection />
 
       {/* REDESIGNED: Certifications + Honors - Side by Side */}
       <section className="py-24 bg-gradient-to-br from-[#060d18] via-[#0a1628] to-[#0d1f38]">
