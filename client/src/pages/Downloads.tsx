@@ -50,7 +50,7 @@ function AnimatedBackground() {
 
     const initParticles = (w: number, h: number) => {
       const particles: Particle[] = [];
-      const count = Math.max(25, Math.floor((w * h) / 35000));
+      const count = Math.max(40, Math.floor((w * h) / 20000));
       const shapes: ('circle' | 'square' | 'diamond')[] = ['circle', 'square', 'diamond'];
       
       for (let i = 0; i < count; i++) {
@@ -60,8 +60,8 @@ function AnimatedBackground() {
           y: Math.random() * h,
           vx: (Math.random() - 0.5) * 0.3,
           vy: (Math.random() - 0.5) * 0.3 - 0.1,
-          size: 2 + Math.random() * 4,
-          opacity: 0.03 + Math.random() * 0.08,
+          size: 3 + Math.random() * 6,
+          opacity: 0.08 + Math.random() * 0.15,
           color: `rgba(${c.r}, ${c.g}, ${c.b},`,
           shape: shapes[Math.floor(Math.random() * shapes.length)],
           rotation: Math.random() * Math.PI * 2,
@@ -87,8 +87,8 @@ function AnimatedBackground() {
       const spacing = 80;
       const wave = Math.sin(time * 0.0005) * 0.3;
       
-      ctx.strokeStyle = `rgba(255, 255, 255, ${0.02 + wave * 0.01})`;
-      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = `rgba(210, 180, 140, ${0.05 + wave * 0.02})`;
+      ctx.lineWidth = 0.7;
       
       for (let x = 0; x < w; x += spacing) {
         const offset = Math.sin(x * 0.005 + time * 0.001) * 3;
@@ -112,8 +112,8 @@ function AnimatedBackground() {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            const alpha = (1 - dist / 150) * 0.04;
+          if (dist < 180) {
+            const alpha = (1 - dist / 180) * 0.1;
             ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
@@ -256,9 +256,9 @@ export default function Downloads() {
       <div className="relative pt-32 pb-24">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <AnimatedBackground />
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#8B7355]/10 rounded-full blur-[150px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ECAA00]/8 rounded-full blur-[150px]" />
-          <div className="absolute top-[60%] left-[10%] w-[400px] h-[400px] bg-[#D2B48C]/6 rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#8B7355]/15 rounded-full blur-[150px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ECAA00]/12 rounded-full blur-[150px]" />
+          <div className="absolute top-[60%] left-[10%] w-[400px] h-[400px] bg-[#D2B48C]/10 rounded-full blur-[120px]" />
         </div>
         
         <main className="relative z-10">
