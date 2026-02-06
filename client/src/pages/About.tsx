@@ -480,9 +480,15 @@ function ShowcaseSection() {
 
   phaseRef.current = phase;
 
-  const scrollLockedRef = useRef(false);
   const containerRef = useRef<HTMLElement | null>(null);
   const blockWheelRef = useRef<((e: WheelEvent) => void) | null>(null);
+
+  const unlockScroll = () => {
+    if (containerRef.current && blockWheelRef.current) {
+      containerRef.current.removeEventListener('wheel', blockWheelRef.current, { capture: true } as EventListenerOptions);
+      blockWheelRef.current = null;
+    }
+  };
 
   useEffect(() => {
     if (!isInView || phase !== "idle") return;
@@ -492,50 +498,34 @@ function ShowcaseSection() {
     containerRef.current = scrollContainer;
 
     const blockWheel = (e: WheelEvent) => {
-      if (scrollLockedRef.current) {
-        e.preventDefault();
-        e.stopPropagation();
+      const currentPhase = phaseRef.current;
+      if (currentPhase === "revealed" || currentPhase === "idle") return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (animatingRef.current) return;
+      if (e.deltaY > 0 && currentPhase === "circle") {
+        animatingRef.current = true;
+        setPhase("splitting");
+        setTimeout(() => {
+          setPhase("revealed");
+          setTimeout(() => {
+            unlockScroll();
+            animatingRef.current = false;
+          }, 800);
+        }, 1200);
       }
     };
     blockWheelRef.current = blockWheel;
-
-    scrollLockedRef.current = true;
     scrollContainer.addEventListener('wheel', blockWheel, { passive: false, capture: true });
 
     animatingRef.current = true;
     setPhase("circle");
     setTimeout(() => { animatingRef.current = false; }, 1200);
+
+    return () => unlockScroll();
   }, [isInView]);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      const currentPhase = phaseRef.current;
-      if (currentPhase === "idle" || currentPhase === "revealed") return;
-      if (animatingRef.current) return;
-      if (e.deltaY > 0) {
-        animatingRef.current = true;
-        if (currentPhase === "circle") {
-          setPhase("splitting");
-          setTimeout(() => { animatingRef.current = false; }, 1200);
-        } else if (currentPhase === "splitting") {
-          setPhase("revealed");
-          setTimeout(() => {
-            scrollLockedRef.current = false;
-            if (containerRef.current && blockWheelRef.current) {
-              containerRef.current.removeEventListener('wheel', blockWheelRef.current, { capture: true } as EventListenerOptions);
-            }
-            animatingRef.current = false;
-          }, 800);
-        }
-      }
-    };
-
-    section.addEventListener('wheel', handleWheel, { passive: false });
-    return () => section.removeEventListener('wheel', handleWheel);
-  }, []);
 
   const circleImages = [
     "/images/showcase-1.png",
