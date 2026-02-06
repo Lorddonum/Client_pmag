@@ -496,7 +496,7 @@ export default function About() {
       tagline: "One-stop lighting solutions with the client at the center.",
       subtitle: "A globalized perspective managing systematic operations.",
       bio: "Holding an MBA from Hong Kong, CEO Michelle Tang leads Paralight Group's strategic expansion into international markets, championing client-centric product development, integrated supply chain operations, and long-term vision for global partnerships. Under her leadership, Paralight Group has launched multiple product lines, systematized production workflows, and positioned itself as a comprehensive lighting solutions provider.",
-      image: ceoImg,
+      image: "/michelle.jpg",
       color: "#ECAA00",
       bgGradient: "from-amber-50 via-white to-yellow-50",
     },
