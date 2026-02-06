@@ -578,9 +578,9 @@ export default function About() {
 
       {/* Hero Section */}
       <section className="relative pt-40 pb-24 overflow-hidden bg-gray-900">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-brand-cyan rounded-full blur-[150px]" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-brand-gold rounded-full blur-[150px]" />
+        <div className="absolute inset-0">
+          <img src="/about-banner.jpg" alt="Paralight Factory" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gray-900/70" />
         </div>
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
