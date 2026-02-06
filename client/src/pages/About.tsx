@@ -473,19 +473,20 @@ function HonorsSlideshow() {
 
 function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useFramerInView(sectionRef, { once: true, amount: 0.2 });
-  const [phase, setPhase] = useState<"circle" | "splitting" | "revealed">("circle");
+  const isInView = useFramerInView(sectionRef, { once: true, amount: 0.5 });
+  const [phase, setPhase] = useState<"idle" | "circle" | "splitting" | "revealed">("idle");
 
   useEffect(() => {
-    if (isInView) {
-      const splitTimer = setTimeout(() => setPhase("splitting"), 1800);
-      const revealTimer = setTimeout(() => setPhase("revealed"), 3200);
+    if (isInView && phase === "idle") {
+      setPhase("circle");
+      const splitTimer = setTimeout(() => setPhase("splitting"), 2200);
+      const revealTimer = setTimeout(() => setPhase("revealed"), 3800);
       return () => {
         clearTimeout(splitTimer);
         clearTimeout(revealTimer);
       };
     }
-  }, [isInView]);
+  }, [isInView, phase]);
 
   const circleImages = [
     "/images/showcase-1.png",
@@ -514,7 +515,7 @@ function ShowcaseSection() {
         <div className="relative h-[700px] lg:h-[800px]">
 
           {/* === CIRCLE SPLIT INTRO ANIMATION === */}
-          {phase !== "revealed" && (
+          {phase !== "revealed" && phase !== "idle" && (
             <div className="absolute inset-0 z-50 flex items-center justify-center">
               {/* Left half of circle */}
               <motion.div
@@ -623,7 +624,7 @@ function ShowcaseSection() {
           {/* Image 3 - Top Left - Sketching */}
           <motion.div
             initial={{ opacity: 0, x: -100 }}
-            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="absolute top-[-3%] left-[5%] w-[45%] lg:w-[40%] z-30"
           >
@@ -638,7 +639,7 @@ function ShowcaseSection() {
           {/* Image 2 - Bottom Left - Living Room */}
           <motion.div
             initial={{ opacity: 0, x: -100 }}
-            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="absolute bottom-0 left-0 w-[35%] lg:w-[30%] z-20"
           >
@@ -653,7 +654,7 @@ function ShowcaseSection() {
           {/* Image 1 - Top Right - Showroom */}
           <motion.div
             initial={{ opacity: 0, x: 100 }}
-            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
             className="absolute top-[2%] right-[-3%] w-[45%] lg:w-[40%] z-10"
           >
@@ -668,7 +669,7 @@ function ShowcaseSection() {
           {/* Image 4 - Bottom Right - Measuring */}
           <motion.div
             initial={{ opacity: 0, x: 100 }}
-            animate={phase === "revealed" ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+            animate={phase === "revealed" ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="absolute bottom-[-5%] right-[15%] w-[50%] lg:w-[45%] z-20"
           >
@@ -683,7 +684,7 @@ function ShowcaseSection() {
           {/* Center Text Block */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={phase === "revealed" ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+            animate={phase === "revealed" ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] lg:w-[32%] bg-[#f5efe6]/85 backdrop-blur-sm p-6 lg:p-10 z-40 shadow-2xl border border-[#d4c9b8]"
           >
@@ -703,7 +704,7 @@ function ShowcaseSection() {
           {/* Decorative star */}
           <motion.div
             className="absolute bottom-6 right-6 text-[#8b7a60]/50"
-            animate={phase === "revealed" ? { opacity: 1 } : { opacity: 0 }}
+            animate={phase === "revealed" ? { opacity: 1 } : {}}
             transition={{ delay: 0.5 }}
           >
             <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
