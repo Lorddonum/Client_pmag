@@ -475,32 +475,57 @@ function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useFramerInView(sectionRef, { once: true, amount: 0.5 });
   const [phase, setPhase] = useState<"idle" | "circle" | "splitting" | "revealed">("idle");
+  const phaseRef = useRef(phase);
+  const animatingRef = useRef(false);
+
+  phaseRef.current = phase;
 
   useEffect(() => {
     if (isInView && phase === "idle") {
       sectionRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' });
-      const scrollContainer = sectionRef.current?.closest('.snap-y');
+      const scrollContainer = sectionRef.current?.closest('.snap-y') as HTMLElement | null;
       if (scrollContainer) {
-        (scrollContainer as HTMLElement).style.overflow = 'hidden';
+        scrollContainer.style.overflow = 'hidden';
       }
-
+      animatingRef.current = true;
       setPhase("circle");
-      const splitTimer = setTimeout(() => setPhase("splitting"), 2200);
-      const revealTimer = setTimeout(() => {
-        setPhase("revealed");
-        if (scrollContainer) {
-          (scrollContainer as HTMLElement).style.overflow = 'auto';
-        }
-      }, 3800);
-      return () => {
-        clearTimeout(splitTimer);
-        clearTimeout(revealTimer);
-        if (scrollContainer) {
-          (scrollContainer as HTMLElement).style.overflow = 'auto';
-        }
-      };
+      setTimeout(() => { animatingRef.current = false; }, 1200);
     }
-  }, [isInView, phase]);
+  }, [isInView]);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      const currentPhase = phaseRef.current;
+      if (currentPhase === "idle" || currentPhase === "revealed") return;
+      if (animatingRef.current) {
+        e.preventDefault();
+        return;
+      }
+      if (e.deltaY > 0) {
+        e.preventDefault();
+        animatingRef.current = true;
+        if (currentPhase === "circle") {
+          setPhase("splitting");
+          setTimeout(() => { animatingRef.current = false; }, 1200);
+        } else if (currentPhase === "splitting") {
+          setPhase("revealed");
+          const scrollContainer = section.closest('.snap-y') as HTMLElement | null;
+          if (scrollContainer) {
+            setTimeout(() => {
+              scrollContainer.style.overflow = 'auto';
+              animatingRef.current = false;
+            }, 800);
+          }
+        }
+      }
+    };
+
+    section.addEventListener('wheel', handleWheel, { passive: false });
+    return () => section.removeEventListener('wheel', handleWheel);
+  }, []);
 
   const circleImages = [
     "/images/showcase-1.png",
