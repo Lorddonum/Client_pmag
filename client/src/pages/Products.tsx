@@ -740,7 +740,18 @@ export default function Products() {
             {["Paralight", "All", "Maglinear"].map((brand) => (
               <motion.button
                 key={brand}
-                onClick={() => setActiveBrand(brand)}
+                onClick={() => {
+                  setActiveBrand(brand);
+                  setActiveSeries("All");
+                  setActiveSubSeries("All");
+                  if (brand === "Paralight") {
+                    setExpandedFilterBrand({ paralight: true, maglinear: false });
+                  } else if (brand === "Maglinear") {
+                    setExpandedFilterBrand({ paralight: false, maglinear: true });
+                  } else {
+                    setExpandedFilterBrand({ paralight: true, maglinear: true });
+                  }
+                }}
                 onMouseEnter={() => brand !== "All" && setHoveredBrand(brand)}
                 onMouseLeave={() => setHoveredBrand(null)}
                 whileHover={{ scale: 1.05, y: -2 }}
