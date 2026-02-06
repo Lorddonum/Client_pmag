@@ -480,23 +480,27 @@ function ShowcaseSection() {
 
   phaseRef.current = phase;
 
+  const scrollLockedRef = useRef(false);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const blockWheelRef = useRef<((e: WheelEvent) => void) | null>(null);
+
   useEffect(() => {
     if (!isInView || phase !== "idle") return;
 
     const scrollContainer = sectionRef.current?.closest('.snap-y') as HTMLElement | null;
-    if (!scrollContainer || !sectionRef.current) return;
+    if (!scrollContainer) return;
+    containerRef.current = scrollContainer;
 
-    const lockScroll = () => {
-      if (sectionRef.current) {
-        scrollContainer.style.scrollSnapType = 'none';
-        scrollContainer.scrollTop = sectionRef.current.offsetTop;
-        scrollContainer.style.overflow = 'hidden';
+    const blockWheel = (e: WheelEvent) => {
+      if (scrollLockedRef.current) {
+        e.preventDefault();
+        e.stopPropagation();
       }
     };
+    blockWheelRef.current = blockWheel;
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(lockScroll);
-    });
+    scrollLockedRef.current = true;
+    scrollContainer.addEventListener('wheel', blockWheel, { passive: false, capture: true });
 
     animatingRef.current = true;
     setPhase("circle");
@@ -510,26 +514,21 @@ function ShowcaseSection() {
     const handleWheel = (e: WheelEvent) => {
       const currentPhase = phaseRef.current;
       if (currentPhase === "idle" || currentPhase === "revealed") return;
-      if (animatingRef.current) {
-        e.preventDefault();
-        return;
-      }
+      if (animatingRef.current) return;
       if (e.deltaY > 0) {
-        e.preventDefault();
         animatingRef.current = true;
         if (currentPhase === "circle") {
           setPhase("splitting");
           setTimeout(() => { animatingRef.current = false; }, 1200);
         } else if (currentPhase === "splitting") {
           setPhase("revealed");
-          const scrollContainer = section.closest('.snap-y') as HTMLElement | null;
-          if (scrollContainer) {
-            setTimeout(() => {
-              scrollContainer.style.scrollSnapType = 'y mandatory';
-              scrollContainer.style.overflow = 'auto';
-              animatingRef.current = false;
-            }, 800);
-          }
+          setTimeout(() => {
+            scrollLockedRef.current = false;
+            if (containerRef.current && blockWheelRef.current) {
+              containerRef.current.removeEventListener('wheel', blockWheelRef.current, { capture: true } as EventListenerOptions);
+            }
+            animatingRef.current = false;
+          }, 800);
         }
       }
     };
