@@ -1038,6 +1038,47 @@ export default function Products() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Contact Us Section */}
+                {!selectedProduct && (
+                  <div className="mt-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white shadow-lg">
+                    <h3 className="text-sm font-bold uppercase tracking-wide mb-3 flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-brand-cyan" />
+                      Contact Us
+                    </h3>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                      Need help choosing the right product? Our team is ready to assist you.
+                    </p>
+                    <div className="space-y-3">
+                      <a
+                        href="mailto:inquiry@paralight.cc"
+                        className="flex items-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/15 rounded-xl transition-colors group"
+                        data-testid="sidebar-contact-email"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-brand-cyan/20 flex items-center justify-center flex-shrink-0">
+                          <Mail className="w-4 h-4 text-brand-cyan" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Email</p>
+                          <p className="text-sm font-medium text-white group-hover:text-brand-cyan transition-colors">inquiry@paralight.cc</p>
+                        </div>
+                      </a>
+                      <a
+                        href="tel:+8618128259727"
+                        className="flex items-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/15 rounded-xl transition-colors group"
+                        data-testid="sidebar-contact-phone"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-brand-gold/20 flex items-center justify-center flex-shrink-0">
+                          <Phone className="w-4 h-4 text-brand-gold" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Phone / WhatsApp</p>
+                          <p className="text-sm font-medium text-white group-hover:text-brand-gold transition-colors">+86 181 2825 9727</p>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             </aside>
 
