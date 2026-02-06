@@ -1137,8 +1137,8 @@ export default function About() {
 
         {/* Team Slider bubbles at bottom */}
         <div className="bg-[#0a1628] py-4">
-          <div className="relative">
-            <div className="flex animate-team-scroll gap-6 w-max">
+          <div className="relative overflow-hidden">
+            <div className="flex animate-team-scroll w-max" style={{ gap: 'calc((100vw - 5 * 4.5rem) / 5)' }}>
               {[
                 { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.jpg" },
                 { name: "Stephy", role: "Sales Manager", image: "/team-stephy.jpg" },
@@ -1164,7 +1164,7 @@ export default function About() {
                   className="flex-shrink-0 cursor-pointer"
                   onClick={() => setSelectedTeamMember(member)}
                 >
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 shadow-lg hover:border-[#00A8E8]/60 transition-all duration-300 hover:scale-110">
+                  <div className="w-[4.5rem] h-[4.5rem] rounded-full overflow-hidden border-2 border-white/20 shadow-lg hover:border-[#00A8E8]/60 transition-all duration-300 hover:scale-110">
                     <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
