@@ -893,7 +893,7 @@ export default function Products() {
                         <div className="p-6">
                           <div className="space-y-1 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                             <button
-                              onClick={() => { setActiveSeries("All"); setActiveSubSeries("All"); }}
+                              onClick={() => { setActiveBrand("All"); setActiveSeries("All"); setActiveSubSeries("All"); }}
                               data-testid="filter-series-all"
                               className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
                                 activeSeries === "All" 
@@ -906,9 +906,9 @@ export default function Products() {
 
                             {/* Paralight Brand Group */}
                             {(() => {
-                              const paralightSeries = seriesList.filter(s => 
-                                brandFilteredProducts.some(p => (p.series || []).includes(s) && p.brand === "Paralight")
-                              );
+                              const paralightSeries = Array.from(new Set(
+                                gridProducts.filter(p => p.brand === "Paralight").flatMap(p => p.series || [])
+                              ));
                               if (paralightSeries.length === 0) return null;
                               return (
                                 <div className="mt-3">
@@ -926,12 +926,12 @@ export default function Products() {
                                   {expandedFilterBrand.paralight && (
                                     <div className="mt-1 space-y-0.5 border-l-2 border-[#00A8E8]/20 ml-4 pl-2">
                                       {paralightSeries.map(series => {
-                                        const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
+                                        const seriesProducts = gridProducts.filter(p => p.brand === "Paralight" && (p.series || []).includes(series));
                                         const isSeriesActive = activeSeries === series;
                                         return (
                                           <div key={series}>
                                             <button
-                                              onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
+                                              onClick={() => { setActiveBrand("Paralight"); setActiveSeries(series); setActiveSubSeries("All"); }}
                                               data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
                                               className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
                                                 isSeriesActive
@@ -955,9 +955,9 @@ export default function Products() {
 
                             {/* Maglinear Brand Group */}
                             {(() => {
-                              const maglinearSeries = seriesList.filter(s => 
-                                brandFilteredProducts.some(p => (p.series || []).includes(s) && p.brand === "Maglinear Lighting")
-                              );
+                              const maglinearSeries = Array.from(new Set(
+                                gridProducts.filter(p => p.brand === "Maglinear Lighting").flatMap(p => p.series || [])
+                              ));
                               if (maglinearSeries.length === 0) return null;
                               return (
                                 <div className="mt-3">
@@ -975,7 +975,7 @@ export default function Products() {
                                   {expandedFilterBrand.maglinear && (
                                     <div className="mt-1 space-y-0.5 border-l-2 border-[#ECAA00]/20 ml-4 pl-2">
                                       {maglinearSeries.map(series => {
-                                        const seriesProducts = brandFilteredProducts.filter(p => (p.series || []).includes(series));
+                                        const seriesProducts = gridProducts.filter(p => p.brand === "Maglinear Lighting" && (p.series || []).includes(series));
                                         const seriesSubSeries = Array.from(new Set(
                                           seriesProducts.flatMap(p => p.subSeries || []).filter((s): s is string => !!s)
                                         ));
@@ -983,7 +983,7 @@ export default function Products() {
                                         return (
                                           <div key={series}>
                                             <button
-                                              onClick={() => { setActiveSeries(series); setActiveSubSeries("All"); }}
+                                              onClick={() => { setActiveBrand("Maglinear Lighting"); setActiveSeries(series); setActiveSubSeries("All"); }}
                                               data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
                                               className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
                                                 isSeriesActive && activeSubSeries === "All"
