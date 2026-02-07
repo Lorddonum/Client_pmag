@@ -949,18 +949,37 @@ export default function About() {
       <section className="snap-start h-screen flex flex-col bg-white overflow-hidden relative">
         {/* Background textures */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#00A8E8]/[0.03] rounded-full blur-[80px]" />
-          <div className="absolute -bottom-32 -left-20 w-[500px] h-[500px] bg-[#ECAA00]/[0.03] rounded-full blur-[100px]" />
+          <div className="absolute -top-10 -right-10 w-[450px] h-[450px] bg-[#00A8E8]/[0.08] rounded-full blur-[80px]" />
+          <div className="absolute -bottom-20 -left-10 w-[500px] h-[500px] bg-[#ECAA00]/[0.07] rounded-full blur-[90px]" />
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px)`,
-              backgroundSize: '24px 24px',
+              backgroundImage: `radial-gradient(rgba(0,0,0,0.06) 1.5px, transparent 1.5px)`,
+              backgroundSize: '20px 20px',
             }}
           />
-          <div className="absolute top-12 right-12 w-48 h-48 border border-gray-100 rounded-full" />
-          <div className="absolute top-20 right-20 w-32 h-32 border border-gray-100/60 rounded-full" />
-          <div className="absolute bottom-16 left-16 w-40 h-40 border border-gray-100 rounded-full" />
+          <div className="absolute top-10 right-10 w-56 h-56 border-2 border-[#00A8E8]/10 rounded-full" />
+          <div className="absolute top-20 right-20 w-36 h-36 border-2 border-[#00A8E8]/15 rounded-full" />
+          <div className="absolute bottom-12 left-12 w-48 h-48 border-2 border-[#ECAA00]/10 rounded-full" />
+          <div className="absolute bottom-20 left-20 w-28 h-28 border-2 border-[#ECAA00]/15 rounded-full" />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.04) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px',
+              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.6) 0%, transparent 50%)',
+              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.6) 0%, transparent 50%)',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.04) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px',
+              maskImage: 'linear-gradient(to top left, rgba(0,0,0,0.6) 0%, transparent 50%)',
+              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,0.6) 0%, transparent 50%)',
+            }}
+          />
         </div>
         <div className="pt-24 pb-8 flex-1 flex flex-col container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
