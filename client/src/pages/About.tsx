@@ -481,7 +481,7 @@ function HonorsSlideshow() {
 function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useFramerInView(sectionRef, { amount: 0.5 });
-  const [phase, setPhase] = useState<"idle" | "circle" | "reversing" | "splitting" | "revealed" | "office-transition" | "office">("idle");
+  const [phase, setPhase] = useState<"idle" | "circle" | "reversing" | "splitting" | "revealed" | "reveal-reversing" | "office-transition" | "office" | "office-reversing">("idle");
   const phaseRef = useRef(phase);
   const animatingRef = useRef(false);
   const hasTriggeredRef = useRef(false);
@@ -507,7 +507,8 @@ function ShowcaseSection() {
 
     const blockWheel = (e: WheelEvent) => {
       const currentPhase = phaseRef.current;
-      if (currentPhase === "office" || currentPhase === "idle") return;
+      if (currentPhase === "idle") return;
+      if (currentPhase === "office" && e.deltaY > 0) return;
 
       e.preventDefault();
       e.stopPropagation();
@@ -542,9 +543,26 @@ function ShowcaseSection() {
         setTimeout(() => {
           setPhase("office");
           setTimeout(() => {
-            unlockScroll();
             animatingRef.current = false;
           }, 1000);
+        }, 800);
+      } else if (e.deltaY < 0 && currentPhase === "office") {
+        animatingRef.current = true;
+        setPhase("office-reversing");
+        setTimeout(() => {
+          setPhase("revealed");
+          setTimeout(() => {
+            animatingRef.current = false;
+          }, 900);
+        }, 800);
+      } else if (e.deltaY < 0 && currentPhase === "revealed") {
+        animatingRef.current = true;
+        setPhase("reveal-reversing");
+        setTimeout(() => {
+          setPhase("circle");
+          setTimeout(() => {
+            animatingRef.current = false;
+          }, 1200);
         }, 800);
       }
     };
@@ -574,9 +592,12 @@ function ShowcaseSection() {
     { src: "/images/office-5.png", alt: "3D product design" },
   ];
 
-  const isOfficePhase = phase === "office-transition" || phase === "office";
-  const showcaseVisible = phase === "revealed";
-  const showcaseExiting = phase === "office-transition";
+  const isOfficePhase = phase === "office-transition" || phase === "office" || phase === "office-reversing";
+  const showcaseVisible = phase === "revealed" || phase === "office-reversing";
+  const showcaseExiting = phase === "office-transition" || phase === "reveal-reversing";
+  const showcaseEntering = phase === "revealed" || phase === "office-reversing";
+  const officeExiting = phase === "office-reversing";
+  const circlePhases = ["circle", "reversing", "splitting", "reveal-reversing"];
 
   return (
     <section
@@ -604,8 +625,22 @@ function ShowcaseSection() {
                 className="absolute"
                 style={{ width: 'min(500px, 70vw)', height: 'min(500px, 70vw)', borderRadius: '50%', overflow: 'hidden', clipPath: 'inset(0 50% 0 0)' }}
                 initial={{ opacity: 0, scale: 0.3 }}
-                animate={phase === "circle" ? { opacity: 1, scale: 1, y: 0 } : phase === "reversing" ? { opacity: 0, scale: 0.3, y: 0 } : { y: 300, opacity: 0 }}
-                transition={phase === "circle" ? { duration: 1.2, ease: "easeOut" } : phase === "reversing" ? { duration: 0.7, ease: "easeIn" } : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+                animate={
+                  phase === "circle" || phase === "reveal-reversing"
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : phase === "reversing"
+                    ? { opacity: 0, scale: 0.3, y: 0 }
+                    : { y: 300, opacity: 0 }
+                }
+                transition={
+                  phase === "circle"
+                    ? { duration: 1.2, ease: "easeOut" }
+                    : phase === "reveal-reversing"
+                    ? { duration: 0.9, ease: "easeOut" }
+                    : phase === "reversing"
+                    ? { duration: 0.7, ease: "easeIn" }
+                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                }
               >
                 <div className="w-full h-full relative">
                   <img src={circleImages[0]} alt="" className="absolute top-0 left-0 w-1/2 h-1/2 object-cover" />
@@ -619,8 +654,22 @@ function ShowcaseSection() {
                 className="absolute"
                 style={{ width: 'min(500px, 70vw)', height: 'min(500px, 70vw)', borderRadius: '50%', overflow: 'hidden', clipPath: 'inset(0 0 0 50%)' }}
                 initial={{ opacity: 0, scale: 0.3 }}
-                animate={phase === "circle" ? { opacity: 1, scale: 1, y: 0 } : phase === "reversing" ? { opacity: 0, scale: 0.3, y: 0 } : { y: -300, opacity: 0 }}
-                transition={phase === "circle" ? { duration: 1.2, ease: "easeOut" } : phase === "reversing" ? { duration: 0.7, ease: "easeIn" } : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+                animate={
+                  phase === "circle" || phase === "reveal-reversing"
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : phase === "reversing"
+                    ? { opacity: 0, scale: 0.3, y: 0 }
+                    : { y: -300, opacity: 0 }
+                }
+                transition={
+                  phase === "circle"
+                    ? { duration: 1.2, ease: "easeOut" }
+                    : phase === "reveal-reversing"
+                    ? { duration: 0.9, ease: "easeOut" }
+                    : phase === "reversing"
+                    ? { duration: 0.7, ease: "easeIn" }
+                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                }
               >
                 <div className="w-full h-full relative">
                   <img src={circleImages[0]} alt="" className="absolute top-0 left-0 w-1/2 h-1/2 object-cover" />
@@ -633,8 +682,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute z-10 text-center pointer-events-none"
                 initial={{ opacity: 0, scale: 0.5 }}
-                animate={phase === "circle" ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
-                transition={phase === "circle" ? { duration: 0.8, delay: 0.6 } : { duration: 0.5 }}
+                animate={phase === "circle" || phase === "reveal-reversing" ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+                transition={phase === "circle" ? { duration: 0.8, delay: 0.6 } : phase === "reveal-reversing" ? { duration: 0.6, delay: 0.3 } : { duration: 0.5 }}
               >
                 <h2 className="font-display text-4xl lg:text-6xl font-bold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
                   <span className="italic">In-House Design.</span>
@@ -731,8 +780,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute top-[4%] left-[12%] w-[55%] z-10"
                 initial={{ opacity: 0, y: -120 }}
-                animate={phase === "office" ? { opacity: 1, y: 0 } : { opacity: 0, y: -60 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.15 }}
+                animate={phase === "office" ? { opacity: 1, y: 0 } : { opacity: 0, y: -120 }}
+                transition={{ duration: officeExiting ? 0.7 : 0.9, ease: "easeOut", delay: officeExiting ? 0 : 0.15 }}
               >
                 <img src={officeImages[0].src} alt={officeImages[0].alt}
                   className="w-full h-auto max-h-[35vh] object-cover rounded-lg shadow-xl" />
@@ -742,8 +791,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute top-[30%] left-[2%] w-[30%] z-20"
                 initial={{ opacity: 0, x: -120 }}
-                animate={phase === "office" ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.25 }}
+                animate={phase === "office" ? { opacity: 1, x: 0 } : { opacity: 0, x: -120 }}
+                transition={{ duration: officeExiting ? 0.7 : 0.9, ease: "easeOut", delay: officeExiting ? 0.05 : 0.25 }}
               >
                 <img src={officeImages[1].src} alt={officeImages[1].alt}
                   className="w-full h-auto max-h-[30vh] object-cover rounded-lg shadow-xl" />
@@ -753,8 +802,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute top-[22%] right-[2%] w-[32%] z-20"
                 initial={{ opacity: 0, x: 120 }}
-                animate={phase === "office" ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.3 }}
+                animate={phase === "office" ? { opacity: 1, x: 0 } : { opacity: 0, x: 120 }}
+                transition={{ duration: officeExiting ? 0.7 : 0.9, ease: "easeOut", delay: officeExiting ? 0.05 : 0.3 }}
               >
                 <img src={officeImages[2].src} alt={officeImages[2].alt}
                   className="w-full h-auto max-h-[35vh] object-cover rounded-lg shadow-xl" />
@@ -764,8 +813,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute bottom-[4%] left-[8%] w-[35%] z-10"
                 initial={{ opacity: 0, x: -80, y: 120 }}
-                animate={phase === "office" ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: -40, y: 60 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.4 }}
+                animate={phase === "office" ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: -80, y: 120 }}
+                transition={{ duration: officeExiting ? 0.7 : 0.9, ease: "easeOut", delay: officeExiting ? 0.1 : 0.4 }}
               >
                 <img src={officeImages[3].src} alt={officeImages[3].alt}
                   className="w-full h-auto max-h-[30vh] object-cover rounded-lg shadow-xl" />
@@ -775,8 +824,8 @@ function ShowcaseSection() {
               <motion.div
                 className="absolute bottom-[4%] right-[5%] w-[40%] z-10"
                 initial={{ opacity: 0, y: 120 }}
-                animate={phase === "office" ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-                transition={{ duration: 0.9, ease: "easeOut", delay: 0.5 }}
+                animate={phase === "office" ? { opacity: 1, y: 0 } : { opacity: 0, y: 120 }}
+                transition={{ duration: officeExiting ? 0.7 : 0.9, ease: "easeOut", delay: officeExiting ? 0.1 : 0.5 }}
               >
                 <img src={officeImages[4].src} alt={officeImages[4].alt}
                   className="w-full h-auto max-h-[30vh] object-cover rounded-lg shadow-xl" />
@@ -787,7 +836,7 @@ function ShowcaseSection() {
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] lg:w-[30%] bg-[#f5efe6]/85 backdrop-blur-sm p-6 lg:p-10 z-30 shadow-2xl border border-[#d4c9b8]"
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={phase === "office" ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: officeExiting ? 0.5 : 0.7, ease: "easeOut", delay: officeExiting ? 0 : 0.2 }}
               >
                 <h2 className="font-display text-2xl lg:text-3xl font-medium text-[#3d3428] mb-3 leading-tight">
                   <span className="italic">Our Workspace.</span>
