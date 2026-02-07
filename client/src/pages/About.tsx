@@ -891,7 +891,7 @@ export default function About() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-4xl mx-auto"
           >
             {stats.map((stat, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 p-6 text-center">
+              <div key={i} className="bg-[#F5F0E8]/10 border border-[#F5F0E8]/15 p-6 text-center">
                 <stat.icon className="w-5 h-5 mx-auto mb-3 text-gray-500" />
                 <div className="font-display text-2xl md:text-3xl text-white font-medium">{stat.value}</div>
                 <div className="text-[10px] font-medium tracking-[0.15em] uppercase text-gray-500 mt-2">{stat.label}</div>
