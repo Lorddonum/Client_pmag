@@ -807,15 +807,14 @@ export default function Products() {
                 aria-label={social.label}
                 whileHover={{ scale: 1.1, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border border-transparent"
-                style={{ backgroundColor: social.color }}
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border border-white/20 bg-transparent"
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)';
-                }}
-                onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = social.color;
                   e.currentTarget.style.borderColor = 'transparent';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
                 }}
                 data-testid={`social-${social.label.toLowerCase()}`}
               >
