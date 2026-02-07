@@ -841,6 +841,19 @@ export default function About() {
 
   const [selectedEvent, setSelectedEvent] = useState<ExhibitionEvent | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<{ name: string; role: string; image: string } | null>(null);
+  const [teamIndex, setTeamIndex] = useState(0);
+
+  const teamMembers = [
+    { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.jpg" },
+    { name: "Stephy", role: "Sales Manager", image: "/team-stephy.jpg" },
+    { name: "Taha", role: "Marketing Specialist", image: "/team-taha.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-1.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-2.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-3.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-4.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-5.jpg" },
+    { name: "Name", role: "Role", image: "/team-member-6.jpg" },
+  ];
 
   return (
     <div className="h-screen overflow-y-scroll snap-y snap-mandatory bg-white">
@@ -1102,8 +1115,8 @@ export default function About() {
       </section>
 
       {/* REDESIGNED: Core Team + Design Philosophy - Asymmetric Split Layout */}
-      <section className="snap-start h-screen relative overflow-hidden flex flex-col">
-        <div className="grid grid-cols-1 lg:grid-cols-2 flex-1 min-h-0">
+      <section className="snap-start h-screen relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           {/* Left: Core Team Image */}
           <div className="relative bg-[#0a1628]">
             <motion.div
@@ -1179,66 +1192,65 @@ export default function About() {
                   ))}
                 </div>
 
-                <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl border border-gray-200/50">
-                  <Quote className="w-8 h-8 text-[#ECAA00] opacity-30 mb-3" />
+                <div className="bg-white/60 backdrop-blur-sm p-5 rounded-xl border border-gray-200/50">
+                  <Quote className="w-6 h-6 text-[#ECAA00] opacity-30 mb-2" />
                   <p className="text-gray-700 leading-relaxed text-sm italic">
                     "This closed-loop system—from responsive demand to collaborative support and full-chain satisfaction—represents 
                     the core competitive advantage of Paralight Group."
                   </p>
                 </div>
+
+                {/* Team Member Slider */}
+                <div className="mt-5">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setTeamIndex((prev) => (prev === 0 ? teamMembers.length - 2 : prev - 2))}
+                      className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
+                      data-testid="button-team-prev"
+                    >
+                      <ChevronLeft className="w-4 h-4 text-gray-600" />
+                    </button>
+
+                    <div className="flex gap-5 flex-1 justify-center overflow-hidden">
+                      <AnimatePresence mode="popLayout">
+                        {[0, 1].map((offset) => {
+                          const idx = (teamIndex + offset) % teamMembers.length;
+                          const member = teamMembers[idx];
+                          return (
+                            <motion.div
+                              key={`${idx}-${teamIndex}`}
+                              initial={{ opacity: 0, x: 30 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -30 }}
+                              transition={{ duration: 0.3 }}
+                              className="flex items-center gap-3 cursor-pointer group"
+                              onClick={() => setSelectedTeamMember(member)}
+                            >
+                              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-[#00A8E8] transition-all duration-300">
+                                <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-semibold text-gray-900 text-sm truncate">{member.name}</p>
+                                <p className="text-xs text-gray-500 truncate">{member.role}</p>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </AnimatePresence>
+                    </div>
+
+                    <button
+                      onClick={() => setTeamIndex((prev) => (prev + 2) % teamMembers.length)}
+                      className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
+                      data-testid="button-team-next"
+                    >
+                      <ChevronRight className="w-4 h-4 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
-        </div>
-
-        {/* Team Slider bubbles at bottom */}
-        <div className="bg-[#0a1628] py-4">
-          <div className="relative overflow-hidden">
-            <div className="flex animate-team-scroll w-max" style={{ gap: 'calc((100vw - 5 * 4.5rem) / 5)' }}>
-              {[
-                { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.jpg" },
-                { name: "Stephy", role: "Sales Manager", image: "/team-stephy.jpg" },
-                { name: "Taha", role: "Marketing Specialist", image: "/team-taha.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-1.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-2.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-3.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-4.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-5.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-6.jpg" },
-                { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.jpg" },
-                { name: "Stephy", role: "Sales Manager", image: "/team-stephy.jpg" },
-                { name: "Taha", role: "Marketing Specialist", image: "/team-taha.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-1.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-2.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-3.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-4.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-5.jpg" },
-                { name: "Name", role: "Role", image: "/team-member-6.jpg" },
-              ].map((member, idx) => (
-                <div
-                  key={idx}
-                  className="flex-shrink-0 cursor-pointer"
-                  onClick={() => setSelectedTeamMember(member)}
-                >
-                  <div className="w-[4.5rem] h-[4.5rem] rounded-full overflow-hidden border-2 border-white/20 shadow-lg hover:border-[#00A8E8]/60 transition-all duration-300 hover:scale-110">
-                    <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <style>{`
-            @keyframes teamScroll {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-            .animate-team-scroll {
-              animation: teamScroll 45s linear infinite;
-            }
-            .animate-team-scroll:hover {
-              animation-play-state: paused;
-            }
-          `}</style>
         </div>
 
         <AnimatePresence>
