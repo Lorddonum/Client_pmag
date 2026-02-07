@@ -1,4 +1,5 @@
-import { Facebook, Instagram, Linkedin, Youtube, Twitter, Music2, Pin, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Youtube, Twitter, Pin, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import TikTokIcon from "@/components/icons/TikTokIcon";
 import footerLogo from "/footer-logo.png";
 import { Link } from "wouter";
 
@@ -9,7 +10,7 @@ export default function Footer() {
     { icon: Linkedin, href: "https://www.linkedin.com/company/paralight-group/", label: "LinkedIn", color: "#0A66C2" },
     { icon: Youtube, href: "https://www.youtube.com/@ParalightMaglinearLighting", label: "YouTube", color: "#FF0000" },
     { icon: Twitter, href: "https://x.com/Paralight_Group", label: "Twitter", color: "#1DA1F2" },
-    { icon: Music2, href: "https://www.tiktok.com/@paralightmaglinear", label: "TikTok", color: "#00F2EA" },
+    { icon: TikTokIcon, href: "https://www.tiktok.com/@paralightmaglinear", label: "TikTok", color: "#00F2EA" },
     { icon: Pin, href: "https://www.pinterest.com/ParalightMaglinear/", label: "Pinterest", color: "#E60023" },
   ];
 
