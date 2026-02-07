@@ -1082,11 +1082,17 @@ export default function About() {
               WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,0.8) 0%, transparent 55%)',
             }}
           />
-          {/* Decorative hexagon shapes - top right */}
-          <svg className="absolute top-8 right-8 w-64 h-64 text-[#00A8E8]/[0.08]" viewBox="0 0 200 200" fill="none">
-            <polygon points="100,10 170,45 170,115 100,150 30,115 30,45" stroke="currentColor" strokeWidth="1.5" />
-            <polygon points="100,30 150,55 150,105 100,130 50,105 50,55" stroke="currentColor" strokeWidth="1" />
-            <polygon points="100,50 130,65 130,95 100,110 70,95 70,65" stroke="currentColor" strokeWidth="0.8" />
+          {/* Decorative hexagon shapes - top right (large, overflowing) */}
+          <svg className="absolute -top-32 -right-32 w-[600px] h-[600px] text-[#00A8E8]/[0.08]" viewBox="0 0 200 200" fill="none">
+            <polygon points="100,10 170,45 170,115 100,150 30,115 30,45" stroke="currentColor" strokeWidth="1" />
+            <polygon points="100,25 155,52 155,108 100,135 45,108 45,52" stroke="currentColor" strokeWidth="0.8" />
+            <polygon points="100,40 140,60 140,100 100,120 60,100 60,60" stroke="currentColor" strokeWidth="0.7" />
+            <polygon points="100,55 125,67 125,93 100,105 75,93 75,67" stroke="currentColor" strokeWidth="0.6" />
+            <polygon points="100,68 112,74 112,86 100,92 88,86 88,74" stroke="currentColor" strokeWidth="0.5" />
+            <line x1="100" y1="10" x2="100" y2="150" stroke="currentColor" strokeWidth="0.4" />
+            <line x1="30" y1="80" x2="170" y2="80" stroke="currentColor" strokeWidth="0.4" />
+            <line x1="30" y1="45" x2="170" y2="115" stroke="currentColor" strokeWidth="0.4" />
+            <line x1="170" y1="45" x2="30" y2="115" stroke="currentColor" strokeWidth="0.4" />
           </svg>
           {/* Decorative diamond + cross - bottom left */}
           <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/[0.1]" viewBox="0 0 200 200" fill="none">
