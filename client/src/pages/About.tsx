@@ -480,10 +480,11 @@ function HonorsSlideshow() {
 
 function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useFramerInView(sectionRef, { once: true, amount: 0.5 });
-  const [phase, setPhase] = useState<"idle" | "circle" | "splitting" | "revealed">("idle");
+  const isInView = useFramerInView(sectionRef, { amount: 0.5 });
+  const [phase, setPhase] = useState<"idle" | "circle" | "reversing" | "splitting" | "revealed">("idle");
   const phaseRef = useRef(phase);
   const animatingRef = useRef(false);
+  const hasTriggeredRef = useRef(false);
 
   phaseRef.current = phase;
 
@@ -498,7 +499,7 @@ function ShowcaseSection() {
   };
 
   useEffect(() => {
-    if (!isInView || phase !== "idle") return;
+    if (!isInView || phase !== "idle" || hasTriggeredRef.current) return;
 
     const scrollContainer = sectionRef.current?.closest('.snap-y') as HTMLElement | null;
     if (!scrollContainer) return;
@@ -512,6 +513,7 @@ function ShowcaseSection() {
       e.stopPropagation();
 
       if (animatingRef.current) return;
+
       if (e.deltaY > 0 && currentPhase === "circle") {
         animatingRef.current = true;
         setPhase("splitting");
@@ -522,17 +524,27 @@ function ShowcaseSection() {
             animatingRef.current = false;
           }, 800);
         }, 1200);
+      } else if (e.deltaY < 0 && currentPhase === "circle") {
+        animatingRef.current = true;
+        setPhase("reversing");
+        setTimeout(() => {
+          setPhase("idle");
+          hasTriggeredRef.current = false;
+          unlockScroll();
+          animatingRef.current = false;
+        }, 800);
       }
     };
     blockWheelRef.current = blockWheel;
     scrollContainer.addEventListener('wheel', blockWheel, { passive: false, capture: true });
 
     animatingRef.current = true;
+    hasTriggeredRef.current = true;
     setPhase("circle");
     setTimeout(() => { animatingRef.current = false; }, 1200);
 
     return () => unlockScroll();
-  }, [isInView]);
+  }, [isInView, phase]);
 
   const circleImages = [
     "/images/showcase-1.png",
@@ -577,11 +589,15 @@ function ShowcaseSection() {
                 animate={
                   phase === "circle"
                     ? { opacity: 1, scale: 1, y: 0 }
+                    : phase === "reversing"
+                    ? { opacity: 0, scale: 0.3, y: 0 }
                     : { y: 300, opacity: 0 }
                 }
                 transition={
                   phase === "circle"
                     ? { duration: 1.2, ease: "easeOut" }
+                    : phase === "reversing"
+                    ? { duration: 0.7, ease: "easeIn" }
                     : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
                 }
               >
@@ -608,11 +624,15 @@ function ShowcaseSection() {
                 animate={
                   phase === "circle"
                     ? { opacity: 1, scale: 1, y: 0 }
+                    : phase === "reversing"
+                    ? { opacity: 0, scale: 0.3, y: 0 }
                     : { y: -300, opacity: 0 }
                 }
                 transition={
                   phase === "circle"
                     ? { duration: 1.2, ease: "easeOut" }
+                    : phase === "reversing"
+                    ? { duration: 0.7, ease: "easeIn" }
                     : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
                 }
               >
@@ -632,12 +652,12 @@ function ShowcaseSection() {
                 animate={
                   phase === "circle"
                     ? { opacity: 1, scale: 1 }
-                    : { opacity: 0, scale: 0.8 }
+                    : { opacity: 0, scale: 0.5 }
                 }
                 transition={
                   phase === "circle"
                     ? { duration: 0.8, delay: 0.6 }
-                    : { duration: 0.6 }
+                    : { duration: 0.5 }
                 }
               >
                 <h2 className="font-display text-4xl lg:text-6xl font-bold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
