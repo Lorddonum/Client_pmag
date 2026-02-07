@@ -11,6 +11,7 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   const [location] = useLocation();
   const [isLightSection, setIsLightSection] = useState(false);
   const [isFooterSection, setIsFooterSection] = useState(false);
+  const [hasNavBg, setHasNavBg] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,9 +22,10 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (location !== '/') {
+    if (location !== '/' && location !== '/about') {
       setIsLightSection(false);
       setIsFooterSection(false);
+      setHasNavBg(false);
       return;
     }
     
@@ -39,30 +41,22 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
           if (location === '/') {
             setIsLightSection(index === 1 || index === 2 || index === 3);
             setIsFooterSection(index === 4 || index === 5);
-          } else {
-            const bg = window.getComputedStyle(section).backgroundColor;
-            const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-            if (match) {
-              const r = parseInt(match[1]);
-              const g = parseInt(match[2]);
-              const b = parseInt(match[3]);
-              const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-              setIsLightSection(brightness > 150);
-              setIsFooterSection(brightness < 50);
-            } else {
-              const classList = section.className || '';
-              const isLight = classList.includes('bg-white') || 
-                             classList.includes('from-sky-50') || 
-                             classList.includes('from-gray-50') ||
-                             classList.includes('from-[#F5F0E8]') ||
-                             classList.includes('from-amber-50') ||
-                             classList.includes('from-cyan-50');
-              const isDark = classList.includes('bg-gray-900') || 
-                            classList.includes('bg-[#0a1628]') || 
-                            classList.includes('from-[#060d18]');
-              setIsLightSection(isLight);
-              setIsFooterSection(isDark);
-            }
+            setHasNavBg(false);
+          } else if (location === '/about') {
+            // 0: Hero (dark) → white
+            // 1: Video (white) → dark
+            // 2: Dev Journey (light) → dark
+            // 3: Chairman (light) → dark
+            // 4: CEO (light) → dark
+            // 5: Core Team (split) → dark + bg
+            // 6: Showcase (beige) → white
+            // 7: Certifications (dark) → white
+            // 8: Exhibitions (dark) → white
+            // 9: Global Delivery (light) → dark
+            // 10: Footer (dark) → white
+            setIsLightSection((index >= 1 && index <= 5) || index === 9);
+            setIsFooterSection(false);
+            setHasNavBg(index === 5);
           }
         }
       });
@@ -91,11 +85,13 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
         "fixed top-0 w-full z-50 transition-all duration-150",
         isFooterSection
           ? "bg-[#0A1628]"
-          : isProductsPage
-            ? "bg-white shadow-sm"
-            : scrolled
-              ? "bg-white/95 backdrop-blur-md shadow-sm"
-              : "bg-transparent",
+          : hasNavBg
+            ? "bg-white/95 backdrop-blur-md shadow-sm"
+            : isProductsPage
+              ? "bg-white shadow-sm"
+              : scrolled
+                ? "bg-white/95 backdrop-blur-md shadow-sm"
+                : "bg-transparent",
       )}
     >
       <div className="container mx-auto px-8 lg:px-12">
