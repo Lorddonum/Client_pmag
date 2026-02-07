@@ -21,7 +21,7 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   }, []);
 
   useEffect(() => {
-    if (location !== '/' && location !== '/about') {
+    if (location !== '/') {
       setIsLightSection(false);
       setIsFooterSection(false);
       return;
