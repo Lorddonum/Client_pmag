@@ -1202,7 +1202,7 @@ export default function About() {
 
                 {/* Team Member Slider */}
                 <div className="mt-5">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={() => setTeamIndex((prev) => (prev === 0 ? teamMembers.length - 2 : prev - 2))}
                       className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
@@ -1211,7 +1211,7 @@ export default function About() {
                       <ChevronLeft className="w-4 h-4 text-gray-600" />
                     </button>
 
-                    <div className="flex gap-5 flex-1 justify-center overflow-hidden">
+                    <div className="flex gap-6 flex-1 justify-center overflow-visible">
                       <AnimatePresence mode="popLayout">
                         {[0, 1].map((offset) => {
                           const idx = (teamIndex + offset) % teamMembers.length;
