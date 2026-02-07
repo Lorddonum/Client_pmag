@@ -1065,10 +1065,10 @@ export default function About() {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.06) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.06) 1px, transparent 1px)`,
-                backgroundSize: '40px 40px',
-                maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 40%, transparent 70%)',
-                WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 40%, transparent 70%)',
+                backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.18) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.18) 1px, transparent 1px)`,
+                backgroundSize: '32px 32px',
+                maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 35%, transparent 65%)',
+                WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 35%, transparent 65%)',
               }}
             />
             <motion.div
