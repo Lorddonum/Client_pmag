@@ -1035,45 +1035,69 @@ export default function About() {
         </div>
       </section>
 
-      {/* Executive Leadership - Both in one section */}
-      <section className="snap-start h-screen relative overflow-hidden flex flex-col bg-gradient-to-br from-sky-50 via-white to-amber-50">
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 min-h-0">
-          {executives.map((exec, i) => (
-            <div key={i} className="flex flex-col h-full overflow-hidden">
-              <div className="relative flex-1 min-h-0">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.2 }}
-                  className="h-full w-full"
-                >
-                  <img src={exec.image} alt={exec.name} loading="eager" className="w-full h-full object-contain object-top" />
-                </motion.div>
+      {/* Executive Leadership - Staggered layout */}
+      <section className="snap-start h-screen relative overflow-hidden bg-white">
+        <div className="h-full pt-20 pb-8 px-8 lg:px-16 flex items-center">
+          <div className="w-full grid grid-cols-12 grid-rows-2 gap-6 h-[calc(100vh-7rem)]">
+
+            {/* Chairman - top left image */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="col-span-5 row-span-1 relative rounded-2xl overflow-hidden shadow-xl"
+            >
+              <img src={executives[0].image} alt={executives[0].name} loading="eager" className="w-full h-full object-cover" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#00A8E8]/20 text-[#00A8E8] mb-1">{executives[0].role}</span>
+                <h2 className="text-xl font-display font-bold text-white">{executives[0].name}</h2>
               </div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 + i * 0.2 }}
-                className="px-6 lg:px-10 py-4 bg-white/80 backdrop-blur-sm"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span
-                    className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                    style={{ backgroundColor: `${exec.color}20`, color: exec.color }}
-                  >
-                    {exec.role}
-                  </span>
-                  <h2 className="text-xl lg:text-2xl font-display font-bold" style={{ color: exec.color }}>
-                    {exec.name}
-                  </h2>
-                </div>
-                <p className="text-sm text-gray-700 font-light italic mb-2">"{exec.tagline}"</p>
-                <p className="text-gray-600 leading-relaxed text-xs line-clamp-3">{exec.bio}</p>
-              </motion.div>
-            </div>
-          ))}
+            </motion.div>
+
+            {/* CEO text - top right */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="col-span-7 row-span-1 flex flex-col justify-center px-4 lg:px-8"
+            >
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ECAA00]/20 text-[#ECAA00] mb-3 w-fit">{executives[1].role}</span>
+              <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#ECAA00] mb-2">{executives[1].name}</h2>
+              <p className="text-sm text-gray-700 font-light italic mb-3">"{executives[1].tagline}"</p>
+              <p className="text-gray-600 leading-relaxed text-xs lg:text-sm">{executives[1].bio}</p>
+            </motion.div>
+
+            {/* Chairman text - bottom left */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="col-span-5 row-span-1 flex flex-col justify-center px-4 lg:px-8"
+            >
+              <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#00A8E8] mb-2">{executives[0].name}</h2>
+              <p className="text-sm text-gray-700 font-light italic mb-3">"{executives[0].tagline}"</p>
+              <p className="text-gray-600 leading-relaxed text-xs lg:text-sm">{executives[0].bio}</p>
+            </motion.div>
+
+            {/* CEO - bottom right image */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="col-span-7 row-span-1 relative rounded-2xl overflow-hidden shadow-xl"
+            >
+              <img src={executives[1].image} alt={executives[1].name} loading="eager" className="w-full h-full object-cover" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ECAA00]/20 text-[#ECAA00] mb-1">{executives[1].role}</span>
+                <h2 className="text-xl font-display font-bold text-white">{executives[1].name}</h2>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
