@@ -82,7 +82,8 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-150",
+        "fixed top-0 w-full z-50 transition-all",
+        location === '/about' ? "duration-500 ease-in-out" : "duration-150",
         isFooterSection
           ? "bg-[#0A1628]"
           : hasNavBg
