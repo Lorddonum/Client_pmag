@@ -1037,8 +1037,8 @@ export default function About() {
 
       {/* Executive Leadership - Staggered layout */}
       <section className="snap-start h-screen relative overflow-hidden bg-white">
-        <div className="h-full pt-20 pb-8 px-8 lg:px-16 flex items-center">
-          <div className="w-full grid grid-cols-12 grid-rows-2 gap-6 h-[calc(100vh-7rem)]">
+        <div className="h-full pt-24 pb-8 px-8 lg:px-16 flex items-center">
+          <div className="w-full grid grid-cols-2 grid-rows-2 gap-x-10 gap-y-6 max-w-6xl mx-auto" style={{ height: 'calc(100vh - 8rem)' }}>
 
             {/* Chairman - top left image */}
             <motion.div
@@ -1046,10 +1046,10 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="col-span-5 row-span-1 relative rounded-2xl overflow-hidden shadow-xl"
+              className="relative rounded-2xl overflow-hidden shadow-xl"
             >
-              <img src={executives[0].image} alt={executives[0].name} loading="eager" className="w-full h-full object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+              <img src={executives[0].image} alt={executives[0].name} loading="eager" className="w-full h-full object-cover object-top" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#00A8E8]/20 text-[#00A8E8] mb-1">{executives[0].role}</span>
                 <h2 className="text-xl font-display font-bold text-white">{executives[0].name}</h2>
               </div>
@@ -1061,7 +1061,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="col-span-7 row-span-1 flex flex-col justify-center px-4 lg:px-8"
+              className="flex flex-col justify-end pb-4 px-2"
             >
               <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ECAA00]/20 text-[#ECAA00] mb-3 w-fit">{executives[1].role}</span>
               <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#ECAA00] mb-2">{executives[1].name}</h2>
@@ -1075,7 +1075,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="col-span-5 row-span-1 flex flex-col justify-center px-4 lg:px-8"
+              className="flex flex-col justify-start pt-4 px-2"
             >
               <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#00A8E8] mb-2">{executives[0].name}</h2>
               <p className="text-sm text-gray-700 font-light italic mb-3">"{executives[0].tagline}"</p>
@@ -1088,10 +1088,10 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="col-span-7 row-span-1 relative rounded-2xl overflow-hidden shadow-xl"
+              className="relative rounded-2xl overflow-hidden shadow-xl"
             >
-              <img src={executives[1].image} alt={executives[1].name} loading="eager" className="w-full h-full object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+              <img src={executives[1].image} alt={executives[1].name} loading="eager" className="w-full h-full object-cover object-top" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ECAA00]/20 text-[#ECAA00] mb-1">{executives[1].role}</span>
                 <h2 className="text-xl font-display font-bold text-white">{executives[1].name}</h2>
               </div>
