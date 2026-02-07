@@ -1091,12 +1091,22 @@ export default function About() {
       {/* CEO Section */}
       <section className={`snap-start h-screen relative overflow-hidden bg-gradient-to-br ${executives[1].bgGradient}`}>
         <div className="h-full grid grid-cols-1 lg:grid-cols-2">
-          <div className="flex flex-col justify-center px-10 lg:px-16 order-2 lg:order-1">
+          <div className="relative flex flex-col justify-center px-10 lg:px-16 order-2 lg:order-1 overflow-hidden">
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.18) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.18) 1px, transparent 1px)`,
+                backgroundSize: '32px 32px',
+                maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 35%, transparent 65%)',
+                WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 35%, transparent 65%)',
+              }}
+            />
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative z-10"
             >
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[#ECAA00]/10 text-[#ECAA00] mb-4 uppercase tracking-widest">{executives[1].role}</span>
               <h2 className="text-3xl lg:text-5xl font-display font-bold text-gray-900 mb-3">{executives[1].name}</h2>
@@ -1111,10 +1121,9 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative h-full order-1 lg:order-2"
+            className="relative h-full flex items-center justify-center p-8 lg:p-12 order-1 lg:order-2"
           >
-            <img src={executives[1].image} alt={executives[1].name} loading="eager" className="w-full h-full object-cover object-top" />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/10" />
+            <img src={executives[1].image} alt={executives[1].name} loading="eager" className="w-full h-[85%] object-cover object-top rounded-2xl shadow-2xl" />
           </motion.div>
         </div>
       </section>
