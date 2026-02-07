@@ -963,6 +963,39 @@ export default function About() {
             <p className="text-gray-500 max-w-xl mx-auto text-base">
               A deep dive into precision lighting manufacturing where craftsmanship meets innovation.
             </p>
+            <div className="flex justify-center gap-3 mt-4">
+              {[
+                { icon: Facebook, href: "https://www.facebook.com/paralightmaglinear/", label: "Facebook", color: "#1877F2" },
+                { icon: Instagram, href: "https://www.instagram.com/paralight.group/", label: "Instagram", color: "#E4405F" },
+                { icon: Linkedin, href: "https://www.linkedin.com/company/paralight-group/", label: "LinkedIn", color: "#0A66C2" },
+                { icon: Youtube, href: "https://www.youtube.com/@ParalightMaglinearLighting", label: "YouTube", color: "#FF0000" },
+                { icon: Twitter, href: "https://x.com/Paralight_Group", label: "Twitter", color: "#1DA1F2" },
+                { icon: TikTokIcon, href: "https://www.tiktok.com/@paralightmaglinear", label: "TikTok", color: "#00F2EA" },
+                { icon: PinterestIcon, href: "https://www.pinterest.com/ParalightMaglinear/", label: "Pinterest", color: "#E60023" },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border border-gray-200 bg-transparent hover:scale-110"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = social.color;
+                    e.currentTarget.style.borderColor = 'transparent';
+                    e.currentTarget.querySelector('svg')!.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'rgb(229,231,235)';
+                    e.currentTarget.querySelector('svg')!.style.color = 'rgb(156,163,175)';
+                  }}
+                  data-testid={`video-social-${social.label.toLowerCase()}`}
+                >
+                  <social.icon className="w-4 h-4 text-gray-400 transition-colors duration-300" />
+                </a>
+              ))}
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
