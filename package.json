@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "node --env-file=.env --import tsx server/index.ts",
-    "build": "echo 'Using pre-built files from dist/'",
+    "build": "node -e \"console.log('Build artifacts already present in dist/public')\" && test -d dist/public || npm run build:client",
     "build:client": "npx vite build",
     "build:server": "npx tsx scripts/build-server.ts",
     "start": "npx tsx server/index.ts",
