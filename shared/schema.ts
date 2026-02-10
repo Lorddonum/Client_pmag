@@ -1,20 +1,20 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, serial, index, boolean } from "drizzle-orm/pg-core";
+import { mysqlTable, text, varchar, int, index, boolean, json } from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const users = mysqlTable("users", {
+  id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => crypto.randomUUID()),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
 });
 
-export const products = pgTable("products", {
-  id: serial("id").primaryKey(),
+export const products = mysqlTable("products", {
+  id: int("id").primaryKey().autoincrement(),
   name: text("name").notNull(),
   modelNumber: text("model_number").notNull(),
   description: text("description").notNull(),
-  series: text("series").array().notNull().default(sql`'{}'::text[]`),
+  series: json("series").$type<string[]>().notNull().default([]),
   brand: text("brand").notNull(),
   application: text("application"),
   finish: text("finish"),
@@ -27,12 +27,12 @@ export const products = pgTable("products", {
   cct: text("cct"),
   beamAngle: text("beam_angle"),
   image: text("image"),
-  images: text("images").array(),
+  images: json("images").$type<string[]>(),
   catalogueUrl: text("catalogue_url"),
   technicalDrawingUrl: text("technical_drawing_url"),
-  technicalDrawings: text("technical_drawings").array(),
+  technicalDrawings: json("technical_drawings").$type<string[]>(),
   // Paralight-specific fields
-  subSeries: text("sub_series").array().default(sql`'{}'::text[]`),
+  subSeries: json("sub_series").$type<string[]>().default([]),
   standardLength: text("standard_length"),
   diffuserFinish: text("diffuser_finish"),
   diffuserMaterial: text("diffuser_material"),

@@ -1,0 +1,33 @@
+import { build } from "esbuild";
+
+console.log("🔨 Building server...");
+
+await build({
+    entryPoints: ["server/index.ts"],
+    bundle: true,
+    platform: "node",
+    target: "node20",
+    format: "esm",
+    outfile: "dist/server.js",
+    external: [
+        "sharp",
+        "express",
+        "compression",
+        "mysql2",
+        "drizzle-orm",
+        "ws",
+    ],
+    banner: {
+        js: `
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+    `.trim(),
+    },
+});
+
+console.log("✅ Server built successfully!");

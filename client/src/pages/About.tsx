@@ -53,7 +53,8 @@ import {
 } from "lucide-react";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import PinterestIcon from "@/components/icons/PinterestIcon";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface ExhibitionEvent {
   name: string;
@@ -62,9 +63,9 @@ interface ExhibitionEvent {
 }
 
 const exhibitionEvents: ExhibitionEvent[] = [
-  { 
-    name: "Middle East Energy", 
-    location: "Dubai, UAE", 
+  {
+    name: "Middle East Energy",
+    location: "Dubai, UAE",
     images: [
       "/exhibitions/dubai-2024/img-1.jpg",
       "/exhibitions/dubai-2024/img-2.jpg",
@@ -76,9 +77,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/dubai-2024/img-8.jpg",
     ]
   },
-  { 
-    name: "Canton Fair", 
-    location: "Guangzhou, China", 
+  {
+    name: "Canton Fair",
+    location: "Guangzhou, China",
     images: [
       "/exhibitions/canton-2024/img-1.jpg",
       "/exhibitions/canton-2024/img-2.jpg",
@@ -90,9 +91,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/canton-2024/img-8.jpg",
     ]
   },
-  { 
-    name: "GILF", 
-    location: "Guzhen, China", 
+  {
+    name: "GILF",
+    location: "Guzhen, China",
     images: [
       "/exhibitions/poland-2024/img-1.jpg",
       "/exhibitions/poland-2024/img-2.jpg",
@@ -104,9 +105,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/poland-2024/img-8.jpg",
     ]
   },
-  { 
-    name: "LED Middle East", 
-    location: "Cairo, Egypt", 
+  {
+    name: "LED Middle East",
+    location: "Cairo, Egypt",
     images: [
       "/exhibitions/egypt-2023/img-1.jpg",
       "/exhibitions/egypt-2023/img-2.jpg",
@@ -117,9 +118,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/egypt-2023/img-7.jpg",
     ]
   },
-  { 
-    name: "HK Lighting Fair", 
-    location: "Hong Kong", 
+  {
+    name: "HK Lighting Fair",
+    location: "Hong Kong",
     images: [
       "/exhibitions/hongkong-2023/img-1.jpg",
       "/exhibitions/hongkong-2023/img-2.jpg",
@@ -131,9 +132,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/hongkong-2023/img-8.jpg",
     ]
   },
-  { 
-    name: "Light + Building", 
-    location: "Frankfurt, Germany", 
+  {
+    name: "Light + Building",
+    location: "Frankfurt, Germany",
     images: [
       "/exhibitions/spain-2022/img-1.jpg",
       "/exhibitions/spain-2022/img-2.jpg",
@@ -143,9 +144,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/spain-2022/img-6.jpg",
     ]
   },
-  { 
-    name: "LEDTEC Asia", 
-    location: "Ho Chi Minh, Vietnam", 
+  {
+    name: "LEDTEC Asia",
+    location: "Ho Chi Minh, Vietnam",
     images: [
       "/exhibitions/india-2022/img-1.jpg",
       "/exhibitions/india-2022/img-2.jpg",
@@ -156,9 +157,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/india-2022/img-7.jpg",
     ]
   },
-  { 
-    name: "Expolux", 
-    location: "São Paulo, Brazil", 
+  {
+    name: "Expolux",
+    location: "São Paulo, Brazil",
     images: [
       "/exhibitions/brazil-2022/img-1.jpg",
       "/exhibitions/brazil-2022/img-2.jpg",
@@ -204,19 +205,18 @@ function ExhibitionCard({ event, onClick, index }: { event: ExhibitionEvent; onC
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/40 to-transparent" />
-        
+
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
           {event.images.slice(0, 5).map((_, idx) => (
             <div
               key={idx}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex % 5 ? "bg-[#00A8E8] w-4" : "bg-white/40"
-              }`}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex % 5 ? "bg-[#00A8E8] w-4" : "bg-white/40"
+                }`}
             />
           ))}
         </div>
       </div>
-      
+
       <div className="p-6">
         <h3 className="font-display text-xl text-white font-medium mb-2 group-hover:text-[#00A8E8] transition-colors duration-300">
           {event.name}
@@ -227,11 +227,11 @@ function ExhibitionCard({ event, onClick, index }: { event: ExhibitionEvent; onC
   );
 }
 
-function ExhibitionLightbox({ 
-  event, 
-  onClose 
-}: { 
-  event: ExhibitionEvent; 
+function ExhibitionLightbox({
+  event,
+  onClose
+}: {
+  event: ExhibitionEvent;
   onClose: () => void;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -287,7 +287,7 @@ function ExhibitionLightbox({
         <ChevronRight className="w-10 h-10" />
       </button>
 
-      <div 
+      <div
         className="relative w-full max-w-5xl mx-4 aspect-[4/3]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -310,9 +310,8 @@ function ExhibitionLightbox({
           <button
             key={idx}
             onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              idx === currentIndex ? "bg-white w-6" : "bg-white/40 hover:bg-white/60"
-            }`}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? "bg-white w-6" : "bg-white/40 hover:bg-white/60"
+              }`}
           />
         ))}
       </div>
@@ -384,15 +383,14 @@ function HonorsSlideshow() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1 transition-all duration-300 rounded-full ${
-                index === currentSlide ? "w-6 bg-[#ECAA00]" : "w-2 bg-white/20 hover:bg-white/40"
-              }`}
+              className={`h-1 transition-all duration-300 rounded-full ${index === currentSlide ? "w-6 bg-[#ECAA00]" : "w-2 bg-white/20 hover:bg-white/40"
+                }`}
             />
           ))}
         </div>
       </div>
 
-      <div 
+      <div
         className="relative bg-white rounded-xl overflow-hidden shadow-2xl cursor-pointer group aspect-[4/3]"
         onClick={() => setLightboxOpen(true)}
         data-testid="button-honor-lightbox"
@@ -450,7 +448,7 @@ function HonorsSlideshow() {
               <ChevronRight className="w-6 h-6 text-white" />
             </button>
 
-            <div 
+            <div
               className="max-w-4xl max-h-[85vh] mx-4"
               onClick={(e) => e.stopPropagation()}
             >
@@ -630,17 +628,17 @@ function ShowcaseSection() {
                   circleIn
                     ? { opacity: 1, scale: 1, y: 0 }
                     : phase === "reversing"
-                    ? { opacity: 0, scale: 0.3, y: 0 }
-                    : { y: 300, opacity: 0 }
+                      ? { opacity: 0, scale: 0.3, y: 0 }
+                      : { y: 300, opacity: 0 }
                 }
                 transition={
                   phase === "circle"
                     ? { duration: 1.2, ease: "easeOut" }
                     : phase === "reveal-reversing"
-                    ? { duration: 0.9, ease: "easeOut" }
-                    : phase === "reversing"
-                    ? { duration: 0.7, ease: "easeIn" }
-                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                      ? { duration: 0.9, ease: "easeOut" }
+                      : phase === "reversing"
+                        ? { duration: 0.7, ease: "easeIn" }
+                        : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
                 }
               >
                 <div className="w-full h-full relative">
@@ -659,17 +657,17 @@ function ShowcaseSection() {
                   circleIn
                     ? { opacity: 1, scale: 1, y: 0 }
                     : phase === "reversing"
-                    ? { opacity: 0, scale: 0.3, y: 0 }
-                    : { y: -300, opacity: 0 }
+                      ? { opacity: 0, scale: 0.3, y: 0 }
+                      : { y: -300, opacity: 0 }
                 }
                 transition={
                   phase === "circle"
                     ? { duration: 1.2, ease: "easeOut" }
                     : phase === "reveal-reversing"
-                    ? { duration: 0.9, ease: "easeOut" }
-                    : phase === "reversing"
-                    ? { duration: 0.7, ease: "easeIn" }
-                    : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
+                      ? { duration: 0.9, ease: "easeOut" }
+                      : phase === "reversing"
+                        ? { duration: 0.7, ease: "easeIn" }
+                        : { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
                 }
               >
                 <div className="w-full h-full relative">
@@ -946,6 +944,16 @@ export default function About() {
     setCurrentMilestone((prev) => (prev - 1 + milestones.length) % milestones.length);
     setCurrentImageIndex(0);
   };
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   useEffect(() => {
     const currentImages = milestones[currentMilestone].images;
@@ -1297,9 +1305,8 @@ export default function About() {
                           <button
                             key={idx}
                             onClick={() => setCurrentImageIndex(idx)}
-                            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer hover:scale-125 ${
-                              idx === currentImageIndex ? "bg-white" : "bg-white/50"
-                            }`}
+                            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer hover:scale-125 ${idx === currentImageIndex ? "bg-white" : "bg-white/50"
+                              }`}
                           />
                         ))}
                       </div>
@@ -1323,9 +1330,8 @@ export default function About() {
                 <button
                   key={index}
                   onClick={() => setCurrentMilestone(index)}
-                  className={`transition-all duration-300 rounded-full ${
-                    index === currentMilestone ? "w-8 h-3 bg-gray-600" : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
-                  }`}
+                  className={`transition-all duration-300 rounded-full ${index === currentMilestone ? "w-8 h-3 bg-gray-600" : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
+                    }`}
                   data-testid={`button-milestone-${index}`}
                 >
                   <span className="sr-only">{milestone.year}</span>
@@ -1406,7 +1412,7 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/80 via-[#0a1628]/40 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
             </motion.div>
-            
+
             <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -1440,13 +1446,13 @@ export default function About() {
               <h2 className="font-display text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
                 Client-Centric <span className="italic font-normal text-[#00A8E8]">Excellence</span>
               </h2>
-              
+
               <div className="space-y-6">
                 <p className="text-gray-600 leading-relaxed">
-                  At Paralight Group, our culture is defined by a <span className="font-semibold text-[#00A8E8]">"Client-Centric"</span> philosophy, 
+                  At Paralight Group, our culture is defined by a <span className="font-semibold text-[#00A8E8]">"Client-Centric"</span> philosophy,
                   brought to life through seamless integration of manufacturing and trade.
                 </p>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
                     { icon: Target, label: "Precision", desc: "Every detail matters" },
@@ -1471,7 +1477,7 @@ export default function About() {
                 <div className="bg-white/60 backdrop-blur-sm p-5 rounded-xl border border-gray-200/50">
                   <Quote className="w-6 h-6 text-[#ECAA00] opacity-30 mb-2" />
                   <p className="text-gray-700 leading-relaxed text-sm italic">
-                    "This closed-loop system—from responsive demand to collaborative support and full-chain satisfaction—represents 
+                    "This closed-loop system—from responsive demand to collaborative support and full-chain satisfaction—represents
                     the core competitive advantage of Paralight Group."
                   </p>
                 </div>
@@ -1581,6 +1587,7 @@ export default function About() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="pt-16 lg:pt-24"
             >
               <div className="flex items-center gap-4 mb-10">
                 <div className="w-14 h-14 rounded-xl bg-[#00A8E8]/20 flex items-center justify-center">
@@ -1592,7 +1599,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-2 gap-3">
                 {[
                   { name: "High-tech Enterprise", desc: "Recognized innovation leader" },
                   { name: "CB / BIS / RoHS / CE", desc: "International compliance" },
@@ -1605,11 +1612,11 @@ export default function About() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all group"
+                    className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
                   >
-                    <CheckCircle className="w-7 h-7 text-[#00A8E8] mb-4 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-semibold text-white text-base mb-2">{cert.name}</h4>
-                    <p className="text-sm text-white/50">{cert.desc}</p>
+                    <CheckCircle className="w-6 h-6 text-[#00A8E8] mb-3 group-hover:scale-110 transition-transform" />
+                    <h4 className="font-semibold text-white text-sm mb-1">{cert.name}</h4>
+                    <p className="text-xs text-white/50">{cert.desc}</p>
                   </motion.div>
                 ))}
               </div>
@@ -1631,15 +1638,17 @@ export default function About() {
                 </div>
               </div>
 
-              <HonorsSlideshow />
+              <div className="max-w-md mx-auto lg:mx-0">
+                <HonorsSlideshow />
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* REDESIGNED: Exhibitions - Dark theme grid */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-[#0a1628] overflow-hidden">
-        <div className="container mx-auto px-8 lg:px-12">
+      {/* REDESIGNED: Exhibitions - Carousel */}
+      <section className="snap-start h-screen flex flex-col justify-center bg-[#0a1628] overflow-hidden relative">
+        <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1652,16 +1661,39 @@ export default function About() {
                 <span className="italic font-normal">Global</span> Exhibitions
               </h2>
             </div>
-            <p className="text-white/50 max-w-md text-sm lg:text-base">
-              We participate in leading lighting exhibitions worldwide, showcasing our latest innovations.
-            </p>
+
+            <div className="flex items-center gap-4">
+              <p className="text-white/50 max-w-md text-sm lg:text-base hidden lg:block mr-8">
+                We participate in leading lighting exhibitions worldwide, showcasing our latest innovations.
+              </p>
+              <button
+                onClick={scrollPrev}
+                className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all text-white/70 hover:text-white"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={scrollNext}
+                className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all text-white/70 hover:text-white"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {exhibitionEvents.map((event, index) => (
-              <ExhibitionCard key={event.name} event={event} onClick={() => setSelectedEvent(event)} index={index} />
-            ))}
+          <div className="overflow-hidden -mx-4 px-4" ref={emblaRef}>
+            <div className="flex gap-6">
+              {exhibitionEvents.map((event, index) => (
+                <div key={event.name} className="flex-[0_0_280px] md:flex-[0_0_320px] min-w-0">
+                  <ExhibitionCard event={event} onClick={() => setSelectedEvent(event)} index={index} />
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
+
+        <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+          <div className="w-64 h-64 bg-[#00A8E8] rounded-full blur-[120px]" />
         </div>
 
         <AnimatePresence>
@@ -1672,7 +1704,7 @@ export default function About() {
       {/* REDESIGNED: Global Delivery - Full width with stats */}
       <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-r from-[#F5F0E8] to-white relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#00A8E8]/5 to-transparent" />
-        
+
         <div className="container mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
@@ -1686,7 +1718,7 @@ export default function About() {
                   Fast & <span className="italic font-normal text-[#00A8E8]">Efficient</span> Delivery
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
-                  We load an average of 2 containers per day, and 50-60 containers a month. Our reinforced 5-layer 
+                  We load an average of 2 containers per day, and 50-60 containers a month. Our reinforced 5-layer
                   packaging system ensures product safety across moisture, pressure, and impact during international transit.
                 </p>
 

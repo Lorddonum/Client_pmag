@@ -40,7 +40,7 @@ function BouncingCircles() {
     const initCircles = (width: number, height: number) => {
       const circles: Circle[] = [];
       const area = width * height;
-      
+
       // Calculate number of circles based on screen area
       const numLarge = Math.max(2, Math.floor(area / 400000));
       const numMedium = Math.max(3, Math.floor(area / 200000));
@@ -92,7 +92,7 @@ function BouncingCircles() {
       // Reinitialize circles based on size
       circlesRef.current = initCircles(rect.width, rect.height);
     };
-    
+
     // Use ResizeObserver to detect container size changes
     const resizeObserver = new ResizeObserver(() => {
       resizeCanvas();
@@ -105,7 +105,7 @@ function BouncingCircles() {
       const dy = c2.y - c1.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       const minDist = c1.radius + c2.radius;
-      
+
       // No collision
       if (distance >= minDist || distance === 0) return;
 
@@ -117,7 +117,7 @@ function BouncingCircles() {
       const overlap = minDist - distance;
       const separationRatio1 = c2.radius / (c1.radius + c2.radius);
       const separationRatio2 = c1.radius / (c1.radius + c2.radius);
-      
+
       c1.x -= overlap * nx * separationRatio1;
       c1.y -= overlap * ny * separationRatio1;
       c2.x += overlap * nx * separationRatio2;
@@ -137,7 +137,7 @@ function BouncingCircles() {
       const restitution = 0.7;
 
       // Impulse scalar
-      const impulse = (-(1 + restitution) * dvn) / (1/m1 + 1/m2);
+      const impulse = (-(1 + restitution) * dvn) / (1 / m1 + 1 / m2);
 
       // Apply impulse
       c1.vx += (impulse / m1) * nx;
@@ -318,20 +318,20 @@ export default function Products() {
     const fetchProducts = async (retries = 3) => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/products/grid');
+        const res = await fetch('/data/products-grid.json');
         if (res.ok) {
           const data = await res.json();
           setGridProducts(data);
         } else {
           const errorText = await res.text();
-          console.error("API error:", res.status, errorText);
+          console.error("JSON load error:", res.status, errorText);
           if (retries > 0) {
             setTimeout(() => fetchProducts(retries - 1), 1000);
             return;
           }
         }
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to load products:", error);
         if (retries > 0) {
           setTimeout(() => fetchProducts(retries - 1), 1000);
           return;
@@ -347,16 +347,23 @@ export default function Products() {
   const fetchProductDetail = useCallback(async (productId: number) => {
     setIsLoadingDetail(true);
     try {
-      const res = await fetch(`/api/products/${productId}`);
+      const res = await fetch('/data/products.json');
       if (res.ok) {
-        const data = await res.json();
-        setSelectedProduct(data);
-        setSelectedImageIndex(0);
-        setCurrentDrawingIndex(0);
-        setActiveDetailTab('overview');
-        setTimeout(() => {
-          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+        const allProducts = await res.json();
+        const product = allProducts.find((p: any) => p.id === productId);
+        if (product) {
+          setSelectedProduct(product);
+          setSelectedImageIndex(0);
+          setCurrentDrawingIndex(0);
+          setActiveDetailTab('overview');
+          setTimeout(() => {
+            detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        } else {
+          console.error("Product not found:", productId);
+        }
+      } else {
+        console.error("Failed to load products data:", res.status);
       }
     } catch (error) {
       console.error("Failed to fetch product details:", error);
@@ -365,8 +372,8 @@ export default function Products() {
     }
   }, []);
 
-  const brandFilteredProducts = activeBrand === "All" 
-    ? gridProducts 
+  const brandFilteredProducts = activeBrand === "All"
+    ? gridProducts
     : gridProducts.filter(p => p.brand === activeBrand);
 
   const seriesList = Array.from(new Set(brandFilteredProducts.flatMap(p => p.series || [])));
@@ -429,14 +436,14 @@ export default function Products() {
     if (!searchQuery.trim() || searchQuery.length < 2) return [];
     const query = searchQuery.toLowerCase();
     const suggestions: { type: 'product' | 'series' | 'brand'; label: string; sublabel?: string; id?: number }[] = [];
-    
+
     const matchingProducts = gridProducts
-      .filter(p => 
-        p.name.toLowerCase().includes(query) || 
+      .filter(p =>
+        p.name.toLowerCase().includes(query) ||
         p.modelNumber.toLowerCase().includes(query)
       )
       .slice(0, 5);
-    
+
     matchingProducts.forEach(p => {
       suggestions.push({
         type: 'product',
@@ -445,11 +452,11 @@ export default function Products() {
         id: p.id
       });
     });
-    
+
     const matchingSeries = Array.from(new Set(gridProducts.flatMap(p => p.series || [])))
       .filter(s => s.toLowerCase().includes(query))
       .slice(0, 3);
-    
+
     matchingSeries.forEach(s => {
       suggestions.push({
         type: 'series',
@@ -457,7 +464,7 @@ export default function Products() {
         sublabel: 'Series'
       });
     });
-    
+
     return suggestions;
   };
 
@@ -560,7 +567,7 @@ export default function Products() {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return;
-    
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setHighlightedIndex(prev => (prev < suggestions.length - 1 ? prev + 1 : 0));
@@ -591,19 +598,19 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      
+
       {/* Hero section */}
       <section className="pt-20 pb-20 mt-16 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
         {/* Split image background */}
         <div className="absolute inset-0 overflow-hidden">
           {/* All Products background image */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0 w-full h-full"
-            animate={{ 
+            animate={{
               opacity: activeBrand === "All" && !hoveredBrand ? 1 : 0
             }}
-            transition={{ 
-              duration: 0.15, 
+            transition={{
+              duration: 0.15,
               ease: "linear"
             }}
           >
@@ -614,27 +621,27 @@ export default function Products() {
             />
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-transparent to-gray-900/60" />
           </motion.div>
-          
+
           {/* Paralight image */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0 w-full h-full"
-            animate={{ 
-              clipPath: activeBrand === "All" 
+            animate={{
+              clipPath: activeBrand === "All"
                 ? hoveredBrand === "Paralight"
                   ? "polygon(0 0, 70% 0, 50% 100%, 0 100%)"
                   : hoveredBrand === "Maglinear"
                     ? "polygon(0 0, 50% 0, 30% 100%, 0 100%)"
-                    : "polygon(0 0, 0% 0, 0% 100%, 0 100%)" 
-                : activeBrand === "Paralight" 
+                    : "polygon(0 0, 0% 0, 0% 100%, 0 100%)"
+                : activeBrand === "Paralight"
                   ? hoveredBrand === "Maglinear"
                     ? "polygon(0 0, 90% 0, 85% 100%, 0 100%)"
-                    : "polygon(0 0, 100% 0, 100% 100%, 0 100%)" 
+                    : "polygon(0 0, 100% 0, 100% 100%, 0 100%)"
                   : hoveredBrand === "Paralight"
                     ? "polygon(0 0, 15% 0, 10% 100%, 0 100%)"
                     : "polygon(0 0, 0% 0, 0% 100%, 0 100%)"
             }}
-            transition={{ 
-              duration: 0.15, 
+            transition={{
+              duration: 0.15,
               ease: "linear"
             }}
           >
@@ -645,27 +652,27 @@ export default function Products() {
             />
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-transparent to-gray-900/60" />
           </motion.div>
-          
+
           {/* Maglinear image */}
-          <motion.div 
+          <motion.div
             className="absolute inset-0 w-full h-full"
-            animate={{ 
-              clipPath: activeBrand === "All" 
+            animate={{
+              clipPath: activeBrand === "All"
                 ? hoveredBrand === "Maglinear"
                   ? "polygon(50% 0, 100% 0, 100% 100%, 30% 100%)"
                   : hoveredBrand === "Paralight"
                     ? "polygon(70% 0, 100% 0, 100% 100%, 50% 100%)"
-                    : "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)" 
-                : activeBrand === "Maglinear" 
+                    : "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)"
+                : activeBrand === "Maglinear"
                   ? hoveredBrand === "Paralight"
                     ? "polygon(10% 0, 100% 0, 100% 100%, 15% 100%)"
-                    : "polygon(0 0, 100% 0, 100% 100%, 0 100%)" 
+                    : "polygon(0 0, 100% 0, 100% 100%, 0 100%)"
                   : hoveredBrand === "Maglinear"
                     ? "polygon(85% 0, 100% 0, 100% 100%, 90% 100%)"
                     : "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)"
             }}
-            transition={{ 
-              duration: 0.15, 
+            transition={{
+              duration: 0.15,
               ease: "linear"
             }}
           >
@@ -678,17 +685,17 @@ export default function Products() {
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-transparent to-gray-900/60" />
           </motion.div>
         </div>
-        
+
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
           backgroundSize: '40px 40px',
         }} />
-        
+
         {/* Gradient orbs */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-cyan/10 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-gold/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/4" />
-        
+
         <div className="container mx-auto px-8 lg:px-12 relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -697,7 +704,7 @@ export default function Products() {
             className="text-center max-w-3xl mx-auto"
           >
             <div className="inline-block px-16 py-12 relative z-0">
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   background: 'rgba(245, 240, 232, 0.55)',
@@ -719,7 +726,7 @@ export default function Products() {
                   Product Catalog
                 </span>
               </motion.div>
-              
+
               <h1 className="font-display text-4xl md:text-6xl text-gray-900 font-medium mb-5">
                 {activeBrand === "All" ? (
                   <>Explore Our <span className="italic font-normal text-white">Collection</span></>
@@ -734,9 +741,9 @@ export default function Products() {
               </p>
             </div>
           </motion.div>
-          
+
           {/* Brand selector tabs - repositioned at bottom */}
-          <motion.div 
+          <motion.div
             className="flex justify-center gap-4 mt-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -761,22 +768,21 @@ export default function Products() {
                 onMouseLeave={() => setHoveredBrand(null)}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className={`relative px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 overflow-hidden ${
-                  activeBrand === brand
-                    ? brand === "Paralight" 
-                      ? "bg-brand-cyan text-white shadow-xl shadow-brand-cyan/40 rounded-full"
-                      : brand === "Maglinear"
+                className={`relative px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300 overflow-hidden ${activeBrand === brand
+                  ? brand === "Paralight"
+                    ? "bg-brand-cyan text-white shadow-xl shadow-brand-cyan/40 rounded-full"
+                    : brand === "Maglinear"
                       ? "bg-brand-gold text-gray-900 shadow-xl shadow-brand-gold/40 rounded-full"
                       : "bg-white text-gray-900 shadow-xl rounded-full"
-                    : "bg-white/5 backdrop-blur-sm text-white/80 hover:bg-white/15 border border-white/20 rounded-full hover:border-white/40"
-                }`}
+                  : "bg-white/5 backdrop-blur-sm text-white/80 hover:bg-white/15 border border-white/20 rounded-full hover:border-white/40"
+                  }`}
                 data-testid={`hero-brand-${brand.toLowerCase()}`}
               >
                 <span className="relative z-10">
                   {brand === "All" ? "All Products" : brand === "Maglinear" ? "Maglinear Lighting" : brand}
                 </span>
                 {activeBrand === brand && (
-                  <motion.div 
+                  <motion.div
                     className="absolute inset-0 rounded-full"
                     layoutId="activeBrandIndicator"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -832,7 +838,7 @@ export default function Products() {
         {/* Textured Background Layer */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Dot grid pattern with diagonal fade from top right */}
-          <div 
+          <div
             className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle, #8B7355 1.5px, transparent 1.5px)`,
@@ -842,7 +848,7 @@ export default function Products() {
             }}
           />
           {/* Cross pattern with diagonal fade from top right */}
-          <div 
+          <div
             className="absolute inset-0"
             style={{
               backgroundImage: `
@@ -855,7 +861,7 @@ export default function Products() {
             }}
           />
           {/* Gradient mesh */}
-          <div 
+          <div
             className="absolute inset-0"
             style={{
               background: `
@@ -873,7 +879,7 @@ export default function Products() {
           <div className={`flex flex-col lg:flex-row gap-10 ${selectedProduct ? 'lg:block' : ''}`}>
             {/* Sidebar - hidden when product is selected */}
             <aside className={`lg:w-80 shrink-0 ${selectedProduct ? 'hidden' : ''}`}>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -890,7 +896,7 @@ export default function Products() {
                       transition={{ duration: 0.3 }}
                     >
                       {/* Mobile filter toggle */}
-                      <button 
+                      <button
                         onClick={() => setShowFilters(!showFilters)}
                         className="lg:hidden flex items-center gap-2 text-sm font-medium text-gray-700 mb-6 px-5 py-3.5 bg-white rounded-xl shadow-md border border-gray-100 w-full justify-center"
                       >
@@ -927,9 +933,8 @@ export default function Products() {
                                 <button
                                   key={`${suggestion.type}-${suggestion.label}-${index}`}
                                   onClick={() => handleSuggestionClick(suggestion)}
-                                  className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${
-                                    highlightedIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
-                                  }`}
+                                  className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${highlightedIndex === index ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                    }`}
                                   data-testid={`suggestion-${index}`}
                                 >
                                   <div className="flex-1 min-w-0">
@@ -951,11 +956,10 @@ export default function Products() {
                             <button
                               onClick={() => { setActiveBrand("All"); setActiveSeries("All"); setActiveSubSeries("All"); }}
                               data-testid="filter-series-all"
-                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
-                                activeSeries === "All" 
-                                  ? "bg-gray-900 text-white font-medium"
-                                  : "text-gray-600 hover:bg-gray-50"
-                              }`}
+                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${activeSeries === "All"
+                                ? "bg-gray-900 text-white font-medium"
+                                : "text-gray-600 hover:bg-gray-50"
+                                }`}
                             >
                               All Series
                             </button>
@@ -963,11 +967,10 @@ export default function Products() {
                             <button
                               onClick={() => setHotSellingOnly(!hotSellingOnly)}
                               data-testid="filter-hot-selling"
-                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all mt-1 ${
-                                hotSellingOnly
-                                  ? "bg-orange-500 text-white font-medium"
-                                  : "text-gray-600 hover:bg-orange-50 border border-dashed border-orange-200"
-                              }`}
+                              className={`block w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all mt-1 ${hotSellingOnly
+                                ? "bg-orange-500 text-white font-medium"
+                                : "text-gray-600 hover:bg-orange-50 border border-dashed border-orange-200"
+                                }`}
                             >
                               <span className="flex items-center gap-2">
                                 <Flame className="w-4 h-4" />
@@ -1004,11 +1007,10 @@ export default function Products() {
                                             <button
                                               onClick={() => { setActiveBrand("Paralight"); setActiveSeries(series); setActiveSubSeries("All"); }}
                                               data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
-                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
-                                                isSeriesActive
-                                                  ? "bg-[#00A8E8] text-white font-medium"
-                                                  : "text-gray-600 hover:bg-gray-50"
-                                              }`}
+                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${isSeriesActive
+                                                ? "bg-[#00A8E8] text-white font-medium"
+                                                : "text-gray-600 hover:bg-gray-50"
+                                                }`}
                                             >
                                               <span className="truncate pr-2">{series}</span>
                                               <span className={`text-xs flex-shrink-0 ${isSeriesActive ? "text-white/70" : "text-gray-400"}`}>
@@ -1056,18 +1058,16 @@ export default function Products() {
                                             <button
                                               onClick={() => { setActiveBrand("Maglinear"); setActiveSeries(series); setActiveSubSeries("All"); }}
                                               data-testid={`filter-series-${series.toLowerCase().replace(/\s+/g, '-')}`}
-                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${
-                                                isSeriesActive && activeSubSeries === "All"
-                                                  ? "bg-[#ECAA00] text-gray-900 font-medium"
-                                                  : isSeriesActive
-                                                    ? "bg-[#ECAA00]/10 text-[#ECAA00] font-medium"
-                                                    : "text-gray-600 hover:bg-gray-50"
-                                              }`}
+                                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-all flex items-center justify-between ${isSeriesActive && activeSubSeries === "All"
+                                                ? "bg-[#ECAA00] text-gray-900 font-medium"
+                                                : isSeriesActive
+                                                  ? "bg-[#ECAA00]/10 text-[#ECAA00] font-medium"
+                                                  : "text-gray-600 hover:bg-gray-50"
+                                                }`}
                                             >
                                               <span className="truncate pr-2">{series}</span>
-                                              <span className={`text-xs flex-shrink-0 ${
-                                                isSeriesActive && activeSubSeries === "All" ? "text-gray-900/50" : "text-gray-400"
-                                              }`}>
+                                              <span className={`text-xs flex-shrink-0 ${isSeriesActive && activeSubSeries === "All" ? "text-gray-900/50" : "text-gray-400"
+                                                }`}>
                                                 {seriesProducts.length}
                                               </span>
                                             </button>
@@ -1080,11 +1080,10 @@ export default function Products() {
                                                       key={subSeriesItem}
                                                       onClick={() => setActiveSubSeries(subSeriesItem)}
                                                       data-testid={`filter-subseries-${subSeriesItem.toLowerCase().replace(/\s+/g, '-')}`}
-                                                      className={`w-full text-left px-3 py-1.5 text-xs rounded-lg transition-all flex items-center justify-between ${
-                                                        activeSubSeries === subSeriesItem 
-                                                          ? "bg-gray-900 text-white font-medium"
-                                                          : "text-gray-500 hover:bg-gray-50"
-                                                      }`}
+                                                      className={`w-full text-left px-3 py-1.5 text-xs rounded-lg transition-all flex items-center justify-between ${activeSubSeries === subSeriesItem
+                                                        ? "bg-gray-900 text-white font-medium"
+                                                        : "text-gray-500 hover:bg-gray-50"
+                                                        }`}
                                                     >
                                                       <span>{subSeriesItem}</span>
                                                       <span className={`text-xs ${activeSubSeries === subSeriesItem ? "text-white/70" : "text-gray-400"}`}>
@@ -1187,7 +1186,7 @@ export default function Products() {
             {/* Product grid or detail view */}
             <div className="flex-1" ref={detailRef}>
               <AnimatePresence mode="wait">
-{selectedProduct ? (
+                {selectedProduct ? (
                   /* Professional Technical Product Detail View */
                   <motion.div
                     key="detail"
@@ -1227,7 +1226,7 @@ export default function Products() {
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                           <h1 className="font-display text-4xl md:text-5xl text-gray-900 font-bold tracking-tight">
@@ -1246,17 +1245,16 @@ export default function Products() {
                             )}
                           </div>
                         </div>
-                        
+
                         {/* Quick Actions */}
                         <div className="flex items-center gap-3">
                           <a
                             href={selectedProduct.catalogueUrl || undefined}
                             download={`${selectedProduct.name}-Catalogue.pdf`}
-                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-                              !selectedProduct.catalogueUrl
-                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-gray-900 text-white hover:bg-gray-800"
-                            }`}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${!selectedProduct.catalogueUrl
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-gray-900 text-white hover:bg-gray-800"
+                              }`}
                             onClick={(e) => !selectedProduct.catalogueUrl && e.preventDefault()}
                           >
                             <Download className="w-4 h-4" />
@@ -1277,11 +1275,10 @@ export default function Products() {
                         <button
                           key={tab.id}
                           onClick={() => setActiveDetailTab(tab.id)}
-                          className={`flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all rounded-lg ${
-                            activeDetailTab === tab.id
-                              ? 'bg-white text-gray-900 shadow-sm'
-                              : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
-                          }`}
+                          className={`flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all rounded-lg ${activeDetailTab === tab.id
+                            ? 'bg-white text-gray-900 shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                            }`}
                         >
                           <tab.icon className="w-4 h-4" />
                           {tab.label}
@@ -1311,7 +1308,7 @@ export default function Products() {
 
                               return (
                                 <>
-                                  <div 
+                                  <div
                                     className="aspect-square bg-gradient-to-br from-gray-50 via-white to-gray-50 border border-gray-200 relative overflow-hidden rounded-2xl cursor-pointer group shadow-sm hover:shadow-lg transition-shadow"
                                     onClick={() => currentImage && setLightboxImage(currentImage)}
                                   >
@@ -1341,14 +1338,13 @@ export default function Products() {
                                         <button
                                           key={index}
                                           onClick={() => setSelectedImageIndex(index)}
-                                          className={`flex-shrink-0 w-20 h-20 border-2 rounded-xl overflow-hidden transition-all ${
-                                            selectedImageIndex === index 
-                                              ? 'border-gray-900 ring-2 ring-gray-900/20 shadow-md' 
-                                              : 'border-gray-200 hover:border-gray-400 hover:shadow-sm'
-                                          }`}
+                                          className={`flex-shrink-0 w-20 h-20 border-2 rounded-xl overflow-hidden transition-all ${selectedImageIndex === index
+                                            ? 'border-gray-900 ring-2 ring-gray-900/20 shadow-md'
+                                            : 'border-gray-200 hover:border-gray-400 hover:shadow-sm'
+                                            }`}
                                         >
-                                          <img 
-                                            src={img} 
+                                          <img
+                                            src={img}
                                             alt={`${selectedProduct.name} ${index + 1}`}
                                             className="w-full h-full object-cover"
                                           />
@@ -1367,9 +1363,9 @@ export default function Products() {
                                   <div className="w-1 h-4 rounded-full" style={{ backgroundColor: brandColor }} />
                                   Packaging Method
                                 </h3>
-                                <img 
-                                  src="/packaging-method.png" 
-                                  alt="Packaging Method" 
+                                <img
+                                  src="/packaging-method.png"
+                                  alt="Packaging Method"
                                   className="max-w-[85%] h-auto mx-auto rounded-lg"
                                 />
                               </div>
@@ -1415,7 +1411,7 @@ export default function Products() {
                             {/* Packaging Information - Paralight only */}
                             {selectedProduct.brand === "Paralight" && (selectedProduct.packagingMethodADesc || selectedProduct.packagingMethodBDesc) && (
                               <div className="border border-gray-200 rounded-xl overflow-hidden">
-                                <div 
+                                <div
                                   className="px-6 py-4 border-b border-gray-200"
                                   style={{ background: `linear-gradient(135deg, ${brandColor}10 0%, transparent 100%)` }}
                                 >
@@ -1464,9 +1460,9 @@ export default function Products() {
                                   <div className="w-1.5 h-5 rounded-full bg-[#ECAA00]" />
                                   Control Integration
                                 </h3>
-                                <img 
-                                  src={controlIntegrationImg} 
-                                  alt="Control Integration" 
+                                <img
+                                  src={controlIntegrationImg}
+                                  alt="Control Integration"
                                   className="w-full max-w-xl mx-auto object-contain rounded-lg"
                                 />
                               </div>
@@ -1487,7 +1483,7 @@ export default function Products() {
                         >
                           {/* Technical Specifications Table */}
                           <div className="border border-gray-200 rounded-xl overflow-hidden">
-                            <div 
+                            <div
                               className="px-6 py-4 border-b border-gray-200"
                               style={{ background: `linear-gradient(135deg, ${brandColor}10 0%, transparent 100%)` }}
                             >
@@ -1513,16 +1509,16 @@ export default function Products() {
                                         </tr>
                                       ));
                                     }
-                                    
+
                                     // Has additional rows - build unified column table
                                     const allLabels = new Set<string>();
                                     additionalSpecRows.forEach(row => {
                                       const rowSpecs = getAdditionalRowSpecs(row, selectedProduct.modelNumber);
                                       rowSpecs.forEach(spec => allLabels.add(spec.label));
                                     });
-                                    
+
                                     const labelArray = Array.from(allLabels);
-                                    
+
                                     return labelArray.map((label, labelIdx) => (
                                       <tr key={label} className={labelIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                                         <td className="px-4 py-3 text-xs uppercase tracking-widest text-gray-500 font-medium whitespace-nowrap border-r border-gray-100 sticky left-0 bg-inherit z-10" style={{ minWidth: '140px' }}>
@@ -1566,7 +1562,7 @@ export default function Products() {
 
                             return (
                               <div className="border border-gray-200 rounded-xl overflow-hidden">
-                                <div 
+                                <div
                                   className="px-6 py-4 border-b border-gray-200 flex items-center justify-between"
                                   style={{ background: `linear-gradient(135deg, ${brandColor}10 0%, transparent 100%)` }}
                                 >
@@ -1589,7 +1585,7 @@ export default function Products() {
                                     </div>
                                   ) : (
                                     <div className="space-y-6">
-                                      <div 
+                                      <div
                                         className="relative bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[400px] cursor-pointer group"
                                         onClick={() => setLightboxImage(currentDrawing)}
                                       >
@@ -1604,17 +1600,16 @@ export default function Products() {
                                           </span>
                                         </div>
                                       </div>
-                                      
+
                                       {allDrawings.length > 1 && (
                                         <div className="flex justify-center gap-3">
                                           <button
                                             onClick={() => setCurrentDrawingIndex(prev => Math.max(0, prev - 1))}
                                             disabled={safeDrawingIndex === 0}
-                                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                                              safeDrawingIndex === 0 
-                                                ? 'border-gray-200 text-gray-300 cursor-not-allowed' 
-                                                : 'border-gray-300 text-gray-700 hover:bg-gray-100'
-                                            }`}
+                                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${safeDrawingIndex === 0
+                                              ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                                              : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                                              }`}
                                           >
                                             <ChevronLeft className="w-4 h-4" />
                                             Previous
@@ -1622,11 +1617,10 @@ export default function Products() {
                                           <button
                                             onClick={() => setCurrentDrawingIndex(prev => Math.min(allDrawings.length - 1, prev + 1))}
                                             disabled={safeDrawingIndex === allDrawings.length - 1}
-                                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                                              safeDrawingIndex === allDrawings.length - 1 
-                                                ? 'border-gray-200 text-gray-300 cursor-not-allowed' 
-                                                : 'border-gray-300 text-gray-700 hover:bg-gray-100'
-                                            }`}
+                                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${safeDrawingIndex === allDrawings.length - 1
+                                              ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                                              : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                                              }`}
                                           >
                                             Next
                                             <ChevronRight className="w-4 h-4" />
@@ -1654,17 +1648,17 @@ export default function Products() {
                             try {
                               const accessoriesData = JSON.parse(selectedProduct.accessoriesSpec);
                               if (!Array.isArray(accessoriesData) || accessoriesData.length === 0) return null;
-                              
-                              const applicationRow = accessoriesData.find((item: { no?: string }) => 
+
+                              const applicationRow = accessoriesData.find((item: { no?: string }) =>
                                 item.no?.toLowerCase() === 'application'
                               );
-                              const regularRows = accessoriesData.filter((item: { no?: string }) => 
+                              const regularRows = accessoriesData.filter((item: { no?: string }) =>
                                 item.no?.toLowerCase() !== 'application'
                               );
-                              
+
                               return (
                                 <div className="border border-gray-200 rounded-xl overflow-hidden">
-                                  <div 
+                                  <div
                                     className="px-6 py-4 border-b border-gray-200"
                                     style={{ background: `linear-gradient(135deg, ${brandColor}10 0%, transparent 100%)` }}
                                   >
@@ -1713,14 +1707,14 @@ export default function Products() {
 
                     {/* Related Products Section */}
                     {(() => {
-                      const relatedProducts = gridProducts.filter(p => 
-                        p.id !== selectedProduct.id && 
-                        (p.brand === selectedProduct.brand || 
-                         (p.series || []).some(s => (selectedProduct.series || []).includes(s)))
+                      const relatedProducts = gridProducts.filter(p =>
+                        p.id !== selectedProduct.id &&
+                        (p.brand === selectedProduct.brand ||
+                          (p.series || []).some(s => (selectedProduct.series || []).includes(s)))
                       ).slice(0, 4);
-                      
+
                       if (relatedProducts.length === 0) return null;
-                      
+
                       return (
                         <motion.div
                           initial={{ opacity: 0, y: 30 }}
@@ -1754,8 +1748,8 @@ export default function Products() {
                                 >
                                   <div className="aspect-square bg-gray-50 relative overflow-hidden">
                                     {product.image ? (
-                                      <img 
-                                        src={product.image} 
+                                      <img
+                                        src={product.image}
                                         alt={product.name}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                       />
@@ -1764,7 +1758,7 @@ export default function Products() {
                                         <Package className="w-12 h-12 text-gray-200" />
                                       </div>
                                     )}
-                                    <div 
+                                    <div
                                       className="absolute top-2 left-2 px-2 py-1 text-[8px] font-medium uppercase tracking-wider text-white rounded"
                                       style={{ backgroundColor: relatedBrandColor }}
                                     >
@@ -1798,69 +1792,69 @@ export default function Products() {
                             <h2 className="text-xl font-display font-semibold text-gray-900">Frequently Asked Questions</h2>
                           </div>
                           <div className="space-y-3">
-                        {[
-                          {
-                            question: "What is the minimum order quantity?",
-                            answer: "Our minimum order quantity varies by product. For aluminum profiles, the MOQ is typically 100 meters. For magnetic track lighting, the MOQ is 50 units. Please contact us for specific product requirements."
-                          },
-                          {
-                            question: "What are the lead times?",
-                            answer: "Standard lead times are 2-3 weeks for stock items and 4-6 weeks for custom orders. Rush orders may be available upon request with additional fees."
-                          },
-                          {
-                            question: "Do you offer custom lengths?",
-                            answer: "Yes, we offer custom cutting services for aluminum profiles. Please specify your required lengths when placing an order. Custom lengths may affect pricing and lead times."
-                          },
-                          {
-                            question: "What warranty do you provide?",
-                            answer: "All our products come with a 3-year manufacturer warranty covering defects in materials and workmanship. LED components are warranted for 50,000 hours of operation."
-                          },
-                          {
-                            question: "How can I request a sample?",
-                            answer: "Samples are available for evaluation. Please contact our sales team at inquiry@paralight.cc with your requirements. Sample costs may apply but are often credited towards bulk orders."
-                          },
-                          {
-                            question: "Do you ship internationally?",
-                            answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
-                          }
-                        ].map((faq, index) => (
-                          <div 
-                            key={index} 
-                            className="space-y-2"
-                            data-testid={`faq-${index}`}
-                          >
-                            {/* Question bubble */}
-                            <button
-                              onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                              className="inline-flex items-center gap-2 px-4 py-2.5 text-left text-white rounded-2xl rounded-bl-md shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
-                              style={{ backgroundColor: brandColor }}
-                            >
-                              <HelpCircle className="w-4 h-4 flex-shrink-0" />
-                              <span className="text-sm font-medium">{faq.question}</span>
-                              <ChevronDown 
-                                className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${expandedFaq === index ? 'rotate-180' : ''}`}
-                              />
-                            </button>
-                            {/* Answer bubble */}
-                            <AnimatePresence>
-                              {expandedFaq === index && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: -10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -10 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="ml-6"
+                            {[
+                              {
+                                question: "What is the minimum order quantity?",
+                                answer: "Our minimum order quantity varies by product. For aluminum profiles, the MOQ is typically 100 meters. For magnetic track lighting, the MOQ is 50 units. Please contact us for specific product requirements."
+                              },
+                              {
+                                question: "What are the lead times?",
+                                answer: "Standard lead times are 2-3 weeks for stock items and 4-6 weeks for custom orders. Rush orders may be available upon request with additional fees."
+                              },
+                              {
+                                question: "Do you offer custom lengths?",
+                                answer: "Yes, we offer custom cutting services for aluminum profiles. Please specify your required lengths when placing an order. Custom lengths may affect pricing and lead times."
+                              },
+                              {
+                                question: "What warranty do you provide?",
+                                answer: "All our products come with a 3-year manufacturer warranty covering defects in materials and workmanship. LED components are warranted for 50,000 hours of operation."
+                              },
+                              {
+                                question: "How can I request a sample?",
+                                answer: "Samples are available for evaluation. Please contact our sales team at inquiry@paralight.cc with your requirements. Sample costs may apply but are often credited towards bulk orders."
+                              },
+                              {
+                                question: "Do you ship internationally?",
+                                answer: "Yes, we ship worldwide. Shipping costs and delivery times vary by destination. We work with reliable logistics partners to ensure safe and timely delivery."
+                              }
+                            ].map((faq, index) => (
+                              <div
+                                key={index}
+                                className="space-y-2"
+                                data-testid={`faq-${index}`}
+                              >
+                                {/* Question bubble */}
+                                <button
+                                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                                  className="inline-flex items-center gap-2 px-4 py-2.5 text-left text-white rounded-2xl rounded-bl-md shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
+                                  style={{ backgroundColor: brandColor }}
                                 >
-                                  <div className="inline-block bg-gray-100 text-gray-700 px-4 py-3 rounded-2xl rounded-tl-md max-w-lg">
-                                    <p className="text-sm leading-relaxed">
-                                      {faq.answer}
-                                    </p>
-                                  </div>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        ))}
+                                  <HelpCircle className="w-4 h-4 flex-shrink-0" />
+                                  <span className="text-sm font-medium">{faq.question}</span>
+                                  <ChevronDown
+                                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${expandedFaq === index ? 'rotate-180' : ''}`}
+                                  />
+                                </button>
+                                {/* Answer bubble */}
+                                <AnimatePresence>
+                                  {expandedFaq === index && (
+                                    <motion.div
+                                      initial={{ opacity: 0, y: -10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -10 }}
+                                      transition={{ duration: 0.2 }}
+                                      className="ml-6"
+                                    >
+                                      <div className="inline-block bg-gray-100 text-gray-700 px-4 py-3 rounded-2xl rounded-tl-md max-w-lg">
+                                        <p className="text-sm leading-relaxed">
+                                          {faq.answer}
+                                        </p>
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -1870,12 +1864,12 @@ export default function Products() {
                             <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
                             <h2 className="text-xl font-display font-semibold text-gray-900">Request Custom Solution</h2>
                           </div>
-                          <div 
+                          <div
                             className="rounded-2xl p-6 border-2 border-dashed"
                             style={{ borderColor: `${brandColor}40`, backgroundColor: `${brandColor}05` }}
                           >
                             <div className="text-center mb-6">
-                              <div 
+                              <div
                                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
                                 style={{ backgroundColor: `${brandColor}15` }}
                               >
@@ -1886,7 +1880,7 @@ export default function Products() {
                                 We can customize this product to meet your specific requirements. Whether you need different dimensions, finishes, or technical specifications, our engineering team is ready to help.
                               </p>
                             </div>
-                            
+
                             <div className="space-y-3 mb-6">
                               {[
                                 "Custom lengths and dimensions",
@@ -1896,7 +1890,7 @@ export default function Products() {
                                 "OEM/ODM partnerships"
                               ].map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-3 text-sm text-gray-700">
-                                  <div 
+                                  <div
                                     className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                                     style={{ backgroundColor: `${brandColor}20` }}
                                   >
@@ -1945,11 +1939,11 @@ export default function Products() {
                         Showing <span className="font-medium text-gray-900">{paginatedProducts.length}</span> of <span className="font-medium text-gray-900">{filteredProducts.length}</span> products
                         {totalPages > 1 && <span className="ml-2 text-gray-400">(Page {currentPage} of {totalPages})</span>}
                       </p>
-                      
+
                       {(activeSeries !== "All" || activeSubSeries !== "All" || searchQuery || hotSellingOnly) && (
                         <div className="flex items-center gap-2 flex-wrap">
                           {activeSeries !== "All" && (
-                            <button 
+                            <button
                               onClick={() => setActiveSeries("All")}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
                             >
@@ -1958,7 +1952,7 @@ export default function Products() {
                             </button>
                           )}
                           {activeSubSeries !== "All" && (
-                            <button 
+                            <button
                               onClick={() => setActiveSubSeries("All")}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
                             >
@@ -1967,7 +1961,7 @@ export default function Products() {
                             </button>
                           )}
                           {searchQuery && (
-                            <button 
+                            <button
                               onClick={() => setSearchQuery("")}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors"
                             >
@@ -1976,7 +1970,7 @@ export default function Products() {
                             </button>
                           )}
                           {hotSellingOnly && (
-                            <button 
+                            <button
                               onClick={() => setHotSellingOnly(false)}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full hover:bg-orange-200 transition-colors"
                             >
@@ -2000,7 +1994,7 @@ export default function Products() {
                       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                         <AnimatePresence mode="popLayout">
                           {paginatedProducts.map((product, index) => (
-                            <motion.div 
+                            <motion.div
                               key={product.id}
                               layout
                               initial={{ opacity: 0, scale: 0.95 }}
@@ -2011,221 +2005,215 @@ export default function Products() {
                               data-testid={`product-card-${product.id}`}
                               onClick={() => handleProductClick(product)}
                             >
-                          <motion.div 
-                            whileHover={{ y: -8 }}
-                            transition={{ duration: 0.3 }}
-                            className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-gray-100/50"
+                              <motion.div
+                                whileHover={{ y: -8 }}
+                                transition={{ duration: 0.3 }}
+                                className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-shadow duration-500 border border-gray-100/50"
+                              >
+                                {/* Image container */}
+                                <div className="aspect-square bg-gray-100 relative overflow-hidden">
+                                  {product.image ? (
+                                    <img
+                                      src={product.image}
+                                      alt={product.name}
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <Package className="w-12 h-12 text-gray-300" />
+                                    </div>
+                                  )}
+
+                                  {/* Hover overlay */}
+                                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${product.brand === "Paralight"
+                                    ? "bg-gradient-to-t from-brand-cyan/80 via-brand-cyan/20 to-transparent"
+                                    : "bg-gradient-to-t from-brand-gold/80 via-brand-gold/20 to-transparent"
+                                    }`} />
+
+                                  {/* View button on hover */}
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                    <motion.div
+                                      initial={{ scale: 0.8 }}
+                                      whileHover={{ scale: 1.1 }}
+                                      className="px-5 py-2.5 bg-white rounded-full text-sm font-medium text-gray-900 shadow-lg flex items-center gap-2"
+                                    >
+                                      View Details
+                                      <ChevronRight className="w-4 h-4" />
+                                    </motion.div>
+                                  </div>
+
+                                  {/* Brand badge */}
+                                  <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-md shadow-lg bg-white/20 text-gray-900 border border-white/30">
+                                    {product.brand}
+                                  </div>
+                                </div>
+
+                                {/* Product info */}
+                                <div className="p-5">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="flex-1 min-w-0">
+                                      <span className={`text-[10px] font-semibold tracking-wider uppercase ${product.brand === "Paralight"
+                                        ? "text-brand-cyan"
+                                        : "text-brand-gold"
+                                        }`}>
+                                        {product.series}
+                                      </span>
+                                      <h2 className="text-sm font-medium text-gray-900 line-clamp-1 mt-1.5">
+                                        {product.name}
+                                      </h2>
+                                      <p className="text-xs text-gray-400 mt-1">{product.modelNumber}</p>
+                                    </div>
+                                    <motion.div
+                                      whileHover={{ x: 3 }}
+                                      className={`mt-1 ${product.brand === "Paralight" ? "text-brand-cyan" : "text-brand-gold"
+                                        }`}
+                                    >
+                                      <ArrowRight className="w-4 h-4" />
+                                    </motion.div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                        {filteredProducts.length === 0 && !isLoading && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="col-span-full text-center py-24 bg-white rounded-2xl border border-gray-100 shadow-sm"
                           >
-                            {/* Image container */}
-                            <div className="aspect-square bg-gray-100 relative overflow-hidden">
-                              {product.image ? (
-                                <img 
-                                  src={product.image} 
-                                  alt={product.name} 
-                                  loading="lazy"
-                                  decoding="async"
-                                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out" 
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <Package className="w-12 h-12 text-gray-300" />
-                                </div>
-                              )}
-                              
-                              {/* Hover overlay */}
-                              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                                product.brand === "Paralight" 
-                                  ? "bg-gradient-to-t from-brand-cyan/80 via-brand-cyan/20 to-transparent" 
-                                  : "bg-gradient-to-t from-brand-gold/80 via-brand-gold/20 to-transparent"
-                              }`} />
-                              
-                              {/* View button on hover */}
-                              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                <motion.div 
-                                  initial={{ scale: 0.8 }}
-                                  whileHover={{ scale: 1.1 }}
-                                  className="px-5 py-2.5 bg-white rounded-full text-sm font-medium text-gray-900 shadow-lg flex items-center gap-2"
-                                >
-                                  View Details
-                                  <ChevronRight className="w-4 h-4" />
-                                </motion.div>
-                              </div>
-                              
-                              {/* Brand badge */}
-                              <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-md shadow-lg bg-white/20 text-gray-900 border border-white/30">
-                                {product.brand}
-                              </div>
+                            <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                              <Package className="w-8 h-8 text-gray-300" />
                             </div>
-                            
-                            {/* Product info */}
-                            <div className="p-5">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <span className={`text-[10px] font-semibold tracking-wider uppercase ${
-                                    product.brand === "Paralight" 
-                                      ? "text-brand-cyan" 
-                                      : "text-brand-gold"
-                                  }`}>
-                                    {product.series}
-                                  </span>
-                                  <h2 className="text-sm font-medium text-gray-900 line-clamp-1 mt-1.5">
-                                    {product.name}
-                                  </h2>
-                                  <p className="text-xs text-gray-400 mt-1">{product.modelNumber}</p>
-                                </div>
-                                <motion.div 
-                                  whileHover={{ x: 3 }}
-                                  className={`mt-1 ${
-                                    product.brand === "Paralight" ? "text-brand-cyan" : "text-brand-gold"
-                                  }`}
-                                >
-                                  <ArrowRight className="w-4 h-4" />
-                                </motion.div>
-                              </div>
-                            </div>
+                            <p className="text-sm text-gray-500 font-medium">No products found</p>
+                            <p className="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
                           </motion.div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                    {filteredProducts.length === 0 && !isLoading && (
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="col-span-full text-center py-24 bg-white rounded-2xl border border-gray-100 shadow-sm"
+                        )}
+                      </div>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && !isLoading && filteredProducts.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-10 flex items-center justify-center gap-2"
                       >
-                        <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
-                          <Package className="w-8 h-8 text-gray-300" />
+                        {/* Previous Button */}
+                        <button
+                          onClick={() => {
+                            setCurrentPage(p => Math.max(1, p - 1));
+                            window.scrollTo({ top: 400, behavior: 'smooth' });
+                          }}
+                          disabled={currentPage === 1}
+                          className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPage === 1
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                            }`}
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                          Previous
+                        </button>
+
+                        {/* Page Numbers */}
+                        <div className="flex items-center gap-1">
+                          {(() => {
+                            const pages: (number | string)[] = [];
+                            const showEllipsisStart = currentPage > 3;
+                            const showEllipsisEnd = currentPage < totalPages - 2;
+
+                            if (totalPages <= 7) {
+                              for (let i = 1; i <= totalPages; i++) pages.push(i);
+                            } else {
+                              pages.push(1);
+                              if (showEllipsisStart) pages.push('...');
+
+                              const start = Math.max(2, currentPage - 1);
+                              const end = Math.min(totalPages - 1, currentPage + 1);
+                              for (let i = start; i <= end; i++) pages.push(i);
+
+                              if (showEllipsisEnd) pages.push('...');
+                              pages.push(totalPages);
+                            }
+
+                            return pages.map((page, idx) => (
+                              page === '...' ? (
+                                <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
+                              ) : (
+                                <button
+                                  key={page}
+                                  onClick={() => {
+                                    setCurrentPage(page as number);
+                                    window.scrollTo({ top: 400, behavior: 'smooth' });
+                                  }}
+                                  className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${currentPage === page
+                                    ? 'bg-gray-900 text-white shadow-md'
+                                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                                    }`}
+                                >
+                                  {page}
+                                </button>
+                              )
+                            ));
+                          })()}
                         </div>
-                        <p className="text-sm text-gray-500 font-medium">No products found</p>
-                        <p className="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
+
+                        {/* Next Button */}
+                        <button
+                          onClick={() => {
+                            setCurrentPage(p => Math.min(totalPages, p + 1));
+                            window.scrollTo({ top: 400, behavior: 'smooth' });
+                          }}
+                          disabled={currentPage === totalPages}
+                          className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${currentPage === totalPages
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                            }`}
+                        >
+                          Next
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
                       </motion.div>
                     )}
-                  </div>
-                )}
-
-                {/* Pagination Controls */}
-                {totalPages > 1 && !isLoading && filteredProducts.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-10 flex items-center justify-center gap-2"
-                  >
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => {
-                        setCurrentPage(p => Math.max(1, p - 1));
-                        window.scrollTo({ top: 400, behavior: 'smooth' });
-                      }}
-                      disabled={currentPage === 1}
-                      className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                        currentPage === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
-                      }`}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      Previous
-                    </button>
-
-                    {/* Page Numbers */}
-                    <div className="flex items-center gap-1">
-                      {(() => {
-                        const pages: (number | string)[] = [];
-                        const showEllipsisStart = currentPage > 3;
-                        const showEllipsisEnd = currentPage < totalPages - 2;
-                        
-                        if (totalPages <= 7) {
-                          for (let i = 1; i <= totalPages; i++) pages.push(i);
-                        } else {
-                          pages.push(1);
-                          if (showEllipsisStart) pages.push('...');
-                          
-                          const start = Math.max(2, currentPage - 1);
-                          const end = Math.min(totalPages - 1, currentPage + 1);
-                          for (let i = start; i <= end; i++) pages.push(i);
-                          
-                          if (showEllipsisEnd) pages.push('...');
-                          pages.push(totalPages);
-                        }
-                        
-                        return pages.map((page, idx) => (
-                          page === '...' ? (
-                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
-                          ) : (
-                            <button
-                              key={page}
-                              onClick={() => {
-                                setCurrentPage(page as number);
-                                window.scrollTo({ top: 400, behavior: 'smooth' });
-                              }}
-                              className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
-                                currentPage === page
-                                  ? 'bg-gray-900 text-white shadow-md'
-                                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          )
-                        ));
-                      })()}
-                    </div>
-
-                    {/* Next Button */}
-                    <button
-                      onClick={() => {
-                        setCurrentPage(p => Math.min(totalPages, p + 1));
-                        window.scrollTo({ top: 400, behavior: 'smooth' });
-                      }}
-                      disabled={currentPage === totalPages}
-                      className={`flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                        currentPage === totalPages
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
-                      }`}
-                    >
-                      Next
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
                   </motion.div>
                 )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
+
+      {/* Lightbox for enlarged image viewing */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
+            onClick={() => setLightboxImage(null)}
+          >
+            <button
+              onClick={() => setLightboxImage(null)}
+              className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={lightboxImage}
+              alt="Enlarged view"
+              className="max-w-full max-h-full object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
-  </main>
-  <Footer />
-  
-  {/* Lightbox for enlarged image viewing */}
-  <AnimatePresence>
-    {lightboxImage && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4"
-        onClick={() => setLightboxImage(null)}
-      >
-        <button
-          onClick={() => setLightboxImage(null)}
-          className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
-        >
-          <X className="w-8 h-8" />
-        </button>
-        <motion.img
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          src={lightboxImage}
-          alt="Enlarged view"
-          className="max-w-full max-h-full object-contain"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
-);
+  );
 }

@@ -52,7 +52,7 @@ function AnimatedBackground() {
       const particles: Particle[] = [];
       const count = Math.max(40, Math.floor((w * h) / 20000));
       const shapes: ('circle' | 'square' | 'diamond')[] = ['circle', 'square', 'diamond'];
-      
+
       for (let i = 0; i < count; i++) {
         const c = colors[i % colors.length];
         particles.push({
@@ -86,10 +86,10 @@ function AnimatedBackground() {
     const drawGrid = (w: number, h: number, time: number) => {
       const spacing = 80;
       const wave = Math.sin(time * 0.0005) * 0.3;
-      
+
       ctx.strokeStyle = `rgba(210, 180, 140, ${0.05 + wave * 0.02})`;
       ctx.lineWidth = 0.7;
-      
+
       for (let x = 0; x < w; x += spacing) {
         const offset = Math.sin(x * 0.005 + time * 0.001) * 3;
         ctx.beginPath();
@@ -201,10 +201,12 @@ export default function Downloads() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch("/data/products.json");
         if (res.ok) {
           const data = await res.json();
           setProducts(data.filter((p: Product) => p.catalogueUrl));
+        } else {
+          console.error("Failed to load products data:", res.status);
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -220,7 +222,7 @@ export default function Downloads() {
       const matchesBrand = activeBrand === "all" || p.brand === activeBrand;
       const matchesSeries = activeSeries === "all" || (p.series || []).includes(activeSeries);
       const query = searchQuery.toLowerCase();
-      const matchesSearch = query === "" || 
+      const matchesSearch = query === "" ||
         p.name.toLowerCase().includes(query) ||
         p.modelNumber.toLowerCase().includes(query) ||
         (p.series || []).some(s => s.toLowerCase().includes(query));
@@ -229,8 +231,8 @@ export default function Downloads() {
   }, [products, activeBrand, activeSeries, searchQuery]);
 
   const allSeries = useMemo(() => {
-    const brandProducts = activeBrand === "all" 
-      ? products 
+    const brandProducts = activeBrand === "all"
+      ? products
       : products.filter(p => p.brand === activeBrand);
     return Array.from(new Set(brandProducts.flatMap(p => p.series || []))).sort();
   }, [products, activeBrand]);
@@ -252,7 +254,7 @@ export default function Downloads() {
   return (
     <div className="min-h-screen bg-[#3d3428] text-white selection:bg-[#00A8E8] selection:text-white font-sans">
       <Navbar />
-      
+
       <div className="relative pt-32 pb-24">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <AnimatedBackground />
@@ -260,7 +262,7 @@ export default function Downloads() {
           <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#ECAA00]/12 rounded-full blur-[150px]" />
           <div className="absolute top-[60%] left-[10%] w-[400px] h-[400px] bg-[#D2B48C]/10 rounded-full blur-[120px]" />
         </div>
-        
+
         <main className="relative z-10">
           <div className="container mx-auto px-6 lg:px-12">
             {/* Hero Section */}
@@ -277,8 +279,8 @@ export default function Downloads() {
                   Resources
                 </span>
               </motion.div>
-              
-              <motion.h1 
+
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
@@ -286,8 +288,8 @@ export default function Downloads() {
               >
                 Download <span className="italic font-normal text-white/40">Center</span>
               </motion.h1>
-              
-              <motion.p 
+
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -347,7 +349,7 @@ export default function Downloads() {
                     data-testid="input-search-downloads"
                   />
                   {searchQuery && (
-                    <button 
+                    <button
                       onClick={() => setSearchQuery("")}
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
                     >
@@ -355,7 +357,7 @@ export default function Downloads() {
                     </button>
                   )}
                 </div>
-                
+
                 {/* Brand Filter */}
                 <div className="flex items-center gap-1.5 p-1 bg-white/5 border border-white/10 rounded-xl">
                   {[
@@ -366,9 +368,8 @@ export default function Downloads() {
                     <button
                       key={b.key}
                       onClick={() => { setActiveBrand(b.key); setActiveSeries("all"); }}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                        activeBrand === b.key ? b.color : "text-white/40 hover:text-white/70 hover:bg-white/5"
-                      }`}
+                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeBrand === b.key ? b.color : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                        }`}
                       data-testid={`filter-${b.key}`}
                     >
                       {b.label}
@@ -384,9 +385,8 @@ export default function Downloads() {
                     <span className="text-[10px] uppercase tracking-widest text-white/30 mr-1">Series:</span>
                     <button
                       onClick={() => setActiveSeries("all")}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        activeSeries === "all" ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeSeries === "all" ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                        }`}
                     >
                       All
                     </button>
@@ -394,9 +394,8 @@ export default function Downloads() {
                       <button
                         key={s}
                         onClick={() => setActiveSeries(s)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          activeSeries === s ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
-                        }`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeSeries === s ? "bg-white/15 text-white" : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                          }`}
                       >
                         {s}
                       </button>
@@ -415,7 +414,7 @@ export default function Downloads() {
                 <p className="text-sm text-white/50">Loading catalogues...</p>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-32 bg-white/[0.02] rounded-2xl border border-white/10 backdrop-blur-sm"
@@ -434,7 +433,7 @@ export default function Downloads() {
                   {Object.entries(grouped).map(([series, prods], sIdx) => {
                     const brandColor = prods[0]?.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
                     const brandName = prods[0]?.brand === "Maglinear" ? "Maglinear Lighting" : prods[0]?.brand;
-                    
+
                     return (
                       <motion.div
                         key={series}
@@ -447,7 +446,7 @@ export default function Downloads() {
                         {/* Series header */}
                         <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div 
+                            <div
                               className="w-10 h-10 rounded-xl flex items-center justify-center"
                               style={{ backgroundColor: `${brandColor}15` }}
                             >
@@ -456,7 +455,7 @@ export default function Downloads() {
                             <div>
                               <h3 className="text-base font-semibold text-white">{series}</h3>
                               <div className="flex items-center gap-2 mt-0.5">
-                                <span 
+                                <span
                                   className="text-[10px] uppercase tracking-widest font-medium"
                                   style={{ color: brandColor }}
                                 >
@@ -471,7 +470,7 @@ export default function Downloads() {
                           </div>
                           <Layers className="w-4 h-4 text-white/15" />
                         </div>
-                        
+
                         {/* Product rows */}
                         <div className="divide-y divide-white/5">
                           {prods.map((product, idx) => (
@@ -493,7 +492,7 @@ export default function Downloads() {
                                   <FileText className="w-5 h-5 text-white/20" />
                                 )}
                               </div>
-                              
+
                               <div className="flex-1 min-w-0">
                                 <h4 className="text-sm font-medium text-white/90 group-hover:text-white truncate transition-colors">
                                   {product.name}
@@ -502,12 +501,12 @@ export default function Downloads() {
                                   {product.modelNumber}
                                 </span>
                               </div>
-                              
+
                               <div className="flex items-center gap-3 opacity-50 group-hover:opacity-100 transition-opacity">
                                 <span className="text-[10px] uppercase tracking-wider text-white/40 hidden sm:block">
                                   PDF
                                 </span>
-                                <div 
+                                <div
                                   className="w-9 h-9 rounded-lg flex items-center justify-center transition-all group-hover:scale-110"
                                   style={{ backgroundColor: `${brandColor}15` }}
                                 >
@@ -532,8 +531,8 @@ export default function Downloads() {
                   <p className="text-xs text-white/25">
                     Showing {filteredProducts.length} of {products.length} catalogues
                   </p>
-                  <a 
-                    href="/contact" 
+                  <a
+                    href="/contact"
                     className="flex items-center gap-2 text-xs text-white/40 hover:text-[#00A8E8] transition-colors group"
                   >
                     Need a custom specification sheet?
@@ -545,7 +544,7 @@ export default function Downloads() {
           </div>
         </main>
       </div>
-      
+
       <Footer />
     </div>
   );
