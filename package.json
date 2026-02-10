@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --env-file=.env --import tsx server/index.ts",
     "build": "npm run build:client",
-    "build:client": "vite build",
+    "build:client": "npx vite build",
     "build:server": "npx tsx scripts/build-server.ts",
     "start": "npx tsx server/index.ts",
     "preview": "vite preview",
