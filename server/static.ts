@@ -1,8 +1,13 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+// Proper ESM-compatible __dirname (works in both tsx dev and compiled ESM output)
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function serveStatic(app: Express) {
+  // In production, dist/server.js and dist/public/ are siblings
   const distPath = path.resolve(__dirname, "public");
   if (!fs.existsSync(distPath)) {
     throw new Error(

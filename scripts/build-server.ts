@@ -9,13 +9,27 @@ await build({
     target: "node20",
     format: "esm",
     outfile: "dist/server.js",
+    sourcemap: true,
     external: [
-        "sharp",
+        // Core framework
         "express",
         "compression",
+        // Database
         "mysql2",
         "drizzle-orm",
+        // Auth
+        "passport",
+        "passport-local",
+        "express-session",
+        "memorystore",
+        // WebSockets
         "ws",
+        // Native addons / build tools (must always be external)
+        "sharp",
+        "bufferutil",
+        "lightningcss",
+        "@tailwindcss/oxide",
+        "@babel/core",
     ],
     banner: {
         js: `

@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    metaImagesPlugin(),
+    metaImagesPlugin(), // updates og:image meta tags — set APP_URL in .env
   ],
   resolve: {
     alias: {
