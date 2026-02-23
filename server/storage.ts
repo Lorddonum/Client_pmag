@@ -2,7 +2,7 @@ import { type User, type InsertUser, type Product, type InsertProduct, users, pr
 import { db } from "./db";
 import { eq, ne, or, sql } from "drizzle-orm";
 
-// Lightweight product type for grid view (no large image arrays)
+// Lightweight product type for grid view (no large image data)
 export interface ProductGridItem {
   id: number;
   name: string;
@@ -10,7 +10,6 @@ export interface ProductGridItem {
   brand: string;
   series: string[];
   subSeries: string[] | null;
-  image: string | null;
   hotSelling: boolean | null;
 }
 
@@ -18,7 +17,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   getProducts(): Promise<Product[]>;
   getProductsForGrid(): Promise<ProductGridItem[]>;
   getProduct(id: number): Promise<Product | undefined>;
@@ -48,7 +47,7 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(products);
   }
 
-  // Optimized query for grid view - only selects essential fields
+  // Optimized query for grid view - only selects essential fields (no image data)
   async getProductsForGrid(): Promise<ProductGridItem[]> {
     return await db.select({
       id: products.id,
@@ -57,7 +56,6 @@ export class DatabaseStorage implements IStorage {
       brand: products.brand,
       series: products.series,
       subSeries: products.subSeries,
-      image: products.image,
       hotSelling: products.hotSelling,
     }).from(products);
   }
@@ -72,7 +70,7 @@ export class DatabaseStorage implements IStorage {
     if (!product) return [];
 
     const allProducts = await db.select().from(products).where(ne(products.id, productId));
-    
+
     const scored = allProducts.map(p => {
       let score = 0;
       const productSeries = product.series || [];

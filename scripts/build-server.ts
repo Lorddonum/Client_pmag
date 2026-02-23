@@ -15,7 +15,7 @@ await build({
         "express",
         "compression",
         // Database
-        "mysql2",
+        "pg",
         "drizzle-orm",
         // Auth
         "passport",

@@ -1,16 +1,15 @@
-import { sql } from "drizzle-orm";
-import { mysqlTable, text, mediumtext, varchar, int, index, boolean, json } from "drizzle-orm/mysql-core";
+import { pgTable, text, serial, boolean, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = mysqlTable("users", {
-  id: varchar("id", { length: 36 }).primaryKey().$defaultFn(() => crypto.randomUUID()),
+export const users = pgTable("users", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
 });
 
-export const products = mysqlTable("products", {
-  id: int("id").primaryKey().autoincrement(),
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   modelNumber: text("model_number").notNull(),
   description: text("description").notNull(),
@@ -26,7 +25,7 @@ export const products = mysqlTable("products", {
   cri: text("cri"),
   cct: text("cct"),
   beamAngle: text("beam_angle"),
-  image: mediumtext("image"),
+  image: text("image"),           // PostgreSQL text has no size limit — no mediumtext needed
   images: json("images").$type<string[]>(),
   catalogueUrl: text("catalogue_url"),
   technicalDrawingUrl: text("technical_drawing_url"),
@@ -44,9 +43,9 @@ export const products = mysqlTable("products", {
   packagingMethodASpec: text("packaging_method_a_spec"),
   packagingMethodBDesc: text("packaging_method_b_desc"),
   packagingMethodBSpec: text("packaging_method_b_spec"),
-  packagingMethodImage: mediumtext("packaging_method_image"),
+  packagingMethodImage: text("packaging_method_image"),
   // Accessories Specification (JSON string for table data)
-  accessoriesSpec: mediumtext("accessories_spec"),
+  accessoriesSpec: text("accessories_spec"),
   // Maglinear-specific fields
   mountingTrack: text("mounting_track"),
   conductionMethod: text("conduction_method"),
@@ -61,7 +60,7 @@ export const products = mysqlTable("products", {
   bluetoothVersion: text("bluetooth_version"),
   adjustableAngle: text("adjustable_angle"),
   // Technical Specifications (JSON string for table data)
-  technicalSpecs: mediumtext("technical_specs"),
+  technicalSpecs: text("technical_specs"),
   // Hot Selling flag
   hotSelling: boolean("hot_selling").default(false),
 });
