@@ -3,6 +3,14 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProductSchema } from "@shared/schema";
 import sharp from "sharp";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { randomUUID } from "crypto";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Uploads dir sits at project root (/../uploads relative to dist/server.js)
+const UPLOADS_DIR = path.resolve(__dirname, "..", "uploads");
 
 
 export async function registerRoutes(
@@ -134,7 +142,42 @@ export async function registerRoutes(
 
   app.put("/api/products/:id", updateProductHandler);
 
-  // Compress image endpoint
+  // Upload image to disk — saves WebP file, returns { url }
+  app.post("/api/upload-image", async (req, res) => {
+    try {
+      const { image, maxWidth = 800, quality = 70 } = req.body;
+      if (!image || typeof image !== 'string') {
+        return res.status(400).json({ error: "No image provided" });
+      }
+      const matches = image.match(/^data:image\/(\w+);base64,(.+)$/);
+      if (!matches) {
+        return res.status(400).json({ error: "Invalid base64 image format" });
+      }
+      const imageBuffer = Buffer.from(matches[2], 'base64');
+      const compressed = await sharp(imageBuffer)
+        .resize(maxWidth, null, { withoutEnlargement: true })
+        .webp({ quality: quality, effort: 4 })
+        .toBuffer();
+
+      if (!fs.existsSync(UPLOADS_DIR)) {
+        fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      }
+      const filename = `${randomUUID()}.webp`;
+      fs.writeFileSync(path.join(UPLOADS_DIR, filename), compressed);
+
+      res.json({
+        url: `/uploads/${filename}`,
+        originalSize: imageBuffer.length,
+        newSize: compressed.length,
+        savings: `${Math.round((1 - compressed.length / imageBuffer.length) * 100)}%`
+      });
+    } catch (error) {
+      console.error("Image upload error:", error);
+      res.status(500).json({ error: "Failed to upload image" });
+    }
+  });
+
+  // Compress image endpoint (returns base64, kept for compatibility)
   app.post("/api/compress-image", async (req, res) => {
     try {
       const { image, maxWidth = 800, quality = 70 } = req.body;

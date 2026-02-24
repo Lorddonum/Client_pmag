@@ -137,7 +137,7 @@ export default function Admin() {
 
   const availableSubSeries = useMemo(() => {
     if (formData.brand === "Maglinear") {
-      const selectedSeriesSubSeries = formData.series.flatMap(s => 
+      const selectedSeriesSubSeries = formData.series.flatMap(s =>
         MAGLINEAR_SERIES[s as keyof typeof MAGLINEAR_SERIES] || []
       );
       return selectedSeriesSubSeries.length > 0 ? selectedSeriesSubSeries : MAGLINEAR_ALL_SUBSERIES;
@@ -147,10 +147,10 @@ export default function Admin() {
 
   const existingSeries = Array.from(new Set(products.flatMap(p => p.series || []).filter(Boolean))).sort();
   const existingSubSeries = Array.from(new Set(products.flatMap(p => p.subSeries || []).filter(Boolean))).sort();
-  const filteredSeries = availableSeries.filter(s => 
+  const filteredSeries = availableSeries.filter(s =>
     s.toLowerCase().includes(seriesFilter.toLowerCase())
   );
-  const filteredSubSeries = availableSubSeries.filter(s => 
+  const filteredSubSeries = availableSubSeries.filter(s =>
     s.toLowerCase().includes(subSeriesFilter.toLowerCase())
   );
 
@@ -193,20 +193,21 @@ export default function Admin() {
 
   const [compressing, setCompressing] = useState(false);
 
-  const compressImage = async (base64: string, maxWidth = 800, quality = 70): Promise<string> => {
+  // Uploads image to server disk, returns a /uploads/ URL (saves DB space)
+  const uploadImage = async (base64: string, maxWidth = 800, quality = 70): Promise<string> => {
     try {
-      const response = await fetch('/api/compress-image', {
+      const response = await fetch('/api/upload-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: base64, maxWidth, quality })
       });
-      if (!response.ok) throw new Error('Compression failed');
+      if (!response.ok) throw new Error('Upload failed');
       const data = await response.json();
-      console.log(`Compressed: ${Math.round(data.originalSize/1024)}KB → ${Math.round(data.newSize/1024)}KB (${data.savings} saved)`);
-      return data.image;
+      console.log(`Uploaded: ${Math.round(data.originalSize / 1024)}KB → ${Math.round(data.newSize / 1024)}KB (${data.savings} saved) → ${data.url}`);
+      return data.url;
     } catch (error) {
-      console.error('Compression error:', error);
-      return base64;
+      console.error('Upload error:', error);
+      return base64; // fallback: keep original base64 if upload fails
     }
   };
 
@@ -218,9 +219,9 @@ export default function Admin() {
         const base64 = reader.result as string;
         if (field !== 'catalogueUrl' && base64.startsWith('data:image')) {
           setCompressing(true);
-          const compressed = await compressImage(base64);
+          const url = await uploadImage(base64);
           setCompressing(false);
-          setFormData(prev => ({ ...prev, [field]: compressed }));
+          setFormData(prev => ({ ...prev, [field]: url }));
         } else {
           setFormData(prev => ({ ...prev, [field]: base64 }));
         }
@@ -239,8 +240,8 @@ export default function Admin() {
           reader.onloadend = async () => {
             const base64 = reader.result as string;
             if (base64.startsWith('data:image')) {
-              const compressed = await compressImage(base64, 1200, 75);
-              resolve(compressed);
+              const url = await uploadImage(base64, 1200, 75);
+              resolve(url);
             } else {
               resolve(base64);
             }
@@ -480,7 +481,7 @@ export default function Admin() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md bg-white border border-gray-200 rounded-xl p-8 shadow-sm"
@@ -489,8 +490,8 @@ export default function Admin() {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Username</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 data-testid="input-username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -500,8 +501,8 @@ export default function Admin() {
             </div>
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Password</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 data-testid="input-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -509,7 +510,7 @@ export default function Admin() {
                 required
               />
             </div>
-            <button 
+            <button
               type="submit"
               data-testid="button-login"
               className="w-full py-4 bg-[#00A8E8] text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:bg-[#00C4E8] transition-colors"
@@ -534,7 +535,7 @@ export default function Admin() {
                 <p className="text-xs text-gray-500 uppercase tracking-widest">Management Dashboard</p>
               </div>
               <div className="space-y-2">
-                <button 
+                <button
                   onClick={resetForm}
                   data-testid="button-add-product"
                   className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${!editingId ? 'bg-gradient-to-r from-[#00A8E8] to-[#0090C8] text-white shadow-lg shadow-[#00A8E8]/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-[#00A8E8] hover:text-[#00A8E8]'}`}
@@ -544,7 +545,7 @@ export default function Admin() {
                 <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-[#ECAA00] hover:text-[#ECAA00] transition-colors rounded-lg">
                   Product List <Package className="w-4 h-4" />
                 </button>
-                <button 
+                <button
                   onClick={handleLogout}
                   data-testid="button-logout"
                   className="w-full flex items-center justify-between p-4 bg-white border border-red-200 text-red-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-50 hover:border-red-300 transition-colors rounded-lg"
@@ -571,23 +572,23 @@ export default function Admin() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Name *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         data-testid="input-name"
                         value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model Number *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         data-testid="input-model"
                         value={formData.modelNumber}
-                        onChange={(e) => setFormData({...formData, modelNumber: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, modelNumber: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       />
                     </div>
@@ -602,7 +603,7 @@ export default function Admin() {
                             {formData.series.map((s, idx) => (
                               <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#00A8E8]/10 text-[#00A8E8] text-xs rounded-full">
                                 {s}
-                                <button type="button" onClick={() => setFormData({...formData, series: formData.series.filter((_, i) => i !== idx)})} className="hover:text-red-500">
+                                <button type="button" onClick={() => setFormData({ ...formData, series: formData.series.filter((_, i) => i !== idx) })} className="hover:text-red-500">
                                   <X className="w-3 h-3" />
                                 </button>
                               </span>
@@ -610,8 +611,8 @@ export default function Admin() {
                           </div>
                         )}
                         <div className="relative">
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             data-testid="input-series"
                             value={seriesFilter}
                             onChange={(e) => {
@@ -624,7 +625,7 @@ export default function Admin() {
                               if (e.key === 'Enter' && seriesFilter.trim()) {
                                 e.preventDefault();
                                 if (!formData.series.includes(seriesFilter.trim())) {
-                                  setFormData({...formData, series: [...formData.series, seriesFilter.trim()]});
+                                  setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
                                 }
                                 setSeriesFilter("");
                                 setShowSeriesDropdown(false);
@@ -640,59 +641,59 @@ export default function Admin() {
                           >
                             <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
                           </button>
-                        {showSeriesDropdown && (
-                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
-                              <button
-                                type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  if (!formData.series.includes(seriesFilter.trim())) {
-                                    setFormData({...formData, series: [...formData.series, seriesFilter.trim()]});
-                                  }
-                                  setSeriesFilter("");
-                                  setShowSeriesDropdown(false);
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-[#00A8E8] hover:bg-[#00A8E8]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
-                              >
-                                <Plus className="w-4 h-4" />
-                                <span>Add "{seriesFilter.trim()}"</span>
-                              </button>
-                            )}
-                            {filteredSeries.length > 0 ? filteredSeries.map((series) => (
-                              <button
-                                key={series}
-                                type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  if (!formData.series.includes(series)) {
-                                    setFormData({...formData, series: [...formData.series, series]});
-                                  }
-                                  setSeriesFilter("");
-                                  setShowSeriesDropdown(false);
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#00A8E8]/10 hover:text-[#00A8E8] flex items-center justify-between transition-colors"
-                              >
-                                <span>{series}</span>
-                                {formData.series.includes(series) && <Check className="w-4 h-4 text-[#00A8E8]" />}
-                              </button>
-                            )) : !seriesFilter.trim() && (
-                              <div className="px-4 py-3 text-sm text-gray-500">
-                                {formData.brand === "Maglinear" ? "Loading series options..." : "Type to add a new series"}
-                              </div>
-                            )}
-                          </div>
-                        )}
+                          {showSeriesDropdown && (
+                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                              {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    if (!formData.series.includes(seriesFilter.trim())) {
+                                      setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
+                                    }
+                                    setSeriesFilter("");
+                                    setShowSeriesDropdown(false);
+                                  }}
+                                  className="w-full px-4 py-2.5 text-left text-sm text-[#00A8E8] hover:bg-[#00A8E8]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                  <span>Add "{seriesFilter.trim()}"</span>
+                                </button>
+                              )}
+                              {filteredSeries.length > 0 ? filteredSeries.map((series) => (
+                                <button
+                                  key={series}
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    if (!formData.series.includes(series)) {
+                                      setFormData({ ...formData, series: [...formData.series, series] });
+                                    }
+                                    setSeriesFilter("");
+                                    setShowSeriesDropdown(false);
+                                  }}
+                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#00A8E8]/10 hover:text-[#00A8E8] flex items-center justify-between transition-colors"
+                                >
+                                  <span>{series}</span>
+                                  {formData.series.includes(series) && <Check className="w-4 h-4 text-[#00A8E8]" />}
+                                </button>
+                              )) : !seriesFilter.trim() && (
+                                <div className="px-4 py-3 text-sm text-gray-500">
+                                  {formData.brand === "Maglinear" ? "Loading series options..." : "Type to add a new series"}
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
-                      <select 
+                      <select
                         required
                         data-testid="select-brand"
                         value={formData.brand}
-                        onChange={(e) => setFormData({...formData, brand: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                         className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                       >
                         <option value="Paralight">Paralight</option>
@@ -703,108 +704,108 @@ export default function Admin() {
                           type="checkbox"
                           data-testid="checkbox-hot-selling"
                           checked={formData.hotSelling}
-                          onChange={(e) => setFormData({...formData, hotSelling: e.target.checked})}
+                          onChange={(e) => setFormData({ ...formData, hotSelling: e.target.checked })}
                           className="w-4 h-4 rounded border-gray-300 text-[#00A8E8] focus:ring-[#00A8E8]/20 cursor-pointer"
                         />
                         <span className="text-xs font-bold uppercase tracking-widest text-orange-500 group-hover:text-orange-600 transition-colors">Hot Selling</span>
                       </label>
                     </div>
                     {formData.brand === "Maglinear" ? (
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series (Multiple)</label>
-                      <div>
-                        {formData.subSeries.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {formData.subSeries.map((s, idx) => (
-                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#ECAA00]/10 text-[#ECAA00] text-xs rounded-full">
-                                {s}
-                                <button type="button" onClick={() => setFormData({...formData, subSeries: formData.subSeries.filter((_, i) => i !== idx)})} className="hover:text-red-500">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <div className="relative">
-                          <input 
-                            type="text" 
-                            data-testid="input-sub-series"
-                            value={subSeriesFilter}
-                            onChange={(e) => {
-                              setSubSeriesFilter(e.target.value);
-                              setShowSubSeriesDropdown(true);
-                            }}
-                            onFocus={() => setShowSubSeriesDropdown(true)}
-                            onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
-                            placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && subSeriesFilter.trim()) {
-                                e.preventDefault();
-                                if (!formData.subSeries.includes(subSeriesFilter.trim())) {
-                                  setFormData({...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()]});
-                                }
-                                setSubSeriesFilter("");
-                              }
-                            }}
-                            className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                          >
-                            <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
-                          </button>
-                        {showSubSeriesDropdown && (
-                          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                            {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
-                              <button
-                                type="button"
-                                onMouseDown={(e) => {
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series (Multiple)</label>
+                        <div>
+                          {formData.subSeries.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {formData.subSeries.map((s, idx) => (
+                                <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#ECAA00]/10 text-[#ECAA00] text-xs rounded-full">
+                                  {s}
+                                  <button type="button" onClick={() => setFormData({ ...formData, subSeries: formData.subSeries.filter((_, i) => i !== idx) })} className="hover:text-red-500">
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="relative">
+                            <input
+                              type="text"
+                              data-testid="input-sub-series"
+                              value={subSeriesFilter}
+                              onChange={(e) => {
+                                setSubSeriesFilter(e.target.value);
+                                setShowSubSeriesDropdown(true);
+                              }}
+                              onFocus={() => setShowSubSeriesDropdown(true)}
+                              onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
+                              placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && subSeriesFilter.trim()) {
                                   e.preventDefault();
                                   if (!formData.subSeries.includes(subSeriesFilter.trim())) {
-                                    setFormData({...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()]});
+                                    setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
                                   }
                                   setSubSeriesFilter("");
-                                  setShowSubSeriesDropdown(false);
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-[#ECAA00] hover:bg-[#ECAA00]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
-                              >
-                                <Plus className="w-4 h-4" />
-                                <span>Add "{subSeriesFilter.trim()}"</span>
-                              </button>
-                            )}
-                            {filteredSubSeries.length > 0 ? filteredSubSeries.map((subSeries) => (
-                              <button
-                                key={subSeries}
-                                type="button"
-                                onMouseDown={(e) => {
-                                  e.preventDefault();
-                                  if (!formData.subSeries.includes(subSeries)) {
-                                    setFormData({...formData, subSeries: [...formData.subSeries, subSeries]});
-                                  }
-                                  setSubSeriesFilter("");
-                                  setShowSubSeriesDropdown(false);
-                                }}
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#ECAA00]/10 hover:text-[#ECAA00] flex items-center justify-between transition-colors"
-                              >
-                                <span>{subSeries}</span>
-                                {formData.subSeries.includes(subSeries) && <Check className="w-4 h-4 text-[#ECAA00]" />}
-                              </button>
-                            )) : !subSeriesFilter.trim() && (
-                              <div className="px-4 py-3 text-sm text-gray-500">
-                                {formData.brand === "Maglinear" && formData.series.length === 0 
-                                  ? "Select a series first to see sub-series options" 
-                                  : formData.brand === "Maglinear" 
-                                    ? "No sub-series for selected series" 
-                                    : "Type to add a new sub-series"}
+                                }
+                              }}
+                              className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                              <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showSubSeriesDropdown && (
+                              <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
+                                  <button
+                                    type="button"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      if (!formData.subSeries.includes(subSeriesFilter.trim())) {
+                                        setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
+                                      }
+                                      setSubSeriesFilter("");
+                                      setShowSubSeriesDropdown(false);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-left text-sm text-[#ECAA00] hover:bg-[#ECAA00]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    <span>Add "{subSeriesFilter.trim()}"</span>
+                                  </button>
+                                )}
+                                {filteredSubSeries.length > 0 ? filteredSubSeries.map((subSeries) => (
+                                  <button
+                                    key={subSeries}
+                                    type="button"
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      if (!formData.subSeries.includes(subSeries)) {
+                                        setFormData({ ...formData, subSeries: [...formData.subSeries, subSeries] });
+                                      }
+                                      setSubSeriesFilter("");
+                                      setShowSubSeriesDropdown(false);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#ECAA00]/10 hover:text-[#ECAA00] flex items-center justify-between transition-colors"
+                                  >
+                                    <span>{subSeries}</span>
+                                    {formData.subSeries.includes(subSeries) && <Check className="w-4 h-4 text-[#ECAA00]" />}
+                                  </button>
+                                )) : !subSeriesFilter.trim() && (
+                                  <div className="px-4 py-3 text-sm text-gray-500">
+                                    {formData.brand === "Maglinear" && formData.series.length === 0
+                                      ? "Select a series first to see sub-series options"
+                                      : formData.brand === "Maglinear"
+                                        ? "No sub-series for selected series"
+                                        : "Type to add a new sub-series"}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
-                        )}
                         </div>
                       </div>
-                    </div>
                     ) : null}
                   </div>
 
@@ -812,8 +813,8 @@ export default function Admin() {
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image (Auto-Compressed)</label>
                       <div className="relative group">
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           accept="image/*"
                           onChange={(e) => handleFileChange(e, 'image')}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
@@ -826,18 +827,18 @@ export default function Admin() {
                             </div>
                           ) : formData.image ? (
                             <div className="flex items-center gap-4 w-full">
-                              <img 
-                                src={formData.image} 
-                                alt="Preview" 
+                              <img
+                                src={formData.image}
+                                alt="Preview"
                                 className="w-20 h-20 object-contain border border-gray-200 rounded-lg bg-white"
                                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                               />
                               <div className="flex-1 text-left">
                                 <p className="text-xs text-green-600 font-medium">Image Ready (Compressed)</p>
                                 <p className="text-[10px] text-gray-500">{Math.round(formData.image.length / 1024)} KB</p>
-                                <button 
-                                  type="button" 
-                                  onClick={(e) => { e.stopPropagation(); setFormData({...formData, image: ''}); }}
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
                                   className="text-[10px] text-red-500 hover:underline mt-1 relative z-30"
                                 >
                                   Remove
@@ -858,8 +859,8 @@ export default function Admin() {
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Catalogue PDF</label>
                       <div className="relative group">
-                        <input 
-                          type="file" 
+                        <input
+                          type="file"
                           accept=".pdf"
                           onChange={(e) => handleFileChange(e, 'catalogueUrl')}
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
@@ -940,12 +941,12 @@ export default function Admin() {
 
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Description *</label>
-                    <textarea 
+                    <textarea
                       required
                       rows={4}
                       data-testid="input-description"
                       value={formData.description}
-                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors resize-none"
                     />
                   </div>
@@ -955,78 +956,78 @@ export default function Admin() {
                       {formData.brand !== "Paralight" && (
                         <div className="space-y-2">
                           <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                          <input type="text" value={formData.wattage} onChange={e => setFormData({...formData, wattage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
+                          <input type="text" value={formData.wattage} onChange={e => setFormData({ ...formData, wattage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
                         </div>
                       )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
-                        <input type="text" value={formData.application} onChange={e => setFormData({...formData, application: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
+                        <input type="text" value={formData.application} onChange={e => setFormData({ ...formData, application: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
-                        <input type="text" value={formData.finish} onChange={e => setFormData({...formData, finish: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.finish} onChange={e => setFormData({ ...formData, finish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
-                        <input type="text" value={formData.material} onChange={e => setFormData({...formData, material: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
+                        <input type="text" value={formData.material} onChange={e => setFormData({ ...formData, material: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
-                        <input type="text" value={formData.dimensions} onChange={e => setFormData({...formData, dimensions: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
+                        <input type="text" value={formData.dimensions} onChange={e => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
                       </div>
                       {formData.brand !== "Paralight" && (
                         <>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                            <input type="text" value={formData.voltage} onChange={e => setFormData({...formData, voltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
+                            <input type="text" value={formData.voltage} onChange={e => setFormData({ ...formData, voltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
                           </div>
                         </>
                       )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
-                        <input type="text" value={formData.color} onChange={e => setFormData({...formData, color: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                        <input type="text" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                       </div>
                       {formData.brand !== "Paralight" && (
                         <>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                            <input type="text" value={formData.cri} onChange={e => setFormData({...formData, cri: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
+                            <input type="text" value={formData.cri} onChange={e => setFormData({ ...formData, cri: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                            <input type="text" value={formData.cct} onChange={e => setFormData({...formData, cct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
+                            <input type="text" value={formData.cct} onChange={e => setFormData({ ...formData, cct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
                           </div>
                         </>
                       )}
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
-                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({...formData, beamAngle: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
+                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({ ...formData, beamAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
                       </div>
                       {formData.brand === "Paralight" && (
                         <>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
-                            <input type="text" value={formData.standardLength} onChange={e => setFormData({...formData, standardLength: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
+                            <input type="text" value={formData.standardLength} onChange={e => setFormData({ ...formData, standardLength: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Finish</label>
-                            <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({...formData, diffuserFinish: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
+                            <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({ ...formData, diffuserFinish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
-                            <input type="text" value={formData.diffuserMaterial} onChange={e => setFormData({...formData, diffuserMaterial: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. PC/PMMA" />
+                            <input type="text" value={formData.diffuserMaterial} onChange={e => setFormData({ ...formData, diffuserMaterial: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. PC/PMMA" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
-                            <input type="text" value={formData.accessories} onChange={e => setFormData({...formData, accessories: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End caps, Clips" />
+                            <input type="text" value={formData.accessories} onChange={e => setFormData({ ...formData, accessories: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End caps, Clips" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
-                            <input type="text" value={formData.ledStripSize} onChange={e => setFormData({...formData, ledStripSize: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 8mm/10mm" />
+                            <input type="text" value={formData.ledStripSize} onChange={e => setFormData({ ...formData, ledStripSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 8mm/10mm" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({...formData, installationMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
+                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
                           </div>
                         </>
                       )}
@@ -1034,55 +1035,55 @@ export default function Admin() {
                         <>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
-                            <input type="text" value={formData.maglinearName} onChange={e => setFormData({...formData, maglinearName: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
+                            <input type="text" value={formData.maglinearName} onChange={e => setFormData({ ...formData, maglinearName: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
-                            <input type="text" value={formData.mountingTrack} onChange={e => setFormData({...formData, mountingTrack: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
+                            <input type="text" value={formData.mountingTrack} onChange={e => setFormData({ ...formData, mountingTrack: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
-                            <input type="text" value={formData.conductionMethod} onChange={e => setFormData({...formData, conductionMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
+                            <input type="text" value={formData.conductionMethod} onChange={e => setFormData({ ...formData, conductionMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
-                            <input type="text" value={formData.inputVoltage} onChange={e => setFormData({...formData, inputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
+                            <input type="text" value={formData.inputVoltage} onChange={e => setFormData({ ...formData, inputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
-                            <input type="text" value={formData.outputVoltage} onChange={e => setFormData({...formData, outputVoltage: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
+                            <input type="text" value={formData.outputVoltage} onChange={e => setFormData({ ...formData, outputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
-                            <input type="text" value={formData.wallThickness} onChange={e => setFormData({...formData, wallThickness: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
+                            <input type="text" value={formData.wallThickness} onChange={e => setFormData({ ...formData, wallThickness: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
-                            <input type="text" value={formData.cutOutSize} onChange={e => setFormData({...formData, cutOutSize: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
+                            <input type="text" value={formData.cutOutSize} onChange={e => setFormData({ ...formData, cutOutSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">1 CCT</label>
-                            <input type="text" value={formData.oneCct} onChange={e => setFormData({...formData, oneCct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
+                            <input type="text" value={formData.oneCct} onChange={e => setFormData({ ...formData, oneCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">3 CCT</label>
-                            <input type="text" value={formData.threeCct} onChange={e => setFormData({...formData, threeCct: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
+                            <input type="text" value={formData.threeCct} onChange={e => setFormData({ ...formData, threeCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({...formData, installationMethod: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Surface Mount, Recessed" />
+                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Surface Mount, Recessed" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
-                            <input type="text" value={formData.protectionRating} onChange={e => setFormData({...formData, protectionRating: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
+                            <input type="text" value={formData.protectionRating} onChange={e => setFormData({ ...formData, protectionRating: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
-                            <input type="text" value={formData.bluetoothVersion} onChange={e => setFormData({...formData, bluetoothVersion: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
+                            <input type="text" value={formData.bluetoothVersion} onChange={e => setFormData({ ...formData, bluetoothVersion: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
                           </div>
                           <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-gray-500">Adjustable Angle</label>
-                            <input type="text" value={formData.adjustableAngle} onChange={e => setFormData({...formData, adjustableAngle: e.target.value})} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
+                            <input type="text" value={formData.adjustableAngle} onChange={e => setFormData({ ...formData, adjustableAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
                           </div>
                         </>
                       )}
@@ -1101,7 +1102,7 @@ export default function Admin() {
                             onClick={() => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs.splice(rowIndex, 1);
-                              setFormData({...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : ''});
+                              setFormData({ ...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : '' });
                             }}
                             className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-red-500 hover:bg-red-50 rounded transition-colors"
                           >
@@ -1114,7 +1115,7 @@ export default function Admin() {
                             <input type="text" value={specRow.model || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].model = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] font-medium" placeholder="e.g. PL-D60-001" />
                           </div>
                           {formData.brand !== "Paralight" && (
@@ -1123,7 +1124,7 @@ export default function Admin() {
                               <input type="text" value={specRow.wattage || ''} onChange={e => {
                                 const specs = JSON.parse(formData.technicalSpecs || '[]');
                                 specs[rowIndex].wattage = e.target.value;
-                                setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                               }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
                             </div>
                           )}
@@ -1132,7 +1133,7 @@ export default function Admin() {
                             <input type="text" value={specRow.application || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].application = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
                           </div>
                           <div className="space-y-2">
@@ -1140,7 +1141,7 @@ export default function Admin() {
                             <input type="text" value={specRow.finish || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].finish = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                           </div>
                           <div className="space-y-2">
@@ -1148,7 +1149,7 @@ export default function Admin() {
                             <input type="text" value={specRow.material || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].material = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
                           </div>
                           <div className="space-y-2">
@@ -1156,7 +1157,7 @@ export default function Admin() {
                             <input type="text" value={specRow.dimensions || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].dimensions = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
                           </div>
                           {formData.brand !== "Paralight" && (
@@ -1165,7 +1166,7 @@ export default function Admin() {
                               <input type="text" value={specRow.voltage || ''} onChange={e => {
                                 const specs = JSON.parse(formData.technicalSpecs || '[]');
                                 specs[rowIndex].voltage = e.target.value;
-                                setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                               }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
                             </div>
                           )}
@@ -1174,7 +1175,7 @@ export default function Admin() {
                             <input type="text" value={specRow.color || ''} onChange={e => {
                               const specs = JSON.parse(formData.technicalSpecs || '[]');
                               specs[rowIndex].color = e.target.value;
-                              setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                             }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
                           </div>
                           {formData.brand !== "Paralight" && (
@@ -1184,7 +1185,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.cri || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].cri = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
                               </div>
                               <div className="space-y-2">
@@ -1192,7 +1193,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.cct || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].cct = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
                               </div>
                               <div className="space-y-2">
@@ -1200,7 +1201,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.beamAngle || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].beamAngle = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
                               </div>
                             </>
@@ -1212,7 +1213,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.maglinearName || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].maglinearName = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product name" />
                               </div>
                               <div className="space-y-2">
@@ -1220,7 +1221,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.mountingTrack || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].mountingTrack = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track" />
                               </div>
                               <div className="space-y-2">
@@ -1228,7 +1229,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.conductionMethod || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].conductionMethod = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
                               </div>
                               <div className="space-y-2">
@@ -1236,7 +1237,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.inputVoltage || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].inputVoltage = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
                               </div>
                               <div className="space-y-2">
@@ -1244,7 +1245,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.outputVoltage || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].outputVoltage = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
                               </div>
                               <div className="space-y-2">
@@ -1252,7 +1253,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.wallThickness || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].wallThickness = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
                               </div>
                               <div className="space-y-2">
@@ -1260,7 +1261,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.cutOutSize || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].cutOutSize = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
                               </div>
                               <div className="space-y-2">
@@ -1268,7 +1269,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.oneCct || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].oneCct = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
                               </div>
                               <div className="space-y-2">
@@ -1276,7 +1277,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.threeCct || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].threeCct = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
                               </div>
                               <div className="space-y-2">
@@ -1284,7 +1285,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.installationMethod || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].installationMethod = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Recessed/Surface" />
                               </div>
                               <div className="space-y-2">
@@ -1292,7 +1293,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.protectionRating || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].protectionRating = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
                               </div>
                               <div className="space-y-2">
@@ -1300,7 +1301,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.bluetoothVersion || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].bluetoothVersion = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
                               </div>
                               <div className="space-y-2">
@@ -1308,7 +1309,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.adjustableAngle || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].adjustableAngle = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
                               </div>
                             </>
@@ -1321,7 +1322,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.diffuserMaterial || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].diffuserMaterial = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Frosted PC" />
                               </div>
                               <div className="space-y-2">
@@ -1329,7 +1330,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.accessories || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].accessories = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End Caps, Mounting Clips" />
                               </div>
                               <div className="space-y-2">
@@ -1337,7 +1338,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.ledStripSize || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].ledStripSize = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 10mm, 12mm" />
                               </div>
                               <div className="space-y-2">
@@ -1345,7 +1346,7 @@ export default function Admin() {
                                 <input type="text" value={specRow.installationMethod || ''} onChange={e => {
                                   const specs = JSON.parse(formData.technicalSpecs || '[]');
                                   specs[rowIndex].installationMethod = e.target.value;
-                                  setFormData({...formData, technicalSpecs: JSON.stringify(specs)});
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
                                 }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
                               </div>
                             </>
@@ -1362,7 +1363,7 @@ export default function Admin() {
                       onClick={() => {
                         const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
                         const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '', oneCct: '', threeCct: '', installationMethod: '' };
-                        setFormData({...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow])});
+                        setFormData({ ...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow]) });
                       }}
                       className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
                     >
@@ -1379,11 +1380,11 @@ export default function Admin() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
-                              <textarea rows={2} value={formData.packagingMethodADesc} onChange={e => setFormData({...formData, packagingMethodADesc: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are bulk packed together..." />
+                              <textarea rows={2} value={formData.packagingMethodADesc} onChange={e => setFormData({ ...formData, packagingMethodADesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are bulk packed together..." />
                             </div>
                             <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
-                              <input type="text" value={formData.packagingMethodASpec} onChange={e => setFormData({...formData, packagingMethodASpec: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 2050*190*90" />
+                              <input type="text" value={formData.packagingMethodASpec} onChange={e => setFormData({ ...formData, packagingMethodASpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 2050*190*90" />
                             </div>
                           </div>
                         </div>
@@ -1392,11 +1393,11 @@ export default function Admin() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
-                              <textarea rows={2} value={formData.packagingMethodBDesc} onChange={e => setFormData({...formData, packagingMethodBDesc: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are packed together in individual bags..." />
+                              <textarea rows={2} value={formData.packagingMethodBDesc} onChange={e => setFormData({ ...formData, packagingMethodBDesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are packed together in individual bags..." />
                             </div>
                             <div className="space-y-2">
                               <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
-                              <input type="text" value={formData.packagingMethodBSpec} onChange={e => setFormData({...formData, packagingMethodBSpec: e.target.value})} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 3150*170*140" />
+                              <input type="text" value={formData.packagingMethodBSpec} onChange={e => setFormData({ ...formData, packagingMethodBSpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 3150*170*140" />
                             </div>
                           </div>
                         </div>
@@ -1413,20 +1414,20 @@ export default function Admin() {
                           onClick={() => {
                             const currentSpec = formData.accessoriesSpec ? JSON.parse(formData.accessoriesSpec) : [];
                             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                            const regularItems = currentSpec.filter((item: {no?: string}) => item.no?.toLowerCase() !== 'application');
+                            const regularItems = currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application');
                             const nextLetter = letters[regularItems.length] || (regularItems.length + 1).toString();
-                            const newSpec = [...currentSpec.filter((item: {no?: string}) => item.no?.toLowerCase() !== 'application'), { no: nextLetter, specification: '', qty: '', remarks: '' }];
-                            const appItem = currentSpec.find((item: {no?: string}) => item.no?.toLowerCase() === 'application');
+                            const newSpec = [...currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application'), { no: nextLetter, specification: '', qty: '', remarks: '' }];
+                            const appItem = currentSpec.find((item: { no?: string }) => item.no?.toLowerCase() === 'application');
                             if (appItem) newSpec.push(appItem);
-                            setFormData({...formData, accessoriesSpec: JSON.stringify(newSpec)});
+                            setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
                           }}
                           className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-white bg-[#00A8E8] hover:bg-[#0090c8] rounded transition-colors"
                         >
                           <Plus className="w-3 h-3" /> Add Row
                         </button>
                       </div>
-                      
-                      {(!formData.accessoriesSpec || JSON.parse(formData.accessoriesSpec || '[]').filter((item: {no?: string}) => item.no?.toLowerCase() !== 'application').length === 0) ? (
+
+                      {(!formData.accessoriesSpec || JSON.parse(formData.accessoriesSpec || '[]').filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application').length === 0) ? (
                         <div className="p-8 border-2 border-dashed border-gray-200 rounded-lg text-center">
                           <p className="text-[10px] uppercase tracking-widest text-gray-400">No accessories added yet</p>
                           <p className="text-[10px] text-gray-400 mt-1">Click "Add Row" to start adding accessories</p>
@@ -1441,84 +1442,84 @@ export default function Admin() {
                             <span></span>
                           </div>
                           {JSON.parse(formData.accessoriesSpec || '[]')
-                            .filter((item: {no?: string}) => item.no?.toLowerCase() !== 'application')
-                            .map((item: {no?: string; specification?: string; qty?: string; remarks?: string}, index: number) => (
-                            <div key={index} className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 items-center">
-                              <input
-                                type="text"
-                                value={item.no || ''}
-                                onChange={(e) => {
-                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                  const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
-                                  const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
-                                  regularItems[index] = {...regularItems[index], no: e.target.value};
-                                  const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                  setFormData({...formData, accessoriesSpec: JSON.stringify(newSpec)});
-                                }}
-                                className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center font-medium"
-                                placeholder="A"
-                              />
-                              <input
-                                type="text"
-                                value={item.specification || ''}
-                                onChange={(e) => {
-                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                  const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
-                                  const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
-                                  regularItems[index] = {...regularItems[index], specification: e.target.value};
-                                  const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                  setFormData({...formData, accessoriesSpec: JSON.stringify(newSpec)});
-                                }}
-                                className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                placeholder="e.g. Profile"
-                              />
-                              <input
-                                type="text"
-                                value={item.qty || ''}
-                                onChange={(e) => {
-                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                  const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
-                                  const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
-                                  regularItems[index] = {...regularItems[index], qty: e.target.value};
-                                  const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                  setFormData({...formData, accessoriesSpec: JSON.stringify(newSpec)});
-                                }}
-                                className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center"
-                                placeholder="1"
-                              />
-                              <input
-                                type="text"
-                                value={item.remarks || ''}
-                                onChange={(e) => {
-                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                  const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
-                                  const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
-                                  regularItems[index] = {...regularItems[index], remarks: e.target.value};
-                                  const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                  setFormData({...formData, accessoriesSpec: JSON.stringify(newSpec)});
-                                }}
-                                className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                placeholder="e.g. 2M/3M"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                  const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
-                                  const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
-                                  regularItems.splice(index, 1);
-                                  const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                  setFormData({...formData, accessoriesSpec: newSpec.length > 0 ? JSON.stringify(newSpec) : ''});
-                                }}
-                                className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          ))}
+                            .filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application')
+                            .map((item: { no?: string; specification?: string; qty?: string; remarks?: string }, index: number) => (
+                              <div key={index} className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 items-center">
+                                <input
+                                  type="text"
+                                  value={item.no || ''}
+                                  onChange={(e) => {
+                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                    regularItems[index] = { ...regularItems[index], no: e.target.value };
+                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                  }}
+                                  className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center font-medium"
+                                  placeholder="A"
+                                />
+                                <input
+                                  type="text"
+                                  value={item.specification || ''}
+                                  onChange={(e) => {
+                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                    regularItems[index] = { ...regularItems[index], specification: e.target.value };
+                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                  }}
+                                  className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
+                                  placeholder="e.g. Profile"
+                                />
+                                <input
+                                  type="text"
+                                  value={item.qty || ''}
+                                  onChange={(e) => {
+                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                    regularItems[index] = { ...regularItems[index], qty: e.target.value };
+                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                  }}
+                                  className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center"
+                                  placeholder="1"
+                                />
+                                <input
+                                  type="text"
+                                  value={item.remarks || ''}
+                                  onChange={(e) => {
+                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                    regularItems[index] = { ...regularItems[index], remarks: e.target.value };
+                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                  }}
+                                  className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
+                                  placeholder="e.g. 2M/3M"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                    regularItems.splice(index, 1);
+                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                    setFormData({ ...formData, accessoriesSpec: newSpec.length > 0 ? JSON.stringify(newSpec) : '' });
+                                  }}
+                                  className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
                         </div>
                       )}
-                      
+
                       <div className="pt-4 border-t border-gray-100">
                         <div className="space-y-2">
                           <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Application</label>
@@ -1527,18 +1528,18 @@ export default function Admin() {
                             value={(() => {
                               try {
                                 const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                const appItem = spec.find((i: {no?: string}) => i.no?.toLowerCase() === 'application');
+                                const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
                                 return appItem?.specification || '';
                               } catch { return ''; }
                             })()}
                             onChange={(e) => {
                               let spec = [];
                               try { spec = JSON.parse(formData.accessoriesSpec || '[]'); } catch { spec = []; }
-                              const regularItems = spec.filter((i: {no?: string}) => i.no?.toLowerCase() !== 'application');
+                              const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
                               if (e.target.value) {
                                 regularItems.push({ no: 'Application', specification: e.target.value, qty: '', remarks: '' });
                               }
-                              setFormData({...formData, accessoriesSpec: regularItems.length > 0 ? JSON.stringify(regularItems) : ''});
+                              setFormData({ ...formData, accessoriesSpec: regularItems.length > 0 ? JSON.stringify(regularItems) : '' });
                             }}
                             className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]"
                             placeholder="e.g. Commercial lighting/Office lighting/Home lighting"
@@ -1548,7 +1549,7 @@ export default function Admin() {
                     </div>
                   )}
 
-                  <button 
+                  <button
                     type="submit"
                     disabled={isLoading}
                     data-testid="button-submit"
@@ -1562,12 +1563,12 @@ export default function Admin() {
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">
-                      Live Products 
+                      Live Products
                       <span className="text-gray-400 font-normal ml-2">
-                        ({products.filter(p => 
+                        ({products.filter(p =>
                           (adminBrandFilter === "All" || p.brand === adminBrandFilter) &&
                           (adminSeriesFilter === "All" || (p.series || []).includes(adminSeriesFilter)) &&
-                          (!adminSearchQuery.trim() || 
+                          (!adminSearchQuery.trim() ||
                             p.name.toLowerCase().includes(adminSearchQuery.toLowerCase()) ||
                             p.modelNumber.toLowerCase().includes(adminSearchQuery.toLowerCase())
                           )
@@ -1575,7 +1576,7 @@ export default function Admin() {
                       </span>
                     </h3>
                   </div>
-                  
+
                   {/* Filter Bar */}
                   <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                     {/* Search */}
@@ -1589,7 +1590,7 @@ export default function Admin() {
                         className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
                       />
                     </div>
-                    
+
                     {/* Brand Filter */}
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand:</span>
@@ -1599,20 +1600,19 @@ export default function Admin() {
                             key={brand}
                             type="button"
                             onClick={() => setAdminBrandFilter(brand)}
-                            className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${
-                              adminBrandFilter === brand 
-                                ? brand === "Paralight" ? 'bg-[#00A8E8] text-white' 
-                                  : brand === "Maglinear" ? 'bg-[#ECAA00] text-white' 
-                                  : 'bg-gray-800 text-white'
+                            className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${adminBrandFilter === brand
+                                ? brand === "Paralight" ? 'bg-[#00A8E8] text-white'
+                                  : brand === "Maglinear" ? 'bg-[#ECAA00] text-white'
+                                    : 'bg-gray-800 text-white'
                                 : 'bg-white text-gray-600 hover:bg-gray-100'
-                            }`}
+                              }`}
                           >
                             {brand === "Maglinear" ? "Maglinear Lighting" : brand}
                           </button>
                         ))}
                       </div>
                     </div>
-                    
+
                     {/* Series Filter */}
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series:</span>
@@ -1627,7 +1627,7 @@ export default function Admin() {
                         ))}
                       </select>
                     </div>
-                    
+
                     {/* Clear Filters */}
                     {(adminSearchQuery || adminBrandFilter !== "All" || adminSeriesFilter !== "All") && (
                       <button
@@ -1662,55 +1662,55 @@ export default function Admin() {
                       );
                     })
                     .map((product) => (
-                    <div key={product.id} data-testid={`product-item-${product.id}`} className={`rounded-xl p-6 flex justify-between items-center group transition-all ${editingId === product.id ? 'bg-[#00A8E8]/5 border-2 border-[#00A8E8] shadow-lg shadow-[#00A8E8]/10' : 'bg-white border border-gray-200 hover:border-[#00A8E8]/50 hover:shadow-md'}`}>
-                      <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
-                          {product.image ? (
-                            <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
-                          ) : (
-                            <Package className="w-6 h-6 text-gray-300" />
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
-                          <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            <span className={`text-[8px] px-2 py-1 uppercase tracking-widest rounded-full ${product.brand === 'Paralight' ? 'bg-[#00A8E8]/10 text-[#00A8E8]' : 'bg-[#ECAA00]/10 text-[#ECAA00]'}`}>{product.brand}</span>
-                            {(product.series || []).map((s, idx) => (
-                              <span key={idx} className="text-[8px] bg-gray-100 text-gray-600 px-2 py-1 uppercase tracking-widest rounded-full">{s}</span>
-                            ))}
+                      <div key={product.id} data-testid={`product-item-${product.id}`} className={`rounded-xl p-6 flex justify-between items-center group transition-all ${editingId === product.id ? 'bg-[#00A8E8]/5 border-2 border-[#00A8E8] shadow-lg shadow-[#00A8E8]/10' : 'bg-white border border-gray-200 hover:border-[#00A8E8]/50 hover:shadow-md'}`}>
+                        <div className="flex items-center gap-6">
+                          <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
+                            {product.image ? (
+                              <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                            ) : (
+                              <Package className="w-6 h-6 text-gray-300" />
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <span className={`text-[8px] px-2 py-1 uppercase tracking-widest rounded-full ${product.brand === 'Paralight' ? 'bg-[#00A8E8]/10 text-[#00A8E8]' : 'bg-[#ECAA00]/10 text-[#ECAA00]'}`}>{product.brand}</span>
+                              {(product.series || []).map((s, idx) => (
+                                <span key={idx} className="text-[8px] bg-gray-100 text-gray-600 px-2 py-1 uppercase tracking-widest rounded-full">{s}</span>
+                              ))}
+                            </div>
                           </div>
                         </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            data-testid={`button-edit-${product.id}`}
+                            className={`p-3 transition-colors rounded-lg flex items-center gap-2 ${editingId === product.id ? 'bg-[#00A8E8] text-white' : 'bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8]'}`}
+                            title="Edit product"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                            {editingId === product.id && <span className="text-xs font-bold uppercase tracking-wider">Editing</span>}
+                          </button>
+                          <button
+                            onClick={() => handleDuplicate(product)}
+                            data-testid={`button-duplicate-${product.id}`}
+                            className="p-3 bg-[#ECAA00]/10 border border-[#ECAA00]/20 text-[#ECAA00] hover:bg-[#ECAA00]/20 transition-colors rounded-lg"
+                            title="Duplicate product"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            data-testid={`button-delete-${product.id}`}
+                            className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-colors rounded-lg"
+                            title="Delete product"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => handleEdit(product)}
-                          data-testid={`button-edit-${product.id}`}
-                          className={`p-3 transition-colors rounded-lg flex items-center gap-2 ${editingId === product.id ? 'bg-[#00A8E8] text-white' : 'bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8]'}`}
-                          title="Edit product"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                          {editingId === product.id && <span className="text-xs font-bold uppercase tracking-wider">Editing</span>}
-                        </button>
-                        <button 
-                          onClick={() => handleDuplicate(product)}
-                          data-testid={`button-duplicate-${product.id}`}
-                          className="p-3 bg-[#ECAA00]/10 border border-[#ECAA00]/20 text-[#ECAA00] hover:bg-[#ECAA00]/20 transition-colors rounded-lg"
-                          title="Duplicate product"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(product.id)}
-                          data-testid={`button-delete-${product.id}`}
-                          className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-colors rounded-lg"
-                          title="Delete product"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                   {products.length === 0 && (
                     <div className="text-center py-20 border border-gray-200 bg-gray-50/50 rounded-xl">
                       <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
