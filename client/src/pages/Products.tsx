@@ -318,13 +318,13 @@ export default function Products() {
     const fetchProducts = async (retries = 3) => {
       setIsLoading(true);
       try {
-        const res = await fetch('/data/products-grid.json');
+        const res = await fetch('/api/products/grid');
         if (res.ok) {
           const data = await res.json();
           setGridProducts(data);
         } else {
           const errorText = await res.text();
-          console.error("JSON load error:", res.status, errorText);
+          console.error("API load error:", res.status, errorText);
           if (retries > 0) {
             setTimeout(() => fetchProducts(retries - 1), 1000);
             return;
@@ -347,10 +347,9 @@ export default function Products() {
   const fetchProductDetail = useCallback(async (productId: number) => {
     setIsLoadingDetail(true);
     try {
-      const res = await fetch('/data/products.json');
+      const res = await fetch(`/api/products/${productId}`);
       if (res.ok) {
-        const allProducts = await res.json();
-        const product = allProducts.find((p: any) => p.id === productId);
+        const product = await res.json();
         if (product) {
           setSelectedProduct(product);
           setSelectedImageIndex(0);
@@ -363,7 +362,7 @@ export default function Products() {
           console.error("Product not found:", productId);
         }
       } else {
-        console.error("Failed to load products data:", res.status);
+        console.error("Failed to load product:", res.status);
       }
     } catch (error) {
       console.error("Failed to fetch product details:", error);
