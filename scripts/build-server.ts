@@ -7,8 +7,8 @@ await build({
     bundle: true,
     platform: "node",
     target: "node20",
-    format: "esm",
-    outfile: "dist/server.js",
+    format: "cjs",
+    outfile: "dist/server.cjs",
     sourcemap: true,
     external: [
         // Core framework
@@ -31,17 +31,6 @@ await build({
         "@tailwindcss/oxide",
         "@babel/core",
     ],
-    banner: {
-        js: `
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const require = createRequire(import.meta.url);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-    `.trim(),
-    },
 });
 
 console.log("✅ Server built successfully!");
