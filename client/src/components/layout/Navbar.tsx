@@ -2,8 +2,8 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-const logoWhite = "/logo-white-navbar.png";
-const logoBlack = "/logo-black.png";
+const logoWhite = "/logo-white-navbar.webp";
+const logoBlack = "/logo-black.webp";
 
 export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   const [scrolled, setScrolled] = useState(false);

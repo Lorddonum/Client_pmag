@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import paralightImg from "@/assets/paralight-profiles.png";
-import maglinearImg from "@/assets/paralight-brand.png";
+import paralightImg from "@/assets/paralight-profiles.webp";
+import maglinearImg from "@/assets/paralight-brand.webp";
 import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";

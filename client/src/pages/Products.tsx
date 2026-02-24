@@ -227,7 +227,7 @@ import { Package, Loader2, X, SlidersHorizontal, Search, ArrowRight, ChevronRigh
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import PinterestIcon from "@/components/icons/PinterestIcon";
 import { useLocation } from "wouter";
-import controlIntegrationImg from "@/assets/control-integration.png";
+import controlIntegrationImg from "@/assets/control-integration.webp";
 
 // Lightweight type for grid view - only essential fields
 interface ProductGridItem {
@@ -615,7 +615,7 @@ export default function Products() {
             }}
           >
             <img
-              src="/all-products-hero.jpg"
+              src="/all-products-hero.webp"
               alt="All Products"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -646,7 +646,7 @@ export default function Products() {
             }}
           >
             <img
-              src="/paralight-hero.jpg"
+              src="/paralight-hero.webp"
               alt="Paralight Aluminum Profiles"
               className="absolute inset-0 w-full h-full object-cover scale-110"
             />
@@ -1364,7 +1364,7 @@ export default function Products() {
                                   Packaging Method
                                 </h3>
                                 <img
-                                  src="/packaging-method.png"
+                                  src="/packaging-method.webp"
                                   alt="Packaging Method"
                                   className="max-w-[85%] h-auto mx-auto rounded-lg"
                                 />

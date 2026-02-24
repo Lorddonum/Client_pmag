@@ -1,33 +1,33 @@
 import { motion, AnimatePresence, useAnimation, useInView as useFramerInView } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import chairmanImg from "@/assets/chairman-situ.png";
-import ceoImg from "@/assets/ceo-michelle.png";
-import coreTeamImg from "@/assets/core-team.png";
-import milestone2016_1 from "@/assets/milestone-2016-1.png";
-import milestone2016_2 from "@/assets/milestone-2016-2.png";
-import milestone2016_3 from "@/assets/milestone-2016-3.png";
-import milestone2019_1 from "@/assets/milestone-2019-1.png";
-import milestone2019_2 from "@/assets/milestone-2019-2.png";
-import milestone2019_3 from "@/assets/milestone-2019-3.png";
-import milestone2021jan_1 from "@/assets/milestone-2021jan-1.png";
-import milestone2021jan_2 from "@/assets/milestone-2021jan-2.png";
-import milestone2021jan_3 from "@/assets/milestone-2021jan-3.png";
-import milestone2021sep_1 from "@/assets/milestone-2021sep-1.png";
-import milestone2021sep_2 from "@/assets/milestone-2021sep-2.png";
-import milestone2022dec_1 from "@/assets/milestone-2022dec-1.png";
-import milestone2022dec_2 from "@/assets/milestone-2022dec-2.png";
-import milestone2022dec_3 from "@/assets/milestone-2022dec-3.png";
-import honor1 from "@/assets/honor-1.png";
-import honor2 from "@/assets/honor-2.png";
-import honor3 from "@/assets/honor-3.png";
-import honor4 from "@/assets/honor-4.png";
-import honor5 from "@/assets/honor-5.png";
-import honor6 from "@/assets/honor-6.jpg";
-import honor7 from "@/assets/honor-7.jpg";
-import honor8 from "@/assets/honor-8.jpg";
-import honor9 from "@/assets/honor-9.jpg";
-import honor10 from "@/assets/honor-10.jpg";
+import chairmanImg from "@/assets/chairman-situ.webp";
+import ceoImg from "@/assets/ceo-michelle.webp";
+import coreTeamImg from "@/assets/core-team.webp";
+import milestone2016_1 from "@/assets/milestone-2016-1.webp";
+import milestone2016_2 from "@/assets/milestone-2016-2.webp";
+import milestone2016_3 from "@/assets/milestone-2016-3.webp";
+import milestone2019_1 from "@/assets/milestone-2019-1.webp";
+import milestone2019_2 from "@/assets/milestone-2019-2.webp";
+import milestone2019_3 from "@/assets/milestone-2019-3.webp";
+import milestone2021jan_1 from "@/assets/milestone-2021jan-1.webp";
+import milestone2021jan_2 from "@/assets/milestone-2021jan-2.webp";
+import milestone2021jan_3 from "@/assets/milestone-2021jan-3.webp";
+import milestone2021sep_1 from "@/assets/milestone-2021sep-1.webp";
+import milestone2021sep_2 from "@/assets/milestone-2021sep-2.webp";
+import milestone2022dec_1 from "@/assets/milestone-2022dec-1.webp";
+import milestone2022dec_2 from "@/assets/milestone-2022dec-2.webp";
+import milestone2022dec_3 from "@/assets/milestone-2022dec-3.webp";
+import honor1 from "@/assets/honor-1.webp";
+import honor2 from "@/assets/honor-2.webp";
+import honor3 from "@/assets/honor-3.webp";
+import honor4 from "@/assets/honor-4.webp";
+import honor5 from "@/assets/honor-5.webp";
+import honor6 from "@/assets/honor-6.webp";
+import honor7 from "@/assets/honor-7.webp";
+import honor8 from "@/assets/honor-8.webp";
+import honor9 from "@/assets/honor-9.webp";
+import honor10 from "@/assets/honor-10.webp";
 import {
   Truck,
   Users,
@@ -67,106 +67,106 @@ const exhibitionEvents: ExhibitionEvent[] = [
     name: "Middle East Energy",
     location: "Dubai, UAE",
     images: [
-      "/exhibitions/dubai-2024/img-1.jpg",
-      "/exhibitions/dubai-2024/img-2.jpg",
-      "/exhibitions/dubai-2024/img-3.jpg",
-      "/exhibitions/dubai-2024/img-4.jpg",
-      "/exhibitions/dubai-2024/img-5.jpg",
-      "/exhibitions/dubai-2024/img-6.jpg",
-      "/exhibitions/dubai-2024/img-7.jpg",
-      "/exhibitions/dubai-2024/img-8.jpg",
+      "/exhibitions/dubai-2024/img-1.webp",
+      "/exhibitions/dubai-2024/img-2.webp",
+      "/exhibitions/dubai-2024/img-3.webp",
+      "/exhibitions/dubai-2024/img-4.webp",
+      "/exhibitions/dubai-2024/img-5.webp",
+      "/exhibitions/dubai-2024/img-6.webp",
+      "/exhibitions/dubai-2024/img-7.webp",
+      "/exhibitions/dubai-2024/img-8.webp",
     ]
   },
   {
     name: "Canton Fair",
     location: "Guangzhou, China",
     images: [
-      "/exhibitions/canton-2024/img-1.jpg",
-      "/exhibitions/canton-2024/img-2.jpg",
-      "/exhibitions/canton-2024/img-3.jpg",
-      "/exhibitions/canton-2024/img-4.jpg",
-      "/exhibitions/canton-2024/img-5.jpg",
-      "/exhibitions/canton-2024/img-6.jpg",
-      "/exhibitions/canton-2024/img-7.jpg",
-      "/exhibitions/canton-2024/img-8.jpg",
+      "/exhibitions/canton-2024/img-1.webp",
+      "/exhibitions/canton-2024/img-2.webp",
+      "/exhibitions/canton-2024/img-3.webp",
+      "/exhibitions/canton-2024/img-4.webp",
+      "/exhibitions/canton-2024/img-5.webp",
+      "/exhibitions/canton-2024/img-6.webp",
+      "/exhibitions/canton-2024/img-7.webp",
+      "/exhibitions/canton-2024/img-8.webp",
     ]
   },
   {
     name: "GILF",
     location: "Guzhen, China",
     images: [
-      "/exhibitions/poland-2024/img-1.jpg",
-      "/exhibitions/poland-2024/img-2.jpg",
-      "/exhibitions/poland-2024/img-3.jpg",
-      "/exhibitions/poland-2024/img-4.jpg",
-      "/exhibitions/poland-2024/img-5.jpg",
-      "/exhibitions/poland-2024/img-6.jpg",
-      "/exhibitions/poland-2024/img-7.jpg",
-      "/exhibitions/poland-2024/img-8.jpg",
+      "/exhibitions/poland-2024/img-1.webp",
+      "/exhibitions/poland-2024/img-2.webp",
+      "/exhibitions/poland-2024/img-3.webp",
+      "/exhibitions/poland-2024/img-4.webp",
+      "/exhibitions/poland-2024/img-5.webp",
+      "/exhibitions/poland-2024/img-6.webp",
+      "/exhibitions/poland-2024/img-7.webp",
+      "/exhibitions/poland-2024/img-8.webp",
     ]
   },
   {
     name: "LED Middle East",
     location: "Cairo, Egypt",
     images: [
-      "/exhibitions/egypt-2023/img-1.jpg",
-      "/exhibitions/egypt-2023/img-2.jpg",
-      "/exhibitions/egypt-2023/img-3.jpg",
-      "/exhibitions/egypt-2023/img-4.jpg",
-      "/exhibitions/egypt-2023/img-5.jpg",
-      "/exhibitions/egypt-2023/img-6.jpg",
-      "/exhibitions/egypt-2023/img-7.jpg",
+      "/exhibitions/egypt-2023/img-1.webp",
+      "/exhibitions/egypt-2023/img-2.webp",
+      "/exhibitions/egypt-2023/img-3.webp",
+      "/exhibitions/egypt-2023/img-4.webp",
+      "/exhibitions/egypt-2023/img-5.webp",
+      "/exhibitions/egypt-2023/img-6.webp",
+      "/exhibitions/egypt-2023/img-7.webp",
     ]
   },
   {
     name: "HK Lighting Fair",
     location: "Hong Kong",
     images: [
-      "/exhibitions/hongkong-2023/img-1.jpg",
-      "/exhibitions/hongkong-2023/img-2.jpg",
-      "/exhibitions/hongkong-2023/img-3.jpg",
-      "/exhibitions/hongkong-2023/img-4.jpg",
-      "/exhibitions/hongkong-2023/img-5.jpg",
-      "/exhibitions/hongkong-2023/img-6.jpg",
-      "/exhibitions/hongkong-2023/img-7.jpg",
-      "/exhibitions/hongkong-2023/img-8.jpg",
+      "/exhibitions/hongkong-2023/img-1.webp",
+      "/exhibitions/hongkong-2023/img-2.webp",
+      "/exhibitions/hongkong-2023/img-3.webp",
+      "/exhibitions/hongkong-2023/img-4.webp",
+      "/exhibitions/hongkong-2023/img-5.webp",
+      "/exhibitions/hongkong-2023/img-6.webp",
+      "/exhibitions/hongkong-2023/img-7.webp",
+      "/exhibitions/hongkong-2023/img-8.webp",
     ]
   },
   {
     name: "Light + Building",
     location: "Frankfurt, Germany",
     images: [
-      "/exhibitions/spain-2022/img-1.jpg",
-      "/exhibitions/spain-2022/img-2.jpg",
-      "/exhibitions/spain-2022/img-3.jpg",
-      "/exhibitions/spain-2022/img-4.jpg",
-      "/exhibitions/spain-2022/img-5.jpg",
-      "/exhibitions/spain-2022/img-6.jpg",
+      "/exhibitions/spain-2022/img-1.webp",
+      "/exhibitions/spain-2022/img-2.webp",
+      "/exhibitions/spain-2022/img-3.webp",
+      "/exhibitions/spain-2022/img-4.webp",
+      "/exhibitions/spain-2022/img-5.webp",
+      "/exhibitions/spain-2022/img-6.webp",
     ]
   },
   {
     name: "LEDTEC Asia",
     location: "Ho Chi Minh, Vietnam",
     images: [
-      "/exhibitions/india-2022/img-1.jpg",
-      "/exhibitions/india-2022/img-2.jpg",
-      "/exhibitions/india-2022/img-3.jpg",
-      "/exhibitions/india-2022/img-4.jpg",
-      "/exhibitions/india-2022/img-5.jpg",
-      "/exhibitions/india-2022/img-6.jpg",
-      "/exhibitions/india-2022/img-7.jpg",
+      "/exhibitions/india-2022/img-1.webp",
+      "/exhibitions/india-2022/img-2.webp",
+      "/exhibitions/india-2022/img-3.webp",
+      "/exhibitions/india-2022/img-4.webp",
+      "/exhibitions/india-2022/img-5.webp",
+      "/exhibitions/india-2022/img-6.webp",
+      "/exhibitions/india-2022/img-7.webp",
     ]
   },
   {
     name: "Expolux",
     location: "São Paulo, Brazil",
     images: [
-      "/exhibitions/brazil-2022/img-1.jpg",
-      "/exhibitions/brazil-2022/img-2.jpg",
-      "/exhibitions/brazil-2022/img-3.jpg",
-      "/exhibitions/brazil-2022/img-4.jpg",
-      "/exhibitions/brazil-2022/img-5.jpg",
-      "/exhibitions/brazil-2022/img-6.jpg",
+      "/exhibitions/brazil-2022/img-1.webp",
+      "/exhibitions/brazil-2022/img-2.webp",
+      "/exhibitions/brazil-2022/img-3.webp",
+      "/exhibitions/brazil-2022/img-4.webp",
+      "/exhibitions/brazil-2022/img-5.webp",
+      "/exhibitions/brazil-2022/img-6.webp",
     ]
   },
 ];
@@ -576,18 +576,18 @@ function ShowcaseSection() {
   }, [isInView]);
 
   const circleImages = [
-    "/images/showcase-1.png",
-    "/images/showcase-2.png",
-    "/images/showcase-3.png",
-    "/images/showcase-4.png",
+    "/images/showcase-1.webp",
+    "/images/showcase-2.webp",
+    "/images/showcase-3.webp",
+    "/images/showcase-4.webp",
   ];
 
   const officeImages = [
-    { src: "/images/office-1.jpg", alt: "Office work" },
-    { src: "/images/office-2.jpg", alt: "Design team" },
-    { src: "/images/office-3.jpg", alt: "Office collaboration" },
-    { src: "/images/office-4.jpg", alt: "Team workspace" },
-    { src: "/images/office-5.png", alt: "3D product design" },
+    { src: "/images/office-1.webp", alt: "Office work" },
+    { src: "/images/office-2.webp", alt: "Design team" },
+    { src: "/images/office-3.webp", alt: "Office collaboration" },
+    { src: "/images/office-4.webp", alt: "Team workspace" },
+    { src: "/images/office-5.webp", alt: "3D product design" },
   ];
 
   const showCircle = phase !== "revealed" && phase !== "idle" && phase !== "office-transition" && phase !== "office" && phase !== "office-reversing";
@@ -704,7 +704,7 @@ function ShowcaseSection() {
                 animate={showcaseIn ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
               >
-                <img src="/images/showcase-3.png" alt="Design sketching"
+                <img src="/images/showcase-3.webp" alt="Design sketching"
                   className="w-full h-auto rounded-lg shadow-2xl grayscale" loading="eager" />
               </motion.div>
 
@@ -715,7 +715,7 @@ function ShowcaseSection() {
                 animate={showcaseIn ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                 transition={{ duration: 0.7, delay: showcaseIn ? 0.15 : 0.05, ease: "easeOut" }}
               >
-                <img src="/images/showcase-2.png" alt="Modern living room lighting"
+                <img src="/images/showcase-2.webp" alt="Modern living room lighting"
                   className="w-full h-auto rounded-lg shadow-2xl grayscale" loading="eager" />
               </motion.div>
 
@@ -726,7 +726,7 @@ function ShowcaseSection() {
                 animate={showcaseIn ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
                 transition={{ duration: 0.7, delay: showcaseIn ? 0.1 : 0.05, ease: "easeOut" }}
               >
-                <img src="/images/showcase-1.png" alt="Modern showroom"
+                <img src="/images/showcase-1.webp" alt="Modern showroom"
                   className="w-full h-auto rounded-lg shadow-2xl grayscale" loading="eager" />
               </motion.div>
 
@@ -737,7 +737,7 @@ function ShowcaseSection() {
                 animate={showcaseIn ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
                 transition={{ duration: 0.7, delay: showcaseIn ? 0.25 : 0.1, ease: "easeOut" }}
               >
-                <img src="/images/showcase-4.png" alt="Precision measurement"
+                <img src="/images/showcase-4.webp" alt="Precision measurement"
                   className="w-full h-auto rounded-lg shadow-2xl grayscale" loading="eager" />
               </motion.div>
 
@@ -881,7 +881,7 @@ export default function About() {
       tagline: "One-stop lighting solutions with the client at the center.",
       subtitle: "A globalized perspective managing systematic operations.",
       bio: "Holding an MBA from Hong Kong, CEO Michelle Tang leads Paralight Group's strategic expansion into international markets, championing client-centric product development, integrated supply chain operations, and long-term vision for global partnerships. Under her leadership, Paralight Group has launched multiple product lines, systematized production workflows, and positioned itself as a comprehensive lighting solutions provider.",
-      image: "/michelle.jpg",
+      image: "/michelle.webp",
       color: "#ECAA00",
       bgGradient: "from-amber-50 via-white to-yellow-50",
     },
@@ -970,15 +970,15 @@ export default function About() {
   const [teamIndex, setTeamIndex] = useState(0);
 
   const teamMembers = [
-    { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.jpg" },
-    { name: "Stephy", role: "Sales Manager", image: "/team-stephy.jpg" },
-    { name: "Taha", role: "Marketing Specialist", image: "/team-taha.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-1.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-2.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-3.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-4.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-5.jpg" },
-    { name: "Name", role: "Role", image: "/team-member-6.jpg" },
+    { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.webp" },
+    { name: "Stephy", role: "Sales Manager", image: "/team-stephy.webp" },
+    { name: "Taha", role: "Marketing Specialist", image: "/team-taha.webp" },
+    { name: "Name", role: "Role", image: "/team-member-1.webp" },
+    { name: "Name", role: "Role", image: "/team-member-2.webp" },
+    { name: "Name", role: "Role", image: "/team-member-3.webp" },
+    { name: "Name", role: "Role", image: "/team-member-4.webp" },
+    { name: "Name", role: "Role", image: "/team-member-5.webp" },
+    { name: "Name", role: "Role", image: "/team-member-6.webp" },
   ];
 
   return (
@@ -988,7 +988,7 @@ export default function About() {
       {/* Hero Section */}
       <section className="snap-start h-screen relative flex flex-col justify-center overflow-hidden bg-gray-900">
         <div className="absolute inset-0">
-          <img src="/about-banner.jpg" alt="Paralight Factory" className="w-full h-full object-cover" />
+          <img src="/about-banner.webp" alt="Paralight Factory" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gray-900/70" />
         </div>
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
@@ -1408,7 +1408,7 @@ export default function About() {
               transition={{ duration: 1 }}
               className="absolute inset-0"
             >
-              <img src="/core-team.jpg" alt="Paralight Core Team" className="w-full h-full object-cover opacity-80" />
+              <img src="/core-team.webp" alt="Paralight Core Team" className="w-full h-full object-cover opacity-80" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/80 via-[#0a1628]/40 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
             </motion.div>

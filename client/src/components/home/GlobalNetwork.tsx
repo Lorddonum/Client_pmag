@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import mapImg from "@/assets/global-map.jpg";
+import mapImg from "@/assets/global-map.webp";
 import { Globe, TrendingUp, Users } from "lucide-react";
 import { Link } from "wouter";
 

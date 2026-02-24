@@ -1,7 +1,7 @@
 import { Facebook, Instagram, Linkedin, Youtube, Twitter, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import PinterestIcon from "@/components/icons/PinterestIcon";
-import footerLogo from "/footer-logo.png";
+import footerLogo from "/footer-logo.webp";
 import { Link } from "wouter";
 
 export default function Footer() {

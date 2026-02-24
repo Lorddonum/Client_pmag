@@ -14,10 +14,10 @@ async function warmupCache() {
       cache.set(`product:${product.id}`, product, 600); // 10 minutes
     });
     cache.set('products:all', products, 300); // 5 minutes
-    
+
     const gridProducts = await storage.getProductsForGrid();
     cache.set('products:grid', gridProducts, 300); // 5 minutes
-    
+
     console.log(`Cache warmed with ${products.length} products`);
   } catch (error) {
     console.error("Cache warmup failed:", error);
@@ -28,21 +28,21 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  
+
   // Warm up cache on startup - await to ensure cache is ready before serving
   await warmupCache();
-  
+
   // Get all products for grid view (optimized - only essential fields)
   app.get("/api/products/grid", async (req, res) => {
     try {
       const cacheKey = 'products:grid';
       let products = cache.get<any[]>(cacheKey);
-      
+
       if (!products) {
         products = await storage.getProductsForGrid();
         cache.set(cacheKey, products, 300); // Cache for 5 minutes
       }
-      
+
       res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       res.json(products);
     } catch (error) {
@@ -56,12 +56,12 @@ export async function registerRoutes(
     try {
       const cacheKey = 'products:all';
       let products = cache.get<any[]>(cacheKey);
-      
+
       if (!products) {
         products = await storage.getProducts();
         cache.set(cacheKey, products, 120); // Cache for 2 minutes
       }
-      
+
       res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       res.json(products);
     } catch (error) {
@@ -76,14 +76,14 @@ export async function registerRoutes(
       const id = parseInt(req.params.id);
       const cacheKey = `product:${id}`;
       let product = cache.get<any>(cacheKey);
-      
+
       if (!product) {
         product = await storage.getProduct(id);
         if (product) {
           cache.set(cacheKey, product, 300); // Cache for 5 minutes
         }
       }
-      
+
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
@@ -180,14 +180,14 @@ export async function registerRoutes(
       res.status(500).json({ error: "Failed to update product" });
     }
   };
-  
+
   app.put("/api/products/:id", updateProductHandler);
 
   // Compress image endpoint
   app.post("/api/compress-image", async (req, res) => {
     try {
       const { image, maxWidth = 800, quality = 70 } = req.body;
-      
+
       if (!image || typeof image !== 'string') {
         return res.status(400).json({ error: "No image provided" });
       }
@@ -199,20 +199,20 @@ export async function registerRoutes(
       }
 
       const imageBuffer = Buffer.from(matches[2], 'base64');
-      
-      // Compress with sharp
+
+      // Compress and convert to WebP with sharp
       const compressed = await sharp(imageBuffer)
         .resize(maxWidth, null, { withoutEnlargement: true })
-        .jpeg({ quality: quality })
+        .webp({ quality: quality, effort: 4 })
         .toBuffer();
 
-      const compressedBase64 = `data:image/jpeg;base64,${compressed.toString('base64')}`;
-      
+      const compressedBase64 = `data:image/webp;base64,${compressed.toString('base64')}`;
+
       const originalSize = imageBuffer.length;
       const newSize = compressed.length;
       const savings = Math.round((1 - newSize / originalSize) * 100);
 
-      res.json({ 
+      res.json({
         image: compressedBase64,
         originalSize,
         newSize,

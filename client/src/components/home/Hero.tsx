@@ -3,11 +3,11 @@ import { Link } from "wouter";
 import { useState, useEffect } from "react";
 
 const heroImages = [
-  "/hero/hero-1.jpg",
-  "/hero/hero-2.jpg",
-  "/hero/hero-3.jpg",
+  "/hero/hero-1.webp",
+  "/hero/hero-2.webp",
+  "/hero/hero-3.webp",
   "/hero/hero-4.jpg?v=2",
-  "/hero/hero-5.jpg",
+  "/hero/hero-5.webp",
 ];
 
 export default function Hero() {

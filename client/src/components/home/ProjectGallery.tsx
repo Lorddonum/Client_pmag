@@ -3,14 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 const applicationCategories = [
-  { image: "/gallery/villa-pool.jpg", label: "Villa and luxury residence" },
-  { image: "/gallery/luxury-living.jpg", label: "Super Large Flat Layer" },
-  { image: "/gallery/private-club.jpg", label: "Private club" },
-  { image: "/gallery/commercial-office.jpg", label: "Real estate project" },
-  { image: "/gallery/five-star-hotel.jpg", label: "Commercial Office Space" },
-  { image: "/gallery/top-apartment.jpg", label: "Five-star plus hotel" },
-  { image: "/gallery/home-decoration.jpg", label: "Top Apartment" },
-  { image: "/gallery/marble-living.jpg", label: "Ordinary home decoration" },
+  { image: "/gallery/villa-pool.webp", label: "Villa and luxury residence" },
+  { image: "/gallery/luxury-living.webp", label: "Super Large Flat Layer" },
+  { image: "/gallery/private-club.webp", label: "Private club" },
+  { image: "/gallery/commercial-office.webp", label: "Real estate project" },
+  { image: "/gallery/five-star-hotel.webp", label: "Commercial Office Space" },
+  { image: "/gallery/top-apartment.webp", label: "Five-star plus hotel" },
+  { image: "/gallery/home-decoration.webp", label: "Top Apartment" },
+  { image: "/gallery/marble-living.webp", label: "Ordinary home decoration" },
 ];
 
 export default function ProjectGallery() {
@@ -21,7 +21,7 @@ export default function ProjectGallery() {
     <section className="h-full overflow-hidden relative flex flex-col">
       <div className="absolute inset-0 bottom-[240px]">
         <img
-          src="/gallery/hero-villa-cropped.jpg"
+          src="/gallery/hero-villa-cropped.webp"
           alt="Modern architectural lighting"
           className="w-full h-full object-cover object-center"
         />
