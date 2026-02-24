@@ -7,8 +7,8 @@ await build({
     bundle: true,
     platform: "node",
     target: "node20",
-    format: "cjs",
-    outfile: "dist/server.cjs",
+    format: "esm",
+    outfile: "dist/server.js",
     sourcemap: true,
     external: [
         // Core framework
