@@ -43,7 +43,7 @@ export async function registerRoutes(
         cache.set(cacheKey, products, 300); // Cache for 5 minutes
       }
 
-      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(products);
     } catch (error) {
       console.error("Error fetching products for grid:", error);
@@ -62,7 +62,7 @@ export async function registerRoutes(
         cache.set(cacheKey, products, 120); // Cache for 2 minutes
       }
 
-      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -87,7 +87,7 @@ export async function registerRoutes(
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
-      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(product);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch product" });
@@ -100,7 +100,7 @@ export async function registerRoutes(
       const id = parseInt(req.params.id);
       const limit = parseInt(req.query.limit as string) || 4;
       const relatedProducts = await storage.getRelatedProducts(id, limit);
-      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(relatedProducts);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch related products" });
