@@ -3,46 +3,17 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertProductSchema } from "@shared/schema";
 import sharp from "sharp";
-import { cache } from "./cache";
 
-// Pre-warm cache with all products for instant detail loading
-async function warmupCache() {
-  try {
-    console.log("Warming up product cache...");
-    const products = await storage.getProducts();
-    products.forEach(product => {
-      cache.set(`product:${product.id}`, product, 600); // 10 minutes
-    });
-    cache.set('products:all', products, 300); // 5 minutes
-
-    const gridProducts = await storage.getProductsForGrid();
-    cache.set('products:grid', gridProducts, 300); // 5 minutes
-
-    console.log(`Cache warmed with ${products.length} products`);
-  } catch (error) {
-    console.error("Cache warmup failed:", error);
-  }
-}
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
 
-  // Warm up cache on startup - await to ensure cache is ready before serving
-  await warmupCache();
-
   // Get all products for grid view (optimized - only essential fields)
   app.get("/api/products/grid", async (req, res) => {
     try {
-      const cacheKey = 'products:grid';
-      let products = cache.get<any[]>(cacheKey);
-
-      if (!products) {
-        products = await storage.getProductsForGrid();
-        cache.set(cacheKey, products, 300); // Cache for 5 minutes
-      }
-
+      const products = await storage.getProductsForGrid();
       res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(products);
     } catch (error) {
@@ -54,14 +25,7 @@ export async function registerRoutes(
   // Get all products (full data - for admin)
   app.get("/api/products", async (req, res) => {
     try {
-      const cacheKey = 'products:all';
-      let products = cache.get<any[]>(cacheKey);
-
-      if (!products) {
-        products = await storage.getProducts();
-        cache.set(cacheKey, products, 120); // Cache for 2 minutes
-      }
-
+      const products = await storage.getProducts();
       res.set('Cache-Control', 'no-cache, must-revalidate');
       res.json(products);
     } catch (error) {
@@ -70,20 +34,11 @@ export async function registerRoutes(
     }
   });
 
-  // Get single product (with caching)
+  // Get single product
   app.get("/api/products/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const cacheKey = `product:${id}`;
-      let product = cache.get<any>(cacheKey);
-
-      if (!product) {
-        product = await storage.getProduct(id);
-        if (product) {
-          cache.set(cacheKey, product, 300); // Cache for 5 minutes
-        }
-      }
-
+      const product = await storage.getProduct(id);
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
@@ -115,7 +70,6 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Invalid product data", details: parsed.error });
       }
       const product = await storage.createProduct(parsed.data);
-      cache.invalidatePattern('^products:'); // Invalidate all product caches
       res.status(201).json(product);
     } catch (error) {
       res.status(500).json({ error: "Failed to create product" });
@@ -134,7 +88,6 @@ export async function registerRoutes(
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
-      cache.invalidatePattern('^products:'); // Invalidate all product caches
       res.json(product);
     } catch (error) {
       res.status(500).json({ error: "Failed to update product" });
@@ -149,7 +102,6 @@ export async function registerRoutes(
       if (!success) {
         return res.status(404).json({ error: "Product not found" });
       }
-      cache.invalidatePattern('^products:'); // Invalidate all product caches
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete product" });
@@ -173,7 +125,6 @@ export async function registerRoutes(
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
-      cache.invalidatePattern('^products:'); // Invalidate all product caches
       res.json(product);
     } catch (error) {
       console.error("Failed to update product:", error);
