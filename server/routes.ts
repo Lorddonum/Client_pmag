@@ -145,8 +145,10 @@ export async function registerRoutes(
   // Upload image to disk — saves WebP file, returns { url }
   app.post("/api/upload-image", async (req, res) => {
     try {
+      console.log(`[Upload Image] Received request: body size = ${req.body?.image?.length} chars`);
       const { image, maxWidth = 800, quality = 70 } = req.body;
       if (!image || typeof image !== 'string') {
+        console.error(`[Upload Image] No valid image provided. req.body keys = ${Object.keys(req.body)}`);
         return res.status(400).json({ error: "No image provided" });
       }
       const matches = image.match(/^data:image\/(\w+);base64,(.+)$/);

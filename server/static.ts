@@ -4,11 +4,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // Proper ESM-compatible __dirname (works in both tsx dev and compiled ESM output)
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+let _dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 export function serveStatic(app: Express) {
   // In production, dist/server.js and dist/public/ are siblings
-  const distPath = path.resolve(__dirname, "public");
+  const distPath = path.resolve(_dirname, "public");
   if (!fs.existsSync(distPath)) {
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
@@ -37,7 +37,7 @@ export function serveStatic(app: Express) {
   }));
 
   // Serve user-uploaded images from /uploads/ (persists across deployments)
-  const uploadsPath = path.resolve(__dirname, "..", "uploads");
+  const uploadsPath = path.resolve(_dirname, "..", "uploads");
   if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath, { recursive: true });
   }
