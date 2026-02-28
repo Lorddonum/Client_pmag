@@ -476,6 +476,51 @@ function HonorsSlideshow() {
   );
 }
 
+function ShippingSlideshow() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const images = [
+    "/about/shipping/1.webp",
+    "/about/shipping/2.webp",
+    "/about/shipping/3.webp",
+    "/about/shipping/4.webp",
+    "/about/shipping/5.webp",
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-gray-100 bg-white">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={currentSlide}
+          src={images[currentSlide]}
+          alt={`Shipping Operation ${currentSlide + 1}`}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </AnimatePresence>
+      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-10">
+        {images.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentSlide(idx)}
+            className={`transition-all duration-300 rounded-full h-1.5 ${idx === currentSlide ? "w-6 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
+              }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useFramerInView(sectionRef, { amount: 0.5 });
@@ -1754,12 +1799,7 @@ export default function About() {
                 className="relative"
               >
                 <div className="absolute -inset-4 bg-gradient-to-br from-[#00A8E8]/20 to-[#ECAA00]/20 rounded-3xl blur-2xl" />
-                <div className="relative bg-white rounded-2xl p-12 shadow-xl border border-gray-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <Truck className="w-24 h-24 text-[#00A8E8]/30 mx-auto mb-4" />
-                    <p className="text-gray-500 text-sm">Global logistics network</p>
-                  </div>
-                </div>
+                <ShippingSlideshow />
               </motion.div>
             </div>
           </div>
