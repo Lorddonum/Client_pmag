@@ -1483,7 +1483,7 @@ export default function About() {
                 </div>
 
                 {/* Team Member Slider */}
-                <div className="mt-5">
+                <div className="mt-5 -ml-4 lg:-ml-8">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setTeamIndex((prev) => (prev === 0 ? teamMembers.length - 2 : prev - 2))}
