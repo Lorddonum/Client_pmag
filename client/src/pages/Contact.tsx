@@ -52,19 +52,25 @@ export default function Contact() {
 
   return (
     <div className={`min-h-screen relative transition-colors duration-1000 ${isLit ? 'bg-transparent text-gray-900' : 'bg-gray-950 text-white'} ${!isLit ? 'overflow-hidden h-screen' : ''}`}>
-      {/* Stylized hotel background that fades in when lit */}
-      <div className={`fixed inset-0 z-0 pointer-events-none transition-all duration-1500 ease-in-out ${isLit ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Stylized hotel background - always visible, tint changes on state */}
+      <div className="fixed inset-0 z-0 pointer-events-none transition-all duration-1500 ease-in-out opacity-100">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-out"
           style={{
             backgroundImage: 'url(/gallery/five-star-hotel.webp)',
-            transform: isLit ? 'scale(1)' : 'scale(1.05)'
+            transform: isLit ? 'scale(1)' : 'scale(1.05)',
+            filter: isLit ? 'brightness(1)' : 'brightness(0.6)'
           }}
         />
-        {/* Premium warm glass overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#EDE4D3]/90 via-[#FAF7F2]/85 to-[#E8DCB8]/90 backdrop-blur-[6px]" />
+        {/* Dynamic Overlay: Dark/moody when unlit, bright/warm when lit */}
+        <div
+          className={`absolute inset-0 transition-all duration-1500 backdrop-blur-[6px] ${isLit
+              ? 'bg-gradient-to-br from-[#EDE4D3]/90 via-[#FAF7F2]/85 to-[#E8DCB8]/90'
+              : 'bg-gray-950/80'
+            }`}
+        />
         {/* Subtle vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.1)_100%)]" />
+        <div className={`absolute inset-0 transition-opacity duration-1500 ${isLit ? 'opacity-100' : 'opacity-50'} bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.1)_100%)]`} />
       </div>
 
       <div className="relative z-10">
