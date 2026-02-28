@@ -32,40 +32,48 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
     const scrollContainer = document.querySelector('.snap-y');
     if (!scrollContainer) return;
 
-    const checkSection = () => {
-      const sections = scrollContainer.querySelectorAll('section.snap-start, div.snap-start');
+    const checkSectionIndex = (index: number) => {
+      if (location === '/') {
+        setIsLightSection(index === 1 || index === 2 || index === 3);
+        setIsFooterSection(index === 4 || index === 5);
+        setHasNavBg(false);
+      } else if (location === '/about') {
+        setIsLightSection((index >= 1 && index <= 5) || index === 6 || index === 9);
+        setIsFooterSection(index === 10);
+        setHasNavBg(index === 5);
+      }
+    };
 
-      sections.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 100 && rect.bottom > 100) {
-          if (location === '/') {
-            setIsLightSection(index === 1 || index === 2 || index === 3);
-            setIsFooterSection(index === 4 || index === 5);
-            setHasNavBg(false);
-          } else if (location === '/about') {
-            // 0: Hero (dark) → white
-            // 1: Video (white) → dark
-            // 2: Dev Journey (light) → dark
-            // 3: Chairman (light) → dark
-            // 4: CEO (light) → dark
-            // 5: Core Team (split) → dark + bg
-            // 6: Showcase (beige) → white
-            // 7: Certifications (dark) → white
-            // 8: Exhibitions (dark) → white
-            // 9: Global Delivery (light) → dark
-            // 10: Footer (dark) → white
-            setIsLightSection((index >= 1 && index <= 5) || index === 9);
-            setIsFooterSection(false);
-            setHasNavBg(index === 5);
+    const sections = scrollContainer.querySelectorAll('section.snap-start, div.snap-start');
+
+    // For initial load, fall back to manual rect check
+    sections.forEach((section, index) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+        checkSectionIndex(index);
+      }
+    });
+
+    // Use IntersectionObserver for highly reliable scroll tracking, especially in snap containers
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = Array.from(sections).indexOf(entry.target);
+          if (index !== -1) {
+            checkSectionIndex(index);
           }
         }
       });
+    }, {
+      root: scrollContainer,
+      threshold: 0.5 // Triggers when a section is at least 50% visible (perfect for snapping)
+    });
+
+    sections.forEach(section => observer.observe(section));
+
+    return () => {
+      observer.disconnect();
     };
-
-    scrollContainer.addEventListener('scroll', checkSection);
-    checkSection();
-
-    return () => scrollContainer.removeEventListener('scroll', checkSection);
   }, [location]);
 
   const isSnapPage = location === '/' || location === '/about';
