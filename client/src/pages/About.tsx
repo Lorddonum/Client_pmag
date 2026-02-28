@@ -1508,12 +1508,12 @@ export default function About() {
                               className="flex items-center gap-3 cursor-pointer group"
                               onClick={() => setSelectedTeamMember(member)}
                             >
-                              <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-[#00A8E8] transition-all duration-300">
+                              <div className="w-36 h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-[#00A8E8] transition-all duration-300">
                                 <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                               </div>
                               <div className="min-w-0">
-                                <p className="font-semibold text-gray-900 text-lg md:text-xl truncate">{member.name}</p>
-                                <p className="text-sm md:text-base text-[#00A8E8] truncate font-medium">{member.role}</p>
+                                <p className="font-semibold text-gray-900 text-base lg:text-lg truncate">{member.name}</p>
+                                <p className="text-sm text-[#00A8E8] truncate font-medium">{member.role}</p>
                               </div>
                             </motion.div>
                           );
