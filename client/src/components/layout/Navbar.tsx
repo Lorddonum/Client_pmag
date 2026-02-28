@@ -28,13 +28,13 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
       setHasNavBg(false);
       return;
     }
-    
+
     const scrollContainer = document.querySelector('.snap-y');
     if (!scrollContainer) return;
 
     const checkSection = () => {
       const sections = scrollContainer.querySelectorAll('section.snap-start, div.snap-start');
-      
+
       sections.forEach((section, index) => {
         const rect = section.getBoundingClientRect();
         if (rect.top <= 100 && rect.bottom > 100) {
@@ -64,12 +64,13 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
 
     scrollContainer.addEventListener('scroll', checkSection);
     checkSection();
-    
+
     return () => scrollContainer.removeEventListener('scroll', checkSection);
   }, [location]);
 
+  const isSnapPage = location === '/' || location === '/about';
   const isProductsPage = location === '/products' || location.startsWith('/products/');
-  const useDarkText = (darkText || isLightSection || scrolled || isProductsPage) && !isFooterSection;
+  const useDarkText = (darkText || isLightSection || (!isSnapPage && scrolled) || isProductsPage) && !isFooterSection;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -90,7 +91,7 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
             ? "bg-white/95 backdrop-blur-md shadow-sm"
             : isProductsPage
               ? "bg-white shadow-sm"
-              : scrolled
+              : (!isSnapPage && scrolled)
                 ? "bg-white/95 backdrop-blur-md shadow-sm"
                 : "bg-transparent",
       )}
@@ -103,25 +104,25 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
             className="flex items-center hover:opacity-80 transition-opacity duration-300 relative"
           >
             <div className="relative h-10 lg:h-12 w-[200px] lg:w-[260px]">
-              <img 
-                src={logoWhite} 
-                alt="Paralight & Maglinear Lighting" 
+              <img
+                src={logoWhite}
+                alt="Paralight & Maglinear Lighting"
                 className={cn(
                   "absolute inset-0 h-full w-full object-contain object-left transition-opacity duration-200",
                   useDarkText ? "opacity-0" : "opacity-100"
-                )} 
+                )}
               />
-              <img 
-                src={logoBlack} 
-                alt="Paralight & Maglinear Lighting" 
+              <img
+                src={logoBlack}
+                alt="Paralight & Maglinear Lighting"
                 className={cn(
                   "absolute inset-0 h-full w-full object-contain object-left transition-opacity duration-200",
                   useDarkText ? "opacity-100" : "opacity-0"
-                )} 
+                )}
               />
             </div>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
@@ -132,8 +133,8 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
                   "relative text-sm font-medium tracking-wide transition-colors duration-300",
                   location === link.href
                     ? useDarkText ? "text-brand-cyan" : "text-white"
-                    : useDarkText 
-                      ? "text-gray-600 hover:text-gray-900" 
+                    : useDarkText
+                      ? "text-gray-600 hover:text-gray-900"
                       : "text-white/90 hover:text-white",
                 )}
               >
