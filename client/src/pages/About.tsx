@@ -1359,7 +1359,7 @@ export default function About() {
               }}
             />
             <div className="relative z-10">
-              <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[#00A8E8]/10 text-[#00A8E8] mb-4 uppercase tracking-widest">{executives[0].role}</span>
+              <span className="inline-block px-6 py-2 rounded-full text-lg lg:text-xl font-bold bg-[#00A8E8]/10 text-[#00A8E8] mb-4 uppercase tracking-widest">{executives[0].role}</span>
               <h2 className="text-3xl lg:text-5xl font-display font-bold text-gray-900 mb-3">{executives[0].name}</h2>
               <p className="text-base lg:text-lg text-gray-500 font-light italic mb-6">"{executives[0].tagline}"</p>
               <p className="text-sm text-[#00A8E8] font-medium mb-4">{executives[0].subtitle}</p>
@@ -1382,7 +1382,7 @@ export default function About() {
               }}
             />
             <div className="relative z-10">
-              <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-[#ECAA00]/10 text-[#ECAA00] mb-4 uppercase tracking-widest">{executives[1].role}</span>
+              <span className="inline-block px-6 py-2 rounded-full text-lg lg:text-xl font-bold bg-[#ECAA00]/10 text-[#ECAA00] mb-4 uppercase tracking-widest">{executives[1].role}</span>
               <h2 className="text-3xl lg:text-5xl font-display font-bold text-gray-900 mb-3">{executives[1].name}</h2>
               <p className="text-base lg:text-lg text-gray-500 font-light italic mb-6">"{executives[1].tagline}"</p>
               <p className="text-sm text-[#ECAA00] font-medium mb-4">{executives[1].subtitle}</p>
