@@ -125,7 +125,6 @@ export default function Admin() {
     bluetoothVersion: "",
     adjustableAngle: "",
     technicalSpecs: "",
-    hotSelling: false
   });
 
   const availableSeries = useMemo(() => {
@@ -292,6 +291,10 @@ export default function Admin() {
           await fetchProducts();
           resetForm();
           alert("Product added successfully!");
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          console.error("Creation failed:", errorData);
+          alert(`Creation failed: ${errorData.error || 'Unknown error'}`);
         }
       }
     } catch (error) {
@@ -702,10 +705,7 @@ export default function Admin() {
                       <label className="flex items-center gap-3 mt-3 cursor-pointer group">
                         <input
                           type="checkbox"
-                          data-testid="checkbox-hot-selling"
-                          checked={formData.hotSelling}
-                          onChange={(e) => setFormData({ ...formData, hotSelling: e.target.checked })}
-                          className="w-4 h-4 rounded border-gray-300 text-[#00A8E8] focus:ring-[#00A8E8]/20 cursor-pointer"
+                          className="w-4 h-4 text-[#00A8E8] rounded border-gray-300 focus:ring-[#00A8E8]"
                         />
                         <span className="text-xs font-bold uppercase tracking-widest text-orange-500 group-hover:text-orange-600 transition-colors">Hot Selling</span>
                       </label>
@@ -1601,10 +1601,10 @@ export default function Admin() {
                             type="button"
                             onClick={() => setAdminBrandFilter(brand)}
                             className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${adminBrandFilter === brand
-                                ? brand === "Paralight" ? 'bg-[#00A8E8] text-white'
-                                  : brand === "Maglinear" ? 'bg-[#ECAA00] text-white'
-                                    : 'bg-gray-800 text-white'
-                                : 'bg-white text-gray-600 hover:bg-gray-100'
+                              ? brand === "Paralight" ? 'bg-[#00A8E8] text-white'
+                                : brand === "Maglinear" ? 'bg-[#ECAA00] text-white'
+                                  : 'bg-gray-800 text-white'
+                              : 'bg-white text-gray-600 hover:bg-gray-100'
                               }`}
                           >
                             {brand === "Maglinear" ? "Maglinear Lighting" : brand}
