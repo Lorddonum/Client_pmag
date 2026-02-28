@@ -65,8 +65,8 @@ export default function Contact() {
         {/* Dynamic Overlay: Dark/moody when unlit, bright/warm when lit */}
         <div
           className={`absolute inset-0 transition-all duration-1500 backdrop-blur-[6px] ${isLit
-              ? 'bg-gradient-to-br from-[#EDE4D3]/90 via-[#FAF7F2]/85 to-[#E8DCB8]/90'
-              : 'bg-gray-950/80'
+            ? 'bg-gradient-to-br from-[#EDE4D3]/90 via-[#FAF7F2]/85 to-[#E8DCB8]/90'
+            : 'bg-gray-950/80'
             }`}
         />
         {/* Subtle vignette */}
@@ -74,7 +74,7 @@ export default function Contact() {
       </div>
 
       <div className="relative z-10">
-        <Navbar />
+        <Navbar darkText={isLit} />
 
         {/* Hero Section - Animates away when lit */}
         <AnimatePresence>
