@@ -79,8 +79,9 @@ export async function registerRoutes(
       }
       const product = await storage.createProduct(parsed.data);
       res.status(201).json(product);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to create product" });
+    } catch (error: any) {
+      console.error("Failed to create product DB error:", error);
+      res.status(500).json({ error: `Failed to create product: ${error.message || String(error)}` });
     }
   });
 
