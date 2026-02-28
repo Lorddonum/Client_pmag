@@ -29,9 +29,6 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
       return;
     }
 
-    const scrollContainer = document.querySelector('.snap-y');
-    if (!scrollContainer) return;
-
     const checkSectionIndex = (index: number) => {
       if (location === '/') {
         setIsLightSection(index === 1 || index === 2 || index === 3);
@@ -44,36 +41,26 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
       }
     };
 
-    const sections = scrollContainer.querySelectorAll('section.snap-start, div.snap-start');
+    const scrollContainer = document.querySelector('.snap-y');
+    if (!scrollContainer) return;
 
-    // For initial load, fall back to manual rect check
-    sections.forEach((section, index) => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-        checkSectionIndex(index);
-      }
-    });
+    const checkSection = () => {
+      const sections = scrollContainer.querySelectorAll('section.snap-start, div.snap-start');
 
-    // Use IntersectionObserver for highly reliable scroll tracking, especially in snap containers
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const index = Array.from(sections).indexOf(entry.target);
-          if (index !== -1) {
-            checkSectionIndex(index);
-          }
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        // The original bulletproof logic: when a section snaps, its rect.top is 0. 
+        // This threshold catches it perfectly as it slides into the top area.
+        if (rect.top <= 100 && rect.bottom > 100) {
+          checkSectionIndex(index);
         }
       });
-    }, {
-      root: scrollContainer,
-      threshold: 0.5 // Triggers when a section is at least 50% visible (perfect for snapping)
-    });
-
-    sections.forEach(section => observer.observe(section));
-
-    return () => {
-      observer.disconnect();
     };
+
+    scrollContainer.addEventListener('scroll', checkSection, { passive: true });
+    checkSection(); // Initial check
+
+    return () => scrollContainer.removeEventListener('scroll', checkSection);
   }, [location]);
 
   const isSnapPage = location === '/' || location === '/about';
