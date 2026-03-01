@@ -1458,7 +1458,7 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
             </motion.div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
+            <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12 pb-48 lg:pb-52">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1533,28 +1533,30 @@ export default function About() {
           </div>
         </div>
 
-        {/* Team Défilé Strip — spans the full bottom across both columns */}
-        <div className="absolute bottom-0 left-0 right-0 h-36 overflow-hidden z-10">
-          {/* Grad fade left (dark) */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a1628] to-transparent z-10 pointer-events-none" />
-          {/* Grad fade right (light) */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+        {/* Team Défilé Strip — full width with background, bigger avatars, ~4 visible */}
+        <div className="absolute bottom-0 left-0 right-0 h-44 z-10 overflow-hidden">
+          {/* Solid background: dark on left fades to warm cream on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628] via-[#0a1628]/90 to-[#EDE4D3]" />
 
-          {/* Continuously scrolling track — duplicate members to create seamless loop */}
+          {/* Gradient edge fades to soften entry/exit */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0a1628] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#EDE4D3] to-transparent z-10 pointer-events-none" />
+
+          {/* Scrolling track — avatar sized so exactly ~4 fit across half the screen */}
           <div
-            className="flex items-end h-full w-max"
-            style={{ animation: 'teamDefileScroll 28s linear infinite' }}
+            className="relative flex items-center h-full w-max"
+            style={{ animation: 'teamDefileScroll 24s linear infinite' }}
           >
             {[...teamMembers, ...teamMembers, ...teamMembers].map((member, idx) => (
               <div
                 key={idx}
-                className="flex-shrink-0 flex flex-col items-center cursor-pointer group px-3 pb-2"
+                className="flex-shrink-0 flex flex-col items-center cursor-pointer group px-4"
                 onClick={() => setSelectedTeamMember(member)}
               >
-                <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/30 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-lg group-hover:scale-110">
+                <div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-white/30 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-xl group-hover:scale-110">
                   <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                 </div>
-                <p className="text-[10px] font-semibold text-white/80 mt-1 bg-[#0a1628]/60 px-2 py-0.5 rounded-full whitespace-nowrap backdrop-blur-sm">
+                <p className="text-[11px] font-semibold text-white/90 mt-2 whitespace-nowrap">
                   {member.name}
                 </p>
               </div>
