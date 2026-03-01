@@ -86,9 +86,11 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
             ? "bg-white/95 backdrop-blur-md shadow-sm"
             : isProductsPage
               ? "bg-white shadow-sm"
-              : (!isSnapPage && scrolled)
+              : (darkText && !isSnapPage)
                 ? "bg-white/95 backdrop-blur-md shadow-sm"
-                : "bg-transparent",
+                : (!isSnapPage && scrolled)
+                  ? "bg-white/95 backdrop-blur-md shadow-sm"
+                  : "bg-transparent",
       )}
     >
       <div className="container mx-auto px-8 lg:px-12">
