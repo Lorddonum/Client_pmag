@@ -521,6 +521,83 @@ function ShippingSlideshow() {
   );
 }
 
+function TeamStrip({
+  teamMembers,
+  onSelect,
+}: {
+  teamMembers: { name: string; role: string; image: string }[];
+  onSelect: (m: { name: string; role: string; image: string }) => void;
+}) {
+  const [page, setPage] = useState(0);
+  const [dir, setDir] = useState(1);
+  const perPage = 3;
+  const totalPages = Math.ceil(teamMembers.length / perPage);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setDir(1);
+      setPage((p) => (p + 1) % totalPages);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [totalPages]);
+
+  const visible = Array.from({ length: perPage }, (_, i) =>
+    teamMembers[(page * perPage + i) % teamMembers.length]
+  );
+
+  return (
+    <div
+      className="absolute bottom-0 left-0 right-0 h-44 z-10 overflow-hidden"
+      style={{ backgroundColor: '#0a1628' }}
+    >
+      <AnimatePresence mode="wait" custom={dir}>
+        <motion.div
+          key={page}
+          custom={dir}
+          initial={{ x: dir * 60, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: dir * -60, opacity: 0 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          className="flex items-center justify-center h-full gap-0 px-6"
+        >
+          {visible.map((member, i) => (
+            <div key={i} className="flex items-center">
+              {/* Member card */}
+              <div
+                className="flex items-center gap-4 cursor-pointer group px-6"
+                onClick={() => onSelect(member)}
+              >
+                <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/20 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-lg flex-shrink-0">
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm leading-tight">{member.name}</p>
+                  <p className="text-[#00A8E8] text-xs mt-0.5">{member.role}</p>
+                </div>
+              </div>
+              {/* Separator between items, not after the last */}
+              {i < perPage - 1 && (
+                <span className="text-white/20 text-2xl font-light select-none">/</span>
+              )}
+            </div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
+        {Array.from({ length: totalPages }).map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setDir(i > page ? 1 : -1); setPage(i); }}
+            className={`h-1 rounded-full transition-all duration-300 ${i === page ? 'w-5 bg-[#00A8E8]' : 'w-1.5 bg-white/20'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ShowcaseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useFramerInView(sectionRef, { amount: 0.5 });
@@ -1533,43 +1610,8 @@ export default function About() {
           </div>
         </div>
 
-        {/* Team Défilé Strip — full width with background, bigger avatars, ~4 visible */}
-        <div className="absolute bottom-0 left-0 right-0 h-44 z-10 overflow-hidden">
-          {/* Solid background: dark on left fades to warm cream on right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628] via-[#0a1628]/90 to-[#EDE4D3]" />
-
-          {/* Gradient edge fades to soften entry/exit */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0a1628] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#EDE4D3] to-transparent z-10 pointer-events-none" />
-
-          {/* Scrolling track — avatar sized so exactly ~4 fit across half the screen */}
-          <div
-            className="relative flex items-center h-full w-max"
-            style={{ animation: 'teamDefileScroll 24s linear infinite' }}
-          >
-            {[...teamMembers, ...teamMembers, ...teamMembers].map((member, idx) => (
-              <div
-                key={idx}
-                className="flex-shrink-0 flex flex-col items-center cursor-pointer group px-4"
-                onClick={() => setSelectedTeamMember(member)}
-              >
-                <div className="w-28 h-28 rounded-full overflow-hidden ring-2 ring-white/30 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-xl group-hover:scale-110">
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                </div>
-                <p className="text-[11px] font-semibold text-white/90 mt-2 whitespace-nowrap">
-                  {member.name}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <style>{`
-            @keyframes teamDefileScroll {
-              from { transform: translateX(0); }
-              to   { transform: translateX(calc(-100% / 3)); }
-            }
-          `}</style>
-        </div>
+        {/* Team Strip — 3 members visible, auto-slides every 4s */}
+        <TeamStrip teamMembers={teamMembers} onSelect={setSelectedTeamMember} />
 
         <AnimatePresence>
           {selectedTeamMember && (
