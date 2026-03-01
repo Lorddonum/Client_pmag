@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, json } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -74,7 +74,28 @@ export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
 });
 
+// ── Analytics ─────────────────────────────────────────────────────────────────
+
+export const pageViews = pgTable("page_views", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id"),          // null = non-product page
+  productName: text("product_name"),
+  page: text("page").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+});
+
+export const visitorEvents = pgTable("visitor_events", {
+  id: serial("id").primaryKey(),
+  country: text("country"),
+  city: text("city"),
+  ip: text("ip"),
+  page: text("page").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Product = typeof products.$inferSelect;
+export type PageView = typeof pageViews.$inferSelect;
+export type VisitorEvent = typeof visitorEvents.$inferSelect;

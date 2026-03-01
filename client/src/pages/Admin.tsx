@@ -1,9 +1,10 @@
-import { useState, useEffect, FormEvent, ChangeEvent, useMemo } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent, useMemo, useCallback } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search, ChevronDown, Check, Copy } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search, ChevronDown, Check, Copy, BarChart2, TrendingUp, Globe, Eye, Users } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { PARALIGHT_SERIES, MAGLINEAR_SERIES, MAGLINEAR_ALL_SERIES, MAGLINEAR_ALL_SUBSERIES } from "@shared/series-config";
 
 const THEME_BG = "bg-[#1a2332]";
@@ -61,6 +62,190 @@ interface Product {
   technicalSpecs?: string | null;
 }
 
+// ── Analytics Dashboard ───────────────────────────────────────────────────────
+
+const PRESET_RANGES = [
+  { label: '7d', days: 7 },
+  { label: '30d', days: 30 },
+  { label: '90d', days: 90 },
+  { label: '1y', days: 365 },
+] as const;
+
+function AnalyticsDashboard() {
+  const [preset, setPreset] = useState<string>('30d');
+  const [productData, setProductData] = useState<{ name: string; views: number }[]>([]);
+  const [geoData, setGeoData] = useState<{
+    countries: { name: string; visitors: number }[];
+    cities: { name: string; visitors: number }[];
+  }>({ countries: [], cities: [] });
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async (days: number) => {
+    setLoading(true);
+    try {
+      const to = new Date().toISOString();
+      const from = new Date(Date.now() - days * 86400000).toISOString();
+      const qs = `from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+      const [pRes, gRes] = await Promise.all([
+        fetch(`/api/analytics/products?${qs}`),
+        fetch(`/api/analytics/geo?${qs}`),
+      ]);
+      if (pRes.ok) setProductData(await pRes.json());
+      if (gRes.ok) setGeoData(await gRes.json());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const days = PRESET_RANGES.find(r => r.label === preset)?.days ?? 30;
+    fetchData(days);
+  }, [preset, fetchData]);
+
+  const totalViews = productData.reduce((s, p) => s + p.views, 0);
+  const totalVisitors = geoData.countries.reduce((s, c) => s + c.visitors, 0);
+  const topProduct = productData[0]?.name ?? '—';
+  const topCountry = geoData.countries[0]?.name ?? '—';
+
+  const BAR_BLUE = '#00A8E8';
+  const BAR_GOLD = '#ECAA00';
+
+  return (
+    <div className="space-y-8">
+      {/* Header + range pills */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Analytics</h2>
+          <p className="text-xs text-gray-500 mt-0.5">Product views &amp; global visitor data</p>
+        </div>
+        <div className="flex gap-2">
+          {PRESET_RANGES.map(r => (
+            <button
+              key={r.label}
+              onClick={() => setPreset(r.label)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${preset === r.label
+                ? 'bg-[#00A8E8] text-white'
+                : 'bg-white border border-gray-200 text-gray-500 hover:border-[#00A8E8] hover:text-[#00A8E8]'
+                }`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Product Views', value: totalViews, icon: Eye, color: '#00A8E8' },
+          { label: 'Total Visitors', value: totalVisitors, icon: Users, color: '#ECAA00' },
+          { label: 'Top Product', value: topProduct, icon: TrendingUp, color: '#10b981' },
+          { label: 'Top Country', value: topCountry, icon: Globe, color: '#8b5cf6' },
+        ].map((card, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: card.color + '18' }}>
+              <card.icon className="w-5 h-5" style={{ color: card.color }} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">{card.label}</p>
+              <p className="text-xl font-bold text-gray-900 mt-0.5 truncate">{loading ? '…' : card.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {loading && (
+        <div className="flex justify-center py-16">
+          <div className="w-8 h-8 border-2 border-[#00A8E8] border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
+      {!loading && (
+        <>
+          {/* Top Products chart */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#00A8E8]" /> Top Products by Views
+            </h3>
+            <p className="text-xs text-gray-400 mb-5">Most opened product detail pages</p>
+            {productData.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-8">No data yet for this period.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={productData} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
+                  <XAxis type="number" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                  <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 11, fill: '#374151' }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{ background: '#1a2332', border: 'none', borderRadius: 8, color: '#fff', fontSize: 12 }}
+                    cursor={{ fill: 'rgba(0,168,232,0.06)' }}
+                    formatter={(v: number) => [`${v} views`, 'Views']}
+                  />
+                  <Bar dataKey="views" radius={[0, 6, 6, 0]} maxBarSize={28}>
+                    {productData.map((_, idx) => (
+                      <Cell key={idx} fill={idx === 0 ? BAR_GOLD : BAR_BLUE} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Geo charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Countries */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-[#ECAA00]" /> Top Countries
+              </h3>
+              <p className="text-xs text-gray-400 mb-5">Visitor count by country</p>
+              {geoData.countries.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-8">No data yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={geoData.countries} margin={{ left: 0, right: 10, top: 0, bottom: 30 }}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#6b7280' }} angle={-35} textAnchor="end" axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: '#1a2332', border: 'none', borderRadius: 8, color: '#fff', fontSize: 12 }}
+                      cursor={{ fill: 'rgba(236,170,0,0.08)' }}
+                      formatter={(v: number) => [`${v} visitors`, 'Visitors']}
+                    />
+                    <Bar dataKey="visitors" radius={[6, 6, 0, 0]} fill={BAR_GOLD} maxBarSize={32} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            {/* Cities */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
+                <BarChart2 className="w-4 h-4 text-[#00A8E8]" /> Top Cities
+              </h3>
+              <p className="text-xs text-gray-400 mb-5">Visitor count by city</p>
+              {geoData.cities.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-8">No data yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={geoData.cities} margin={{ left: 0, right: 10, top: 0, bottom: 30 }}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#6b7280' }} angle={-35} textAnchor="end" axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: '#1a2332', border: 'none', borderRadius: 8, color: '#fff', fontSize: 12 }}
+                      cursor={{ fill: 'rgba(0,168,232,0.08)' }}
+                      formatter={(v: number) => [`${v} visitors`, 'Visitors']}
+                    />
+                    <Bar dataKey="visitors" radius={[6, 6, 0, 0]} fill={BAR_BLUE} maxBarSize={32} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
@@ -76,6 +261,7 @@ export default function Admin() {
   const [subSeriesFilter, setSubSeriesFilter] = useState("");
   const [adminBrandFilter, setAdminBrandFilter] = useState<"All" | "Paralight" | "Maglinear">("All");
   const [adminSeriesFilter, setAdminSeriesFilter] = useState("All");
+  const [activePanel, setActivePanel] = useState<'products' | 'analytics'>('products');
 
   const [formData, setFormData] = useState({
     name: "",
@@ -539,11 +725,17 @@ export default function Admin() {
               </div>
               <div className="space-y-2">
                 <button
-                  onClick={resetForm}
+                  onClick={() => { resetForm(); setActivePanel('products'); }}
                   data-testid="button-add-product"
-                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${!editingId ? 'bg-gradient-to-r from-[#00A8E8] to-[#0090C8] text-white shadow-lg shadow-[#00A8E8]/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-[#00A8E8] hover:text-[#00A8E8]'}`}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${activePanel === 'products' && !editingId ? 'bg-gradient-to-r from-[#00A8E8] to-[#0090C8] text-white shadow-lg shadow-[#00A8E8]/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-[#00A8E8] hover:text-[#00A8E8]'}`}
                 >
                   Add Product <Plus className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setActivePanel('analytics')}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${activePanel === 'analytics' ? 'bg-gradient-to-r from-[#ECAA00] to-[#D4970A] text-white shadow-lg shadow-[#ECAA00]/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-[#ECAA00] hover:text-[#ECAA00]'}`}
+                >
+                  Analytics <BarChart2 className="w-4 h-4" />
                 </button>
                 <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-[#ECAA00] hover:text-[#ECAA00] transition-colors rounded-lg">
                   Product List <Package className="w-4 h-4" />
@@ -558,168 +750,58 @@ export default function Admin() {
               </div>
             </div>
             <div className="flex-1 space-y-12">
-              <section className="bg-white border border-gray-200 rounded-xl p-8 md:p-12 relative shadow-sm">
-                <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-[#00A8E8]/20 -mt-2 -mr-2 pointer-events-none rounded-tr-xl" />
-                <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-xl font-display font-bold uppercase tracking-widest flex items-center gap-4 text-gray-900">
-                    {editingId ? <Edit2 className="w-5 h-5 text-[#ECAA00]" /> : <Plus className="w-5 h-5 text-[#00A8E8]" />}
-                    {editingId ? "Edit Lighting System" : "Add New Lighting System"}
-                  </h3>
-                  {editingId && (
-                    <button onClick={resetForm} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#00A8E8] flex items-center gap-2">
-                      <X className="w-3 h-3" /> Cancel Edit
-                    </button>
-                  )}
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Name *</label>
-                      <input
-                        type="text"
-                        required
-                        data-testid="input-name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model Number *</label>
-                      <input
-                        type="text"
-                        required
-                        data-testid="input-model"
-                        value={formData.modelNumber}
-                        onChange={(e) => setFormData({ ...formData, modelNumber: e.target.value })}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                      />
-                    </div>
+              {activePanel === 'analytics' ? (
+                <AnalyticsDashboard />
+              ) : (<>
+                <section className="bg-white border border-gray-200 rounded-xl p-8 md:p-12 relative shadow-sm">
+                  <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-[#00A8E8]/20 -mt-2 -mr-2 pointer-events-none rounded-tr-xl" />
+                  <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-xl font-display font-bold uppercase tracking-widest flex items-center gap-4 text-gray-900">
+                      {editingId ? <Edit2 className="w-5 h-5 text-[#ECAA00]" /> : <Plus className="w-5 h-5 text-[#00A8E8]" />}
+                      {editingId ? "Edit Lighting System" : "Add New Lighting System"}
+                    </h3>
+                    {editingId && (
+                      <button onClick={resetForm} className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-[#00A8E8] flex items-center gap-2">
+                        <X className="w-3 h-3" /> Cancel Edit
+                      </button>
+                    )}
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series * (Multiple)</label>
-                      <div>
-                        {formData.series.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {formData.series.map((s, idx) => (
-                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#00A8E8]/10 text-[#00A8E8] text-xs rounded-full">
-                                {s}
-                                <button type="button" onClick={() => setFormData({ ...formData, series: formData.series.filter((_, i) => i !== idx) })} className="hover:text-red-500">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <div className="relative">
-                          <input
-                            type="text"
-                            data-testid="input-series"
-                            value={seriesFilter}
-                            onChange={(e) => {
-                              setSeriesFilter(e.target.value);
-                              setShowSeriesDropdown(true);
-                            }}
-                            onFocus={() => setShowSeriesDropdown(true)}
-                            onBlur={() => setTimeout(() => setShowSeriesDropdown(false), 200)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && seriesFilter.trim()) {
-                                e.preventDefault();
-                                if (!formData.series.includes(seriesFilter.trim())) {
-                                  setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
-                                }
-                                setSeriesFilter("");
-                                setShowSeriesDropdown(false);
-                              }
-                            }}
-                            placeholder={formData.series.length === 0 ? "Type and press Enter or select..." : "Add another series..."}
-                            className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowSeriesDropdown(!showSeriesDropdown)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                          >
-                            <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
-                          </button>
-                          {showSeriesDropdown && (
-                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                              {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
-                                <button
-                                  type="button"
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (!formData.series.includes(seriesFilter.trim())) {
-                                      setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
-                                    }
-                                    setSeriesFilter("");
-                                    setShowSeriesDropdown(false);
-                                  }}
-                                  className="w-full px-4 py-2.5 text-left text-sm text-[#00A8E8] hover:bg-[#00A8E8]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  <span>Add "{seriesFilter.trim()}"</span>
-                                </button>
-                              )}
-                              {filteredSeries.length > 0 ? filteredSeries.map((series) => (
-                                <button
-                                  key={series}
-                                  type="button"
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (!formData.series.includes(series)) {
-                                      setFormData({ ...formData, series: [...formData.series, series] });
-                                    }
-                                    setSeriesFilter("");
-                                    setShowSeriesDropdown(false);
-                                  }}
-                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#00A8E8]/10 hover:text-[#00A8E8] flex items-center justify-between transition-colors"
-                                >
-                                  <span>{series}</span>
-                                  {formData.series.includes(series) && <Check className="w-4 h-4 text-[#00A8E8]" />}
-                                </button>
-                              )) : !seriesFilter.trim() && (
-                                <div className="px-4 py-3 text-sm text-gray-500">
-                                  {formData.brand === "Maglinear" ? "Loading series options..." : "Type to add a new series"}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Name *</label>
+                        <input
+                          type="text"
+                          required
+                          data-testid="input-name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model Number *</label>
+                        <input
+                          type="text"
+                          required
+                          data-testid="input-model"
+                          value={formData.modelNumber}
+                          onChange={(e) => setFormData({ ...formData, modelNumber: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
+                        />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
-                      <select
-                        required
-                        data-testid="select-brand"
-                        value={formData.brand}
-                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
-                      >
-                        <option value="Paralight">Paralight</option>
-                        <option value="Maglinear">Maglinear Lighting</option>
-                      </select>
-                      <label className="flex items-center gap-3 mt-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 text-[#00A8E8] rounded border-gray-300 focus:ring-[#00A8E8]"
-                        />
-                        <span className="text-xs font-bold uppercase tracking-widest text-orange-500 group-hover:text-orange-600 transition-colors">Hot Selling</span>
-                      </label>
-                    </div>
-                    {formData.brand === "Maglinear" ? (
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series (Multiple)</label>
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series * (Multiple)</label>
                         <div>
-                          {formData.subSeries.length > 0 && (
+                          {formData.series.length > 0 && (
                             <div className="flex flex-wrap gap-1 mb-2">
-                              {formData.subSeries.map((s, idx) => (
-                                <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#ECAA00]/10 text-[#ECAA00] text-xs rounded-full">
+                              {formData.series.map((s, idx) => (
+                                <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#00A8E8]/10 text-[#00A8E8] text-xs rounded-full">
                                   {s}
-                                  <button type="button" onClick={() => setFormData({ ...formData, subSeries: formData.subSeries.filter((_, i) => i !== idx) })} className="hover:text-red-500">
+                                  <button type="button" onClick={() => setFormData({ ...formData, series: formData.series.filter((_, i) => i !== idx) })} className="hover:text-red-500">
                                     <X className="w-3 h-3" />
                                   </button>
                                 </span>
@@ -729,76 +811,73 @@ export default function Admin() {
                           <div className="relative">
                             <input
                               type="text"
-                              data-testid="input-sub-series"
-                              value={subSeriesFilter}
+                              data-testid="input-series"
+                              value={seriesFilter}
                               onChange={(e) => {
-                                setSubSeriesFilter(e.target.value);
-                                setShowSubSeriesDropdown(true);
+                                setSeriesFilter(e.target.value);
+                                setShowSeriesDropdown(true);
                               }}
-                              onFocus={() => setShowSubSeriesDropdown(true)}
-                              onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
-                              placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
+                              onFocus={() => setShowSeriesDropdown(true)}
+                              onBlur={() => setTimeout(() => setShowSeriesDropdown(false), 200)}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter' && subSeriesFilter.trim()) {
+                                if (e.key === 'Enter' && seriesFilter.trim()) {
                                   e.preventDefault();
-                                  if (!formData.subSeries.includes(subSeriesFilter.trim())) {
-                                    setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
+                                  if (!formData.series.includes(seriesFilter.trim())) {
+                                    setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
                                   }
-                                  setSubSeriesFilter("");
+                                  setSeriesFilter("");
+                                  setShowSeriesDropdown(false);
                                 }
                               }}
-                              className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
+                              placeholder={formData.series.length === 0 ? "Type and press Enter or select..." : "Add another series..."}
+                              className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                             />
                             <button
                               type="button"
-                              onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
+                              onClick={() => setShowSeriesDropdown(!showSeriesDropdown)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                             >
-                              <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
+                              <ChevronDown className={`w-4 h-4 transition-transform ${showSeriesDropdown ? 'rotate-180' : ''}`} />
                             </button>
-                            {showSubSeriesDropdown && (
+                            {showSeriesDropdown && (
                               <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                                {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
+                                {seriesFilter.trim() && !availableSeries.includes(seriesFilter.trim()) && (
                                   <button
                                     type="button"
                                     onMouseDown={(e) => {
                                       e.preventDefault();
-                                      if (!formData.subSeries.includes(subSeriesFilter.trim())) {
-                                        setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
+                                      if (!formData.series.includes(seriesFilter.trim())) {
+                                        setFormData({ ...formData, series: [...formData.series, seriesFilter.trim()] });
                                       }
-                                      setSubSeriesFilter("");
-                                      setShowSubSeriesDropdown(false);
+                                      setSeriesFilter("");
+                                      setShowSeriesDropdown(false);
                                     }}
-                                    className="w-full px-4 py-2.5 text-left text-sm text-[#ECAA00] hover:bg-[#ECAA00]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
+                                    className="w-full px-4 py-2.5 text-left text-sm text-[#00A8E8] hover:bg-[#00A8E8]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
                                   >
                                     <Plus className="w-4 h-4" />
-                                    <span>Add "{subSeriesFilter.trim()}"</span>
+                                    <span>Add "{seriesFilter.trim()}"</span>
                                   </button>
                                 )}
-                                {filteredSubSeries.length > 0 ? filteredSubSeries.map((subSeries) => (
+                                {filteredSeries.length > 0 ? filteredSeries.map((series) => (
                                   <button
-                                    key={subSeries}
+                                    key={series}
                                     type="button"
                                     onMouseDown={(e) => {
                                       e.preventDefault();
-                                      if (!formData.subSeries.includes(subSeries)) {
-                                        setFormData({ ...formData, subSeries: [...formData.subSeries, subSeries] });
+                                      if (!formData.series.includes(series)) {
+                                        setFormData({ ...formData, series: [...formData.series, series] });
                                       }
-                                      setSubSeriesFilter("");
-                                      setShowSubSeriesDropdown(false);
+                                      setSeriesFilter("");
+                                      setShowSeriesDropdown(false);
                                     }}
-                                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#ECAA00]/10 hover:text-[#ECAA00] flex items-center justify-between transition-colors"
+                                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#00A8E8]/10 hover:text-[#00A8E8] flex items-center justify-between transition-colors"
                                   >
-                                    <span>{subSeries}</span>
-                                    {formData.subSeries.includes(subSeries) && <Check className="w-4 h-4 text-[#ECAA00]" />}
+                                    <span>{series}</span>
+                                    {formData.series.includes(series) && <Check className="w-4 h-4 text-[#00A8E8]" />}
                                   </button>
-                                )) : !subSeriesFilter.trim() && (
+                                )) : !seriesFilter.trim() && (
                                   <div className="px-4 py-3 text-sm text-gray-500">
-                                    {formData.brand === "Maglinear" && formData.series.length === 0
-                                      ? "Select a series first to see sub-series options"
-                                      : formData.brand === "Maglinear"
-                                        ? "No sub-series for selected series"
-                                        : "Type to add a new sub-series"}
+                                    {formData.brand === "Maglinear" ? "Loading series options..." : "Type to add a new series"}
                                   </div>
                                 )}
                               </div>
@@ -806,922 +885,1039 @@ export default function Admin() {
                           </div>
                         </div>
                       </div>
-                    ) : null}
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image (Auto-Compressed)</label>
-                      <div className="relative group">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleFileChange(e, 'image')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                        />
-                        <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors min-h-[140px] flex flex-col justify-center items-center ${formData.image ? 'bg-[#00A8E8]/5 border-[#00A8E8]/30' : 'border-gray-300 hover:border-[#00A8E8]'}`}>
-                          {compressing ? (
-                            <div className="py-4">
-                              <div className="w-8 h-8 border-2 border-[#00A8E8] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                              <p className="text-[10px] text-[#00A8E8] font-medium">Compressing image...</p>
-                            </div>
-                          ) : formData.image ? (
-                            <div className="flex items-center gap-4 w-full">
-                              <img
-                                src={formData.image}
-                                alt="Preview"
-                                className="w-20 h-20 object-contain border border-gray-200 rounded-lg bg-white"
-                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              />
-                              <div className="flex-1 text-left">
-                                <p className="text-xs text-green-600 font-medium">Image Ready (Compressed)</p>
-                                <p className="text-[10px] text-gray-500">{Math.round(formData.image.length / 1024)} KB</p>
-                                <button
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
-                                  className="text-[10px] text-red-500 hover:underline mt-1 relative z-30"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="py-4">
-                              <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-[#00A8E8] transition-colors" />
-                              <p className="text-[10px] text-gray-500 group-hover:text-gray-700">Click to upload image</p>
-                              <p className="text-[8px] text-gray-400 mt-1">Images auto-compressed to ~20-50KB</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Catalogue PDF</label>
-                      <div className="relative group">
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={(e) => handleFileChange(e, 'catalogueUrl')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                        />
-                        <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.catalogueUrl ? 'bg-[#ECAA00]/5 border-[#ECAA00]/30' : 'border-gray-300 hover:border-[#ECAA00]'}`}>
-                          {formData.catalogueUrl ? (
-                            <div className="flex flex-col items-center gap-2 text-blue-400">
-                              <FileText className="w-8 h-8 mx-auto mb-2" />
-                              <p className="text-[10px] font-bold uppercase tracking-widest">PDF Ready</p>
-                              <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace PDF</p>
-                            </div>
-                          ) : (
-                            <>
-                              <Upload className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
-                              <p className="text-xs text-gray-500 uppercase tracking-widest">Catalogue PDF</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Additional Product Images</label>
-                    <div className="flex flex-wrap gap-3">
-                      {formData.images.map((img, index) => (
-                        <div key={index} className="relative w-20 h-20 border border-gray-200 rounded-lg group">
-                          <img src={img} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => removeFromArray('images', index)}
-                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                      <div className="relative w-20 h-20 border-2 border-dashed border-gray-300 hover:border-[#00A8E8] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={(e) => handleMultipleFileChange(e, 'images')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <Plus className="w-6 h-6 text-gray-500" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawing (Multiple)</label>
-                    <div className="flex flex-wrap gap-3">
-                      {formData.technicalDrawings.map((drawing, index) => (
-                        <div key={index} className="relative w-24 h-24 border border-amber-500/20 bg-amber-500/5 group">
-                          <img src={drawing} alt={`Drawing ${index + 1}`} className="w-full h-full object-contain p-1" />
-                          <button
-                            type="button"
-                            onClick={() => removeFromArray('technicalDrawings', index)}
-                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                      <div className="relative w-24 h-24 border-2 border-dashed border-gray-300 hover:border-[#ECAA00] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={(e) => handleMultipleFileChange(e, 'technicalDrawings')}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <Ruler className="w-6 h-6 text-gray-500" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Description *</label>
-                    <textarea
-                      required
-                      rows={4}
-                      data-testid="input-description"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors resize-none"
-                    />
-                  </div>
-                  <div className="space-y-6 pt-6 border-t border-gray-200">
-                    <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                      {formData.brand !== "Paralight" && (
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                          <input type="text" value={formData.wattage} onChange={e => setFormData({ ...formData, wattage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
-                        </div>
-                      )}
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
-                        <input type="text" value={formData.application} onChange={e => setFormData({ ...formData, application: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
-                        <input type="text" value={formData.finish} onChange={e => setFormData({ ...formData, finish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
-                        <input type="text" value={formData.material} onChange={e => setFormData({ ...formData, material: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
-                        <input type="text" value={formData.dimensions} onChange={e => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
-                      </div>
-                      {formData.brand !== "Paralight" && (
-                        <>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                            <input type="text" value={formData.voltage} onChange={e => setFormData({ ...formData, voltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
-                          </div>
-                        </>
-                      )}
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
-                        <input type="text" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
-                      </div>
-                      {formData.brand !== "Paralight" && (
-                        <>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                            <input type="text" value={formData.cri} onChange={e => setFormData({ ...formData, cri: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                            <input type="text" value={formData.cct} onChange={e => setFormData({ ...formData, cct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
-                          </div>
-                        </>
-                      )}
-                      <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
-                        <input type="text" value={formData.beamAngle} onChange={e => setFormData({ ...formData, beamAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
-                      </div>
-                      {formData.brand === "Paralight" && (
-                        <>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
-                            <input type="text" value={formData.standardLength} onChange={e => setFormData({ ...formData, standardLength: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Finish</label>
-                            <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({ ...formData, diffuserFinish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
-                            <input type="text" value={formData.diffuserMaterial} onChange={e => setFormData({ ...formData, diffuserMaterial: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. PC/PMMA" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
-                            <input type="text" value={formData.accessories} onChange={e => setFormData({ ...formData, accessories: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End caps, Clips" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
-                            <input type="text" value={formData.ledStripSize} onChange={e => setFormData({ ...formData, ledStripSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 8mm/10mm" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
-                          </div>
-                        </>
-                      )}
-                      {formData.brand === "Maglinear" && (
-                        <>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
-                            <input type="text" value={formData.maglinearName} onChange={e => setFormData({ ...formData, maglinearName: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
-                            <input type="text" value={formData.mountingTrack} onChange={e => setFormData({ ...formData, mountingTrack: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
-                            <input type="text" value={formData.conductionMethod} onChange={e => setFormData({ ...formData, conductionMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
-                            <input type="text" value={formData.inputVoltage} onChange={e => setFormData({ ...formData, inputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
-                            <input type="text" value={formData.outputVoltage} onChange={e => setFormData({ ...formData, outputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
-                            <input type="text" value={formData.wallThickness} onChange={e => setFormData({ ...formData, wallThickness: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
-                            <input type="text" value={formData.cutOutSize} onChange={e => setFormData({ ...formData, cutOutSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">1 CCT</label>
-                            <input type="text" value={formData.oneCct} onChange={e => setFormData({ ...formData, oneCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">3 CCT</label>
-                            <input type="text" value={formData.threeCct} onChange={e => setFormData({ ...formData, threeCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                            <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Surface Mount, Recessed" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
-                            <input type="text" value={formData.protectionRating} onChange={e => setFormData({ ...formData, protectionRating: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
-                            <input type="text" value={formData.bluetoothVersion} onChange={e => setFormData({ ...formData, bluetoothVersion: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Adjustable Angle</label>
-                            <input type="text" value={formData.adjustableAngle} onChange={e => setFormData({ ...formData, adjustableAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                  </div>
-
-                  {/* Additional Specification Rows */}
-                  {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
-                    JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; protectionRating?: string; bluetoothVersion?: string; adjustableAngle?: string }, rowIndex: number) => (
-                      <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs.splice(rowIndex, 1);
-                              setFormData({ ...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : '' });
-                            }}
-                            className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-red-500 hover:bg-red-50 rounded transition-colors"
-                          >
-                            <Trash2 className="w-3 h-3" /> Remove Row
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model</label>
-                            <input type="text" value={specRow.model || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].model = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] font-medium" placeholder="e.g. PL-D60-001" />
-                          </div>
-                          {formData.brand !== "Paralight" && (
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
-                              <input type="text" value={specRow.wattage || ''} onChange={e => {
-                                const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                specs[rowIndex].wattage = e.target.value;
-                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
-                            </div>
-                          )}
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
-                            <input type="text" value={specRow.application || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].application = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
-                            <input type="text" value={specRow.finish || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].finish = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
-                            <input type="text" value={specRow.material || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].material = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
-                            <input type="text" value={specRow.dimensions || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].dimensions = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
-                          </div>
-                          {formData.brand !== "Paralight" && (
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
-                              <input type="text" value={specRow.voltage || ''} onChange={e => {
-                                const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                specs[rowIndex].voltage = e.target.value;
-                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
-                            </div>
-                          )}
-                          <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
-                            <input type="text" value={specRow.color || ''} onChange={e => {
-                              const specs = JSON.parse(formData.technicalSpecs || '[]');
-                              specs[rowIndex].color = e.target.value;
-                              setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                            }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
-                          </div>
-                          {formData.brand !== "Paralight" && (
-                            <>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
-                                <input type="text" value={specRow.cri || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].cri = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
-                                <input type="text" value={specRow.cct || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].cct = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
-                                <input type="text" value={specRow.beamAngle || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].beamAngle = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
-                              </div>
-                            </>
-                          )}
-                          {formData.brand === "Maglinear" && (
-                            <>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
-                                <input type="text" value={specRow.maglinearName || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].maglinearName = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product name" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
-                                <input type="text" value={specRow.mountingTrack || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].mountingTrack = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
-                                <input type="text" value={specRow.conductionMethod || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].conductionMethod = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
-                                <input type="text" value={specRow.inputVoltage || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].inputVoltage = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
-                                <input type="text" value={specRow.outputVoltage || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].outputVoltage = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
-                                <input type="text" value={specRow.wallThickness || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].wallThickness = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
-                                <input type="text" value={specRow.cutOutSize || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].cutOutSize = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">1 CCT</label>
-                                <input type="text" value={specRow.oneCct || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].oneCct = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">3 CCT</label>
-                                <input type="text" value={specRow.threeCct || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].threeCct = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                                <input type="text" value={specRow.installationMethod || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].installationMethod = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Recessed/Surface" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
-                                <input type="text" value={specRow.protectionRating || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].protectionRating = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
-                                <input type="text" value={specRow.bluetoothVersion || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].bluetoothVersion = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Adjustable Angle</label>
-                                <input type="text" value={specRow.adjustableAngle || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].adjustableAngle = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
-                              </div>
-                            </>
-                          )}
-                          {/* Paralight-specific fields in additional rows */}
-                          {formData.brand === "Paralight" && (
-                            <>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
-                                <input type="text" value={specRow.diffuserMaterial || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].diffuserMaterial = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Frosted PC" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
-                                <input type="text" value={specRow.accessories || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].accessories = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End Caps, Mounting Clips" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
-                                <input type="text" value={specRow.ledStripSize || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].ledStripSize = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 10mm, 12mm" />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
-                                <input type="text" value={specRow.installationMethod || ''} onChange={e => {
-                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
-                                  specs[rowIndex].installationMethod = e.target.value;
-                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
-                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-
-                  {/* Add Specification Row Button */}
-                  <div className="pt-4 border-t border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
-                        const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '', oneCct: '', threeCct: '', installationMethod: '' };
-                        setFormData({ ...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow]) });
-                      }}
-                      className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
-                    >
-                      <Plus className="w-4 h-4" /> Add Another Specification Row
-                    </button>
-                  </div>
-
-                  {formData.brand === "Paralight" && (
-                    <div className="space-y-6 pt-6 border-t border-gray-200">
-                      <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Packaging Information</h4>
-                      <div className="space-y-4">
-                        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
-                          <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method A</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
-                              <textarea rows={2} value={formData.packagingMethodADesc} onChange={e => setFormData({ ...formData, packagingMethodADesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are bulk packed together..." />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
-                              <input type="text" value={formData.packagingMethodASpec} onChange={e => setFormData({ ...formData, packagingMethodASpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 2050*190*90" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
-                          <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method B (Additional Fee)</h5>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
-                              <textarea rows={2} value={formData.packagingMethodBDesc} onChange={e => setFormData({ ...formData, packagingMethodBDesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are packed together in individual bags..." />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
-                              <input type="text" value={formData.packagingMethodBSpec} onChange={e => setFormData({ ...formData, packagingMethodBSpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 3150*170*140" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {formData.brand === "Paralight" && (
-                    <div className="space-y-6 pt-6 border-t border-gray-200">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Accessories Specification</h4>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const currentSpec = formData.accessoriesSpec ? JSON.parse(formData.accessoriesSpec) : [];
-                            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                            const regularItems = currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application');
-                            const nextLetter = letters[regularItems.length] || (regularItems.length + 1).toString();
-                            const newSpec = [...currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application'), { no: nextLetter, specification: '', qty: '', remarks: '' }];
-                            const appItem = currentSpec.find((item: { no?: string }) => item.no?.toLowerCase() === 'application');
-                            if (appItem) newSpec.push(appItem);
-                            setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
-                          }}
-                          className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-white bg-[#00A8E8] hover:bg-[#0090c8] rounded transition-colors"
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand *</label>
+                        <select
+                          required
+                          data-testid="select-brand"
+                          value={formData.brand}
+                          onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                          className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors"
                         >
-                          <Plus className="w-3 h-3" /> Add Row
-                        </button>
+                          <option value="Paralight">Paralight</option>
+                          <option value="Maglinear">Maglinear Lighting</option>
+                        </select>
+                        <label className="flex items-center gap-3 mt-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 text-[#00A8E8] rounded border-gray-300 focus:ring-[#00A8E8]"
+                          />
+                          <span className="text-xs font-bold uppercase tracking-widest text-orange-500 group-hover:text-orange-600 transition-colors">Hot Selling</span>
+                        </label>
+                      </div>
+                      {formData.brand === "Maglinear" ? (
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Sub Series (Multiple)</label>
+                          <div>
+                            {formData.subSeries.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {formData.subSeries.map((s, idx) => (
+                                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#ECAA00]/10 text-[#ECAA00] text-xs rounded-full">
+                                    {s}
+                                    <button type="button" onClick={() => setFormData({ ...formData, subSeries: formData.subSeries.filter((_, i) => i !== idx) })} className="hover:text-red-500">
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <div className="relative">
+                              <input
+                                type="text"
+                                data-testid="input-sub-series"
+                                value={subSeriesFilter}
+                                onChange={(e) => {
+                                  setSubSeriesFilter(e.target.value);
+                                  setShowSubSeriesDropdown(true);
+                                }}
+                                onFocus={() => setShowSubSeriesDropdown(true)}
+                                onBlur={() => setTimeout(() => setShowSubSeriesDropdown(false), 200)}
+                                placeholder={formData.subSeries.length === 0 ? "Select or type sub-series..." : "Add another sub-series..."}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && subSeriesFilter.trim()) {
+                                    e.preventDefault();
+                                    if (!formData.subSeries.includes(subSeriesFilter.trim())) {
+                                      setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
+                                    }
+                                    setSubSeriesFilter("");
+                                  }
+                                }}
+                                className="w-full bg-gray-50 border border-gray-200 px-4 py-3 pr-10 text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00] focus:ring-1 focus:ring-[#ECAA00]/20 transition-colors"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowSubSeriesDropdown(!showSubSeriesDropdown)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                              >
+                                <ChevronDown className={`w-4 h-4 transition-transform ${showSubSeriesDropdown ? 'rotate-180' : ''}`} />
+                              </button>
+                              {showSubSeriesDropdown && (
+                                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                  {subSeriesFilter.trim() && !availableSubSeries.includes(subSeriesFilter.trim()) && (
+                                    <button
+                                      type="button"
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        if (!formData.subSeries.includes(subSeriesFilter.trim())) {
+                                          setFormData({ ...formData, subSeries: [...formData.subSeries, subSeriesFilter.trim()] });
+                                        }
+                                        setSubSeriesFilter("");
+                                        setShowSubSeriesDropdown(false);
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-[#ECAA00] hover:bg-[#ECAA00]/10 flex items-center gap-2 transition-colors border-b border-gray-100"
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                      <span>Add "{subSeriesFilter.trim()}"</span>
+                                    </button>
+                                  )}
+                                  {filteredSubSeries.length > 0 ? filteredSubSeries.map((subSeries) => (
+                                    <button
+                                      key={subSeries}
+                                      type="button"
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        if (!formData.subSeries.includes(subSeries)) {
+                                          setFormData({ ...formData, subSeries: [...formData.subSeries, subSeries] });
+                                        }
+                                        setSubSeriesFilter("");
+                                        setShowSubSeriesDropdown(false);
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-[#ECAA00]/10 hover:text-[#ECAA00] flex items-center justify-between transition-colors"
+                                    >
+                                      <span>{subSeries}</span>
+                                      {formData.subSeries.includes(subSeries) && <Check className="w-4 h-4 text-[#ECAA00]" />}
+                                    </button>
+                                  )) : !subSeriesFilter.trim() && (
+                                    <div className="px-4 py-3 text-sm text-gray-500">
+                                      {formData.brand === "Maglinear" && formData.series.length === 0
+                                        ? "Select a series first to see sub-series options"
+                                        : formData.brand === "Maglinear"
+                                          ? "No sub-series for selected series"
+                                          : "Type to add a new sub-series"}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Product Image (Auto-Compressed)</label>
+                        <div className="relative group">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileChange(e, 'image')}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                          />
+                          <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors min-h-[140px] flex flex-col justify-center items-center ${formData.image ? 'bg-[#00A8E8]/5 border-[#00A8E8]/30' : 'border-gray-300 hover:border-[#00A8E8]'}`}>
+                            {compressing ? (
+                              <div className="py-4">
+                                <div className="w-8 h-8 border-2 border-[#00A8E8] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                                <p className="text-[10px] text-[#00A8E8] font-medium">Compressing image...</p>
+                              </div>
+                            ) : formData.image ? (
+                              <div className="flex items-center gap-4 w-full">
+                                <img
+                                  src={formData.image}
+                                  alt="Preview"
+                                  className="w-20 h-20 object-contain border border-gray-200 rounded-lg bg-white"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                />
+                                <div className="flex-1 text-left">
+                                  <p className="text-xs text-green-600 font-medium">Image Ready (Compressed)</p>
+                                  <p className="text-[10px] text-gray-500">{Math.round(formData.image.length / 1024)} KB</p>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
+                                    className="text-[10px] text-red-500 hover:underline mt-1 relative z-30"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="py-4">
+                                <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2 group-hover:text-[#00A8E8] transition-colors" />
+                                <p className="text-[10px] text-gray-500 group-hover:text-gray-700">Click to upload image</p>
+                                <p className="text-[8px] text-gray-400 mt-1">Images auto-compressed to ~20-50KB</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
-                      {(!formData.accessoriesSpec || JSON.parse(formData.accessoriesSpec || '[]').filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application').length === 0) ? (
-                        <div className="p-8 border-2 border-dashed border-gray-200 rounded-lg text-center">
-                          <p className="text-[10px] uppercase tracking-widest text-gray-400">No accessories added yet</p>
-                          <p className="text-[10px] text-gray-400 mt-1">Click "Add Row" to start adding accessories</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 px-2">
-                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">NO.</span>
-                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Specification</span>
-                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">QTY</span>
-                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Remarks</span>
-                            <span></span>
-                          </div>
-                          {JSON.parse(formData.accessoriesSpec || '[]')
-                            .filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application')
-                            .map((item: { no?: string; specification?: string; qty?: string; remarks?: string }, index: number) => (
-                              <div key={index} className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 items-center">
-                                <input
-                                  type="text"
-                                  value={item.no || ''}
-                                  onChange={(e) => {
-                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                    regularItems[index] = { ...regularItems[index], no: e.target.value };
-                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
-                                  }}
-                                  className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center font-medium"
-                                  placeholder="A"
-                                />
-                                <input
-                                  type="text"
-                                  value={item.specification || ''}
-                                  onChange={(e) => {
-                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                    regularItems[index] = { ...regularItems[index], specification: e.target.value };
-                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
-                                  }}
-                                  className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                  placeholder="e.g. Profile"
-                                />
-                                <input
-                                  type="text"
-                                  value={item.qty || ''}
-                                  onChange={(e) => {
-                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                    regularItems[index] = { ...regularItems[index], qty: e.target.value };
-                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
-                                  }}
-                                  className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center"
-                                  placeholder="1"
-                                />
-                                <input
-                                  type="text"
-                                  value={item.remarks || ''}
-                                  onChange={(e) => {
-                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                    regularItems[index] = { ...regularItems[index], remarks: e.target.value };
-                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                    setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
-                                  }}
-                                  className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
-                                  placeholder="e.g. 2M/3M"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                    const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                                    const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                    regularItems.splice(index, 1);
-                                    const newSpec = appItem ? [...regularItems, appItem] : regularItems;
-                                    setFormData({ ...formData, accessoriesSpec: newSpec.length > 0 ? JSON.stringify(newSpec) : '' });
-                                  }}
-                                  className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded transition-colors"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-
-                      <div className="pt-4 border-t border-gray-100">
-                        <div className="space-y-2">
-                          <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Application</label>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Catalogue PDF</label>
+                        <div className="relative group">
                           <input
-                            type="text"
-                            value={(() => {
-                              try {
-                                const spec = JSON.parse(formData.accessoriesSpec || '[]');
-                                const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
-                                return appItem?.specification || '';
-                              } catch { return ''; }
-                            })()}
-                            onChange={(e) => {
-                              let spec = [];
-                              try { spec = JSON.parse(formData.accessoriesSpec || '[]'); } catch { spec = []; }
-                              const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
-                              if (e.target.value) {
-                                regularItems.push({ no: 'Application', specification: e.target.value, qty: '', remarks: '' });
-                              }
-                              setFormData({ ...formData, accessoriesSpec: regularItems.length > 0 ? JSON.stringify(regularItems) : '' });
-                            }}
-                            className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]"
-                            placeholder="e.g. Commercial lighting/Office lighting/Home lighting"
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) => handleFileChange(e, 'catalogueUrl')}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                           />
+                          <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors h-48 flex flex-col justify-center items-center ${formData.catalogueUrl ? 'bg-[#ECAA00]/5 border-[#ECAA00]/30' : 'border-gray-300 hover:border-[#ECAA00]'}`}>
+                            {formData.catalogueUrl ? (
+                              <div className="flex flex-col items-center gap-2 text-blue-400">
+                                <FileText className="w-8 h-8 mx-auto mb-2" />
+                                <p className="text-[10px] font-bold uppercase tracking-widest">PDF Ready</p>
+                                <p className="text-[8px] uppercase tracking-widest text-gray-500 italic">Click to replace PDF</p>
+                              </div>
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-gray-500 mx-auto mb-4 group-hover:text-white transition-colors" />
+                                <p className="text-xs text-gray-500 uppercase tracking-widest">Catalogue PDF</p>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  )}
 
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    data-testid="button-submit"
-                    className="w-full py-5 bg-white text-black font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-gray-200 transition-colors shadow-2xl disabled:opacity-50"
-                  >
-                    {isLoading ? "Saving..." : (editingId ? "Update Product" : "Publish Product")}
-                  </button>
-                </form>
-              </section>
-              <section className="space-y-6">
-                <div className="flex flex-col gap-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">
-                      Live Products
-                      <span className="text-gray-400 font-normal ml-2">
-                        ({products.filter(p =>
-                          (adminBrandFilter === "All" || p.brand === adminBrandFilter) &&
-                          (adminSeriesFilter === "All" || (p.series || []).includes(adminSeriesFilter)) &&
-                          (!adminSearchQuery.trim() ||
-                            p.name.toLowerCase().includes(adminSearchQuery.toLowerCase()) ||
-                            p.modelNumber.toLowerCase().includes(adminSearchQuery.toLowerCase())
-                          )
-                        ).length} of {products.length})
-                      </span>
-                    </h3>
-                  </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Additional Product Images</label>
+                      <div className="flex flex-wrap gap-3">
+                        {formData.images.map((img, index) => (
+                          <div key={index} className="relative w-20 h-20 border border-gray-200 rounded-lg group">
+                            <img src={img} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeFromArray('images', index)}
+                              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                        <div className="relative w-20 h-20 border-2 border-dashed border-gray-300 hover:border-[#00A8E8] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => handleMultipleFileChange(e, 'images')}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          <Plus className="w-6 h-6 text-gray-500" />
+                        </div>
+                      </div>
+                    </div>
 
-                  {/* Filter Bar */}
-                  <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                    {/* Search */}
-                    <div className="relative flex-1 min-w-[200px]">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                      <input
-                        type="text"
-                        placeholder="Search products..."
-                        value={adminSearchQuery}
-                        onChange={(e) => setAdminSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
+                    <div className="space-y-4">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Technical Drawing (Multiple)</label>
+                      <div className="flex flex-wrap gap-3">
+                        {formData.technicalDrawings.map((drawing, index) => (
+                          <div key={index} className="relative w-24 h-24 border border-amber-500/20 bg-amber-500/5 group">
+                            <img src={drawing} alt={`Drawing ${index + 1}`} className="w-full h-full object-contain p-1" />
+                            <button
+                              type="button"
+                              onClick={() => removeFromArray('technicalDrawings', index)}
+                              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                        <div className="relative w-24 h-24 border-2 border-dashed border-gray-300 hover:border-[#ECAA00] transition-colors flex items-center justify-center cursor-pointer rounded-lg">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => handleMultipleFileChange(e, 'technicalDrawings')}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          <Ruler className="w-6 h-6 text-gray-500" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Description *</label>
+                      <textarea
+                        required
+                        rows={4}
+                        data-testid="input-description"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        className="w-full bg-gray-50 border border-gray-200 px-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] focus:ring-1 focus:ring-[#00A8E8]/20 transition-colors resize-none"
                       />
                     </div>
-
-                    {/* Brand Filter */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand:</span>
-                      <div className="flex rounded-lg overflow-hidden border border-gray-200">
-                        {(["All", "Paralight", "Maglinear"] as const).map((brand) => (
-                          <button
-                            key={brand}
-                            type="button"
-                            onClick={() => setAdminBrandFilter(brand)}
-                            className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${adminBrandFilter === brand
-                              ? brand === "Paralight" ? 'bg-[#00A8E8] text-white'
-                                : brand === "Maglinear" ? 'bg-[#ECAA00] text-white'
-                                  : 'bg-gray-800 text-white'
-                              : 'bg-white text-gray-600 hover:bg-gray-100'
-                              }`}
-                          >
-                            {brand === "Maglinear" ? "Maglinear Lighting" : brand}
-                          </button>
-                        ))}
+                    <div className="space-y-6 pt-6 border-t border-gray-200">
+                      <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {formData.brand !== "Paralight" && (
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
+                            <input type="text" value={formData.wattage} onChange={e => setFormData({ ...formData, wattage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
+                          </div>
+                        )}
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
+                          <input type="text" value={formData.application} onChange={e => setFormData({ ...formData, application: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
+                          <input type="text" value={formData.finish} onChange={e => setFormData({ ...formData, finish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
+                          <input type="text" value={formData.material} onChange={e => setFormData({ ...formData, material: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
+                          <input type="text" value={formData.dimensions} onChange={e => setFormData({ ...formData, dimensions: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
+                        </div>
+                        {formData.brand !== "Paralight" && (
+                          <>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
+                              <input type="text" value={formData.voltage} onChange={e => setFormData({ ...formData, voltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
+                            </div>
+                          </>
+                        )}
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
+                          <input type="text" value={formData.color} onChange={e => setFormData({ ...formData, color: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                        </div>
+                        {formData.brand !== "Paralight" && (
+                          <>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
+                              <input type="text" value={formData.cri} onChange={e => setFormData({ ...formData, cri: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
+                              <input type="text" value={formData.cct} onChange={e => setFormData({ ...formData, cct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
+                            </div>
+                          </>
+                        )}
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
+                          <input type="text" value={formData.beamAngle} onChange={e => setFormData({ ...formData, beamAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
+                        </div>
+                        {formData.brand === "Paralight" && (
+                          <>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Standard Length</label>
+                              <input type="text" value={formData.standardLength} onChange={e => setFormData({ ...formData, standardLength: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 2M/3M" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Finish</label>
+                              <input type="text" value={formData.diffuserFinish} onChange={e => setFormData({ ...formData, diffuserFinish: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Opal/Clear" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
+                              <input type="text" value={formData.diffuserMaterial} onChange={e => setFormData({ ...formData, diffuserMaterial: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. PC/PMMA" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
+                              <input type="text" value={formData.accessories} onChange={e => setFormData({ ...formData, accessories: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End caps, Clips" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
+                              <input type="text" value={formData.ledStripSize} onChange={e => setFormData({ ...formData, ledStripSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 8mm/10mm" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
+                              <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
+                            </div>
+                          </>
+                        )}
+                        {formData.brand === "Maglinear" && (
+                          <>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
+                              <input type="text" value={formData.maglinearName} onChange={e => setFormData({ ...formData, maglinearName: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product display name" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
+                              <input type="text" value={formData.mountingTrack} onChange={e => setFormData({ ...formData, mountingTrack: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track, Recessed Track" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
+                              <input type="text" value={formData.conductionMethod} onChange={e => setFormData({ ...formData, conductionMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
+                              <input type="text" value={formData.inputVoltage} onChange={e => setFormData({ ...formData, inputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
+                              <input type="text" value={formData.outputVoltage} onChange={e => setFormData({ ...formData, outputVoltage: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
+                              <input type="text" value={formData.wallThickness} onChange={e => setFormData({ ...formData, wallThickness: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
+                              <input type="text" value={formData.cutOutSize} onChange={e => setFormData({ ...formData, cutOutSize: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">1 CCT</label>
+                              <input type="text" value={formData.oneCct} onChange={e => setFormData({ ...formData, oneCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">3 CCT</label>
+                              <input type="text" value={formData.threeCct} onChange={e => setFormData({ ...formData, threeCct: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
+                              <input type="text" value={formData.installationMethod} onChange={e => setFormData({ ...formData, installationMethod: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Surface Mount, Recessed" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
+                              <input type="text" value={formData.protectionRating} onChange={e => setFormData({ ...formData, protectionRating: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
+                              <input type="text" value={formData.bluetoothVersion} onChange={e => setFormData({ ...formData, bluetoothVersion: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Adjustable Angle</label>
+                              <input type="text" value={formData.adjustableAngle} onChange={e => setFormData({ ...formData, adjustableAngle: e.target.value })} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
+                            </div>
+                          </>
+                        )}
                       </div>
+
                     </div>
 
-                    {/* Series Filter */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series:</span>
-                      <select
-                        value={adminSeriesFilter}
-                        onChange={(e) => setAdminSeriesFilter(e.target.value)}
-                        className="px-3 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] transition-colors"
-                      >
-                        <option value="All">All Series</option>
-                        {existingSeries.map((series) => (
-                          <option key={series} value={series}>{series}</option>
-                        ))}
-                      </select>
-                    </div>
+                    {/* Additional Specification Rows */}
+                    {formData.technicalSpecs && JSON.parse(formData.technicalSpecs || '[]').length > 0 && (
+                      JSON.parse(formData.technicalSpecs || '[]').map((specRow: { model?: string; wattage?: string; application?: string; finish?: string; material?: string; dimensions?: string; voltage?: string; color?: string; cri?: string; cct?: string; beamAngle?: string; mountingTrack?: string; diffuserMaterial?: string; accessories?: string; ledStripSize?: string; installationMethod?: string; conductionMethod?: string; maglinearName?: string; inputVoltage?: string; outputVoltage?: string; wallThickness?: string; cutOutSize?: string; oneCct?: string; threeCct?: string; protectionRating?: string; bluetoothVersion?: string; adjustableAngle?: string }, rowIndex: number) => (
+                        <div key={rowIndex} className="space-y-6 pt-6 border-t border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Technical Specifications Row {rowIndex + 2}</h4>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs.splice(rowIndex, 1);
+                                setFormData({ ...formData, technicalSpecs: specs.length > 0 ? JSON.stringify(specs) : '' });
+                              }}
+                              className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-red-500 hover:bg-red-50 rounded transition-colors"
+                            >
+                              <Trash2 className="w-3 h-3" /> Remove Row
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Model</label>
+                              <input type="text" value={specRow.model || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].model = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] font-medium" placeholder="e.g. PL-D60-001" />
+                            </div>
+                            {formData.brand !== "Paralight" && (
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Wattage</label>
+                                <input type="text" value={specRow.wattage || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].wattage = e.target.value;
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 5W" />
+                              </div>
+                            )}
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Application</label>
+                              <input type="text" value={specRow.application || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].application = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Retail, Office" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Finish</label>
+                              <input type="text" value={specRow.finish || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].finish = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Material</label>
+                              <input type="text" value={specRow.material || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].material = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Aluminum" />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Dimensions</label>
+                              <input type="text" value={specRow.dimensions || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].dimensions = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. D60" />
+                            </div>
+                            {formData.brand !== "Paralight" && (
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Voltage</label>
+                                <input type="text" value={specRow.voltage || ''} onChange={e => {
+                                  const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                  specs[rowIndex].voltage = e.target.value;
+                                  setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. DC24V" />
+                              </div>
+                            )}
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-widest text-gray-500">Color</label>
+                              <input type="text" value={specRow.color || ''} onChange={e => {
+                                const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                specs[rowIndex].color = e.target.value;
+                                setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                              }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Sand White" />
+                            </div>
+                            {formData.brand !== "Paralight" && (
+                              <>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">CRI</label>
+                                  <input type="text" value={specRow.cri || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].cri = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Ra≥90" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">CCT</label>
+                                  <input type="text" value={specRow.cct || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].cct = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 3000K" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Beam Angle</label>
+                                  <input type="text" value={specRow.beamAngle || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].beamAngle = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 270°" />
+                                </div>
+                              </>
+                            )}
+                            {formData.brand === "Maglinear" && (
+                              <>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Name</label>
+                                  <input type="text" value={specRow.maglinearName || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].maglinearName = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Product name" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Mounting Track</label>
+                                  <input type="text" value={specRow.mountingTrack || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].mountingTrack = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Standard Track" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Conduction Method</label>
+                                  <input type="text" value={specRow.conductionMethod || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].conductionMethod = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Magnetic, Direct wire" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Input Voltage</label>
+                                  <input type="text" value={specRow.inputVoltage || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].inputVoltage = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. AC 100-240V" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Output Voltage</label>
+                                  <input type="text" value={specRow.outputVoltage || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].outputVoltage = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. DC 48V" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Wall Thickness</label>
+                                  <input type="text" value={specRow.wallThickness || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].wallThickness = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 1.2mm" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Cut Out Size</label>
+                                  <input type="text" value={specRow.cutOutSize || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].cutOutSize = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 70mm" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">1 CCT</label>
+                                  <input type="text" value={specRow.oneCct || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].oneCct = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 3000K" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">3 CCT</label>
+                                  <input type="text" value={specRow.threeCct || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].threeCct = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 2700K/3000K/4000K" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
+                                  <input type="text" value={specRow.installationMethod || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].installationMethod = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. Recessed/Surface" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Protection Rating</label>
+                                  <input type="text" value={specRow.protectionRating || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].protectionRating = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. IP20, IP44, IP65" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Bluetooth Version</label>
+                                  <input type="text" value={specRow.bluetoothVersion || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].bluetoothVersion = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 5.0, 5.1, 5.2" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Adjustable Angle</label>
+                                  <input type="text" value={specRow.adjustableAngle || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].adjustableAngle = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#ECAA00]" placeholder="e.g. 0-30°, 0-45°, 360°" />
+                                </div>
+                              </>
+                            )}
+                            {/* Paralight-specific fields in additional rows */}
+                            {formData.brand === "Paralight" && (
+                              <>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Diffuser Material</label>
+                                  <input type="text" value={specRow.diffuserMaterial || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].diffuserMaterial = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Frosted PC" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Accessories</label>
+                                  <input type="text" value={specRow.accessories || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].accessories = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. End Caps, Mounting Clips" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">LED Strip Size</label>
+                                  <input type="text" value={specRow.ledStripSize || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].ledStripSize = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 10mm, 12mm" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] uppercase tracking-widest text-gray-500">Installation Method</label>
+                                  <input type="text" value={specRow.installationMethod || ''} onChange={e => {
+                                    const specs = JSON.parse(formData.technicalSpecs || '[]');
+                                    specs[rowIndex].installationMethod = e.target.value;
+                                    setFormData({ ...formData, technicalSpecs: JSON.stringify(specs) });
+                                  }} className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. Recessed/Surface" />
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
 
-                    {/* Clear Filters */}
-                    {(adminSearchQuery || adminBrandFilter !== "All" || adminSeriesFilter !== "All") && (
+                    {/* Add Specification Row Button */}
+                    <div className="pt-4 border-t border-gray-100">
                       <button
                         type="button"
                         onClick={() => {
-                          setAdminSearchQuery("");
-                          setAdminBrandFilter("All");
-                          setAdminSeriesFilter("All");
+                          const currentSpecs = formData.technicalSpecs ? JSON.parse(formData.technicalSpecs) : [];
+                          const newRow = { wattage: '', application: '', finish: '', material: '', dimensions: '', voltage: '', color: '', cri: '', cct: '', beamAngle: '', mountingTrack: '', conductionMethod: '', maglinearName: '', inputVoltage: '', outputVoltage: '', wallThickness: '', cutOutSize: '', oneCct: '', threeCct: '', installationMethod: '' };
+                          setFormData({ ...formData, technicalSpecs: JSON.stringify([...currentSpecs, newRow]) });
                         }}
-                        className="px-3 py-2 text-[10px] uppercase tracking-widest font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-4 py-2.5 text-[10px] uppercase tracking-widest text-[#00A8E8] border border-[#00A8E8] hover:bg-[#00A8E8]/5 rounded-lg transition-colors"
                       >
-                        Clear Filters
+                        <Plus className="w-4 h-4" /> Add Another Specification Row
                       </button>
-                    )}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {products
-                    .filter(product => {
-                      // Brand filter
-                      if (adminBrandFilter !== "All" && product.brand !== adminBrandFilter) return false;
-                      // Series filter
-                      if (adminSeriesFilter !== "All" && !(product.series || []).includes(adminSeriesFilter)) return false;
-                      // Search filter
-                      if (!adminSearchQuery.trim()) return true;
-                      const query = adminSearchQuery.toLowerCase();
-                      return (
-                        product.name.toLowerCase().includes(query) ||
-                        product.modelNumber.toLowerCase().includes(query) ||
-                        product.brand.toLowerCase().includes(query) ||
-                        (product.series || []).some(s => s.toLowerCase().includes(query))
-                      );
-                    })
-                    .map((product) => (
-                      <div key={product.id} data-testid={`product-item-${product.id}`} className={`rounded-xl p-6 flex justify-between items-center group transition-all ${editingId === product.id ? 'bg-[#00A8E8]/5 border-2 border-[#00A8E8] shadow-lg shadow-[#00A8E8]/10' : 'bg-white border border-gray-200 hover:border-[#00A8E8]/50 hover:shadow-md'}`}>
-                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
-                            {product.image ? (
-                              <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
-                            ) : (
-                              <Package className="w-6 h-6 text-gray-300" />
-                            )}
+                    </div>
+
+                    {formData.brand === "Paralight" && (
+                      <div className="space-y-6 pt-6 border-t border-gray-200">
+                        <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Packaging Information</h4>
+                        <div className="space-y-4">
+                          <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
+                            <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method A</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
+                                <textarea rows={2} value={formData.packagingMethodADesc} onChange={e => setFormData({ ...formData, packagingMethodADesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are bulk packed together..." />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
+                                <input type="text" value={formData.packagingMethodASpec} onChange={e => setFormData({ ...formData, packagingMethodASpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 2050*190*90" />
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              <span className={`text-[8px] px-2 py-1 uppercase tracking-widest rounded-full ${product.brand === 'Paralight' ? 'bg-[#00A8E8]/10 text-[#00A8E8]' : 'bg-[#ECAA00]/10 text-[#ECAA00]'}`}>{product.brand}</span>
-                              {(product.series || []).map((s, idx) => (
-                                <span key={idx} className="text-[8px] bg-gray-100 text-gray-600 px-2 py-1 uppercase tracking-widest rounded-full">{s}</span>
-                              ))}
+                          <div className="p-4 border border-gray-200 rounded-lg bg-gray-50/50">
+                            <h5 className="text-[10px] uppercase tracking-widest text-gray-700 font-bold mb-3">Method B (Additional Fee)</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Description</label>
+                                <textarea rows={2} value={formData.packagingMethodBDesc} onChange={e => setFormData({ ...formData, packagingMethodBDesc: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] resize-none" placeholder="e.g. Aluminum profiles, PC covers, and accessories are packed together in individual bags..." />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-widest text-gray-500">Specifications</label>
+                                <input type="text" value={formData.packagingMethodBSpec} onChange={e => setFormData({ ...formData, packagingMethodBSpec: e.target.value })} className="w-full bg-white border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]" placeholder="e.g. 100Pcs / 3150*170*140" />
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <div className="flex gap-2">
+                      </div>
+                    )}
+
+                    {formData.brand === "Paralight" && (
+                      <div className="space-y-6 pt-6 border-t border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-[10px] uppercase tracking-[0.2em] text-[#00A8E8] font-bold">Accessories Specification</h4>
                           <button
-                            onClick={() => handleEdit(product)}
-                            data-testid={`button-edit-${product.id}`}
-                            className={`p-3 transition-colors rounded-lg flex items-center gap-2 ${editingId === product.id ? 'bg-[#00A8E8] text-white' : 'bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8]'}`}
-                            title="Edit product"
+                            type="button"
+                            onClick={() => {
+                              const currentSpec = formData.accessoriesSpec ? JSON.parse(formData.accessoriesSpec) : [];
+                              const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                              const regularItems = currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application');
+                              const nextLetter = letters[regularItems.length] || (regularItems.length + 1).toString();
+                              const newSpec = [...currentSpec.filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application'), { no: nextLetter, specification: '', qty: '', remarks: '' }];
+                              const appItem = currentSpec.find((item: { no?: string }) => item.no?.toLowerCase() === 'application');
+                              if (appItem) newSpec.push(appItem);
+                              setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                            }}
+                            className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase tracking-widest text-white bg-[#00A8E8] hover:bg-[#0090c8] rounded transition-colors"
                           >
-                            <Edit2 className="w-4 h-4" />
-                            {editingId === product.id && <span className="text-xs font-bold uppercase tracking-wider">Editing</span>}
-                          </button>
-                          <button
-                            onClick={() => handleDuplicate(product)}
-                            data-testid={`button-duplicate-${product.id}`}
-                            className="p-3 bg-[#ECAA00]/10 border border-[#ECAA00]/20 text-[#ECAA00] hover:bg-[#ECAA00]/20 transition-colors rounded-lg"
-                            title="Duplicate product"
-                          >
-                            <Copy className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product.id)}
-                            data-testid={`button-delete-${product.id}`}
-                            className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-colors rounded-lg"
-                            title="Delete product"
-                          >
-                            <Trash2 className="w-4 h-4" />
+                            <Plus className="w-3 h-3" /> Add Row
                           </button>
                         </div>
+
+                        {(!formData.accessoriesSpec || JSON.parse(formData.accessoriesSpec || '[]').filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application').length === 0) ? (
+                          <div className="p-8 border-2 border-dashed border-gray-200 rounded-lg text-center">
+                            <p className="text-[10px] uppercase tracking-widest text-gray-400">No accessories added yet</p>
+                            <p className="text-[10px] text-gray-400 mt-1">Click "Add Row" to start adding accessories</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 px-2">
+                              <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">NO.</span>
+                              <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Specification</span>
+                              <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">QTY</span>
+                              <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Remarks</span>
+                              <span></span>
+                            </div>
+                            {JSON.parse(formData.accessoriesSpec || '[]')
+                              .filter((item: { no?: string }) => item.no?.toLowerCase() !== 'application')
+                              .map((item: { no?: string; specification?: string; qty?: string; remarks?: string }, index: number) => (
+                                <div key={index} className="grid grid-cols-[60px_1fr_80px_1fr_40px] gap-2 items-center">
+                                  <input
+                                    type="text"
+                                    value={item.no || ''}
+                                    onChange={(e) => {
+                                      const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                      const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                      const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                      regularItems[index] = { ...regularItems[index], no: e.target.value };
+                                      const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                      setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                    }}
+                                    className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center font-medium"
+                                    placeholder="A"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={item.specification || ''}
+                                    onChange={(e) => {
+                                      const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                      const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                      const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                      regularItems[index] = { ...regularItems[index], specification: e.target.value };
+                                      const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                      setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                    }}
+                                    className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
+                                    placeholder="e.g. Profile"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={item.qty || ''}
+                                    onChange={(e) => {
+                                      const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                      const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                      const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                      regularItems[index] = { ...regularItems[index], qty: e.target.value };
+                                      const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                      setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                    }}
+                                    className="bg-gray-50 border border-gray-200 px-2 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8] text-center"
+                                    placeholder="1"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={item.remarks || ''}
+                                    onChange={(e) => {
+                                      const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                      const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                      const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                      regularItems[index] = { ...regularItems[index], remarks: e.target.value };
+                                      const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                      setFormData({ ...formData, accessoriesSpec: JSON.stringify(newSpec) });
+                                    }}
+                                    className="bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-900 rounded focus:outline-none focus:border-[#00A8E8]"
+                                    placeholder="e.g. 2M/3M"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                      const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                      const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                      regularItems.splice(index, 1);
+                                      const newSpec = appItem ? [...regularItems, appItem] : regularItems;
+                                      setFormData({ ...formData, accessoriesSpec: newSpec.length > 0 ? JSON.stringify(newSpec) : '' });
+                                    }}
+                                    className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                          </div>
+                        )}
+
+                        <div className="pt-4 border-t border-gray-100">
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Application</label>
+                            <input
+                              type="text"
+                              value={(() => {
+                                try {
+                                  const spec = JSON.parse(formData.accessoriesSpec || '[]');
+                                  const appItem = spec.find((i: { no?: string }) => i.no?.toLowerCase() === 'application');
+                                  return appItem?.specification || '';
+                                } catch { return ''; }
+                              })()}
+                              onChange={(e) => {
+                                let spec = [];
+                                try { spec = JSON.parse(formData.accessoriesSpec || '[]'); } catch { spec = []; }
+                                const regularItems = spec.filter((i: { no?: string }) => i.no?.toLowerCase() !== 'application');
+                                if (e.target.value) {
+                                  regularItems.push({ no: 'Application', specification: e.target.value, qty: '', remarks: '' });
+                                }
+                                setFormData({ ...formData, accessoriesSpec: regularItems.length > 0 ? JSON.stringify(regularItems) : '' });
+                              }}
+                              className="w-full bg-gray-50 border border-gray-200 px-4 py-2 text-sm text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8]"
+                              placeholder="e.g. Commercial lighting/Office lighting/Home lighting"
+                            />
+                          </div>
+                        </div>
                       </div>
-                    ))}
-                  {products.length === 0 && (
-                    <div className="text-center py-20 border border-gray-200 bg-gray-50/50 rounded-xl">
-                      <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-sm text-gray-500 uppercase tracking-[0.3em]">No products yet</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      data-testid="button-submit"
+                      className="w-full py-5 bg-white text-black font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-gray-200 transition-colors shadow-2xl disabled:opacity-50"
+                    >
+                      {isLoading ? "Saving..." : (editingId ? "Update Product" : "Publish Product")}
+                    </button>
+                  </form>
+                </section>
+                <section className="space-y-6">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xl font-display font-bold uppercase tracking-widest text-gray-900">
+                        Live Products
+                        <span className="text-gray-400 font-normal ml-2">
+                          ({products.filter(p =>
+                            (adminBrandFilter === "All" || p.brand === adminBrandFilter) &&
+                            (adminSeriesFilter === "All" || (p.series || []).includes(adminSeriesFilter)) &&
+                            (!adminSearchQuery.trim() ||
+                              p.name.toLowerCase().includes(adminSearchQuery.toLowerCase()) ||
+                              p.modelNumber.toLowerCase().includes(adminSearchQuery.toLowerCase())
+                            )
+                          ).length} of {products.length})
+                        </span>
+                      </h3>
                     </div>
-                  )}
-                </div>
-              </section>
+
+                    {/* Filter Bar */}
+                    <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                      {/* Search */}
+                      <div className="relative flex-1 min-w-[200px]">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <input
+                          type="text"
+                          placeholder="Search products..."
+                          value={adminSearchQuery}
+                          onChange={(e) => setAdminSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#00A8E8] transition-colors"
+                        />
+                      </div>
+
+                      {/* Brand Filter */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Brand:</span>
+                        <div className="flex rounded-lg overflow-hidden border border-gray-200">
+                          {(["All", "Paralight", "Maglinear"] as const).map((brand) => (
+                            <button
+                              key={brand}
+                              type="button"
+                              onClick={() => setAdminBrandFilter(brand)}
+                              className={`px-3 py-2 text-[10px] uppercase tracking-widest font-bold transition-colors ${adminBrandFilter === brand
+                                ? brand === "Paralight" ? 'bg-[#00A8E8] text-white'
+                                  : brand === "Maglinear" ? 'bg-[#ECAA00] text-white'
+                                    : 'bg-gray-800 text-white'
+                                : 'bg-white text-gray-600 hover:bg-gray-100'
+                                }`}
+                            >
+                              {brand === "Maglinear" ? "Maglinear Lighting" : brand}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Series Filter */}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Series:</span>
+                        <select
+                          value={adminSeriesFilter}
+                          onChange={(e) => setAdminSeriesFilter(e.target.value)}
+                          className="px-3 py-2 text-sm bg-white border border-gray-200 text-gray-900 rounded-lg focus:outline-none focus:border-[#00A8E8] transition-colors"
+                        >
+                          <option value="All">All Series</option>
+                          {existingSeries.map((series) => (
+                            <option key={series} value={series}>{series}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Clear Filters */}
+                      {(adminSearchQuery || adminBrandFilter !== "All" || adminSeriesFilter !== "All") && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAdminSearchQuery("");
+                            setAdminBrandFilter("All");
+                            setAdminSeriesFilter("All");
+                          }}
+                          className="px-3 py-2 text-[10px] uppercase tracking-widest font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    {products
+                      .filter(product => {
+                        // Brand filter
+                        if (adminBrandFilter !== "All" && product.brand !== adminBrandFilter) return false;
+                        // Series filter
+                        if (adminSeriesFilter !== "All" && !(product.series || []).includes(adminSeriesFilter)) return false;
+                        // Search filter
+                        if (!adminSearchQuery.trim()) return true;
+                        const query = adminSearchQuery.toLowerCase();
+                        return (
+                          product.name.toLowerCase().includes(query) ||
+                          product.modelNumber.toLowerCase().includes(query) ||
+                          product.brand.toLowerCase().includes(query) ||
+                          (product.series || []).some(s => s.toLowerCase().includes(query))
+                        );
+                      })
+                      .map((product) => (
+                        <div key={product.id} data-testid={`product-item-${product.id}`} className={`rounded-xl p-6 flex justify-between items-center group transition-all ${editingId === product.id ? 'bg-[#00A8E8]/5 border-2 border-[#00A8E8] shadow-lg shadow-[#00A8E8]/10' : 'bg-white border border-gray-200 hover:border-[#00A8E8]/50 hover:shadow-md'}`}>
+                          <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
+                              {product.image ? (
+                                <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+                              ) : (
+                                <Package className="w-6 h-6 text-gray-300" />
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-bold uppercase tracking-widest mb-1">{product.name}</h4>
+                              <p className="text-[10px] text-gray-500 uppercase tracking-widest">{product.modelNumber}</p>
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                <span className={`text-[8px] px-2 py-1 uppercase tracking-widest rounded-full ${product.brand === 'Paralight' ? 'bg-[#00A8E8]/10 text-[#00A8E8]' : 'bg-[#ECAA00]/10 text-[#ECAA00]'}`}>{product.brand}</span>
+                                {(product.series || []).map((s, idx) => (
+                                  <span key={idx} className="text-[8px] bg-gray-100 text-gray-600 px-2 py-1 uppercase tracking-widest rounded-full">{s}</span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEdit(product)}
+                              data-testid={`button-edit-${product.id}`}
+                              className={`p-3 transition-colors rounded-lg flex items-center gap-2 ${editingId === product.id ? 'bg-[#00A8E8] text-white' : 'bg-gray-100 border border-gray-200 hover:bg-[#00A8E8]/10 hover:border-[#00A8E8]'}`}
+                              title="Edit product"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                              {editingId === product.id && <span className="text-xs font-bold uppercase tracking-wider">Editing</span>}
+                            </button>
+                            <button
+                              onClick={() => handleDuplicate(product)}
+                              data-testid={`button-duplicate-${product.id}`}
+                              className="p-3 bg-[#ECAA00]/10 border border-[#ECAA00]/20 text-[#ECAA00] hover:bg-[#ECAA00]/20 transition-colors rounded-lg"
+                              title="Duplicate product"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product.id)}
+                              data-testid={`button-delete-${product.id}`}
+                              className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-colors rounded-lg"
+                              title="Delete product"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    {products.length === 0 && (
+                      <div className="text-center py-20 border border-gray-200 bg-gray-50/50 rounded-xl">
+                        <Package className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <p className="text-sm text-gray-500 uppercase tracking-[0.3em]">No products yet</p>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </>)}
+              </div>
             </div>
           </div>
-        </div>
       </main>
       <Footer />
     </div>

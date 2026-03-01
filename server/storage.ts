@@ -1,6 +1,6 @@
-import { type User, type InsertUser, type Product, type InsertProduct, users, products } from "@shared/schema";
+import { type User, type InsertUser, type Product, type InsertProduct, users, products, pageViews, visitorEvents } from "@shared/schema";
 import { db } from "./db";
-import { eq, ne, or, sql } from "drizzle-orm";
+import { eq, ne, gte, lte, and, sql } from "drizzle-orm";
 
 // Lightweight product type for grid view (no large image data)
 export interface ProductGridItem {
@@ -11,6 +11,15 @@ export interface ProductGridItem {
   series: string[];
   subSeries: string[] | null;
   image: string | null;
+}
+
+export interface TrackPayload {
+  page: string;
+  productId?: number;
+  productName?: string;
+  ip: string;
+  country?: string;
+  city?: string;
 }
 
 export interface IStorage {
@@ -25,6 +34,14 @@ export interface IStorage {
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: InsertProduct): Promise<Product | undefined>;
   deleteProduct(id: number): Promise<boolean>;
+
+  // Analytics
+  trackView(payload: TrackPayload): Promise<void>;
+  getProductAnalytics(from: Date, to: Date): Promise<{ name: string; views: number }[]>;
+  getGeoAnalytics(from: Date, to: Date): Promise<{
+    countries: { name: string; visitors: number }[];
+    cities: { name: string; visitors: number }[];
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -99,6 +116,78 @@ export class DatabaseStorage implements IStorage {
   async deleteProduct(id: number): Promise<boolean> {
     const result = await db.delete(products).where(eq(products.id, id)).returning();
     return result.length > 0;
+  }
+
+  // ── Analytics ──────────────────────────────────────────────────────────────
+
+  async trackView(payload: TrackPayload): Promise<void> {
+    const now = new Date();
+    // Insert page view (product views only logged when productId present)
+    if (payload.productId) {
+      await db.insert(pageViews).values({
+        productId: payload.productId,
+        productName: payload.productName ?? null,
+        page: payload.page,
+        timestamp: now,
+      });
+    }
+    // Always insert visitor geo event
+    await db.insert(visitorEvents).values({
+      country: payload.country ?? null,
+      city: payload.city ?? null,
+      ip: payload.ip,
+      page: payload.page,
+      timestamp: now,
+    });
+  }
+
+  async getProductAnalytics(from: Date, to: Date): Promise<{ name: string; views: number }[]> {
+    const rows = await db
+      .select({
+        name: pageViews.productName,
+        views: sql<number>`cast(count(*) as int)`,
+      })
+      .from(pageViews)
+      .where(and(gte(pageViews.timestamp, from), lte(pageViews.timestamp, to)))
+      .groupBy(pageViews.productName)
+      .orderBy(sql`count(*) desc`)
+      .limit(20);
+
+    return rows.map(r => ({ name: r.name ?? "Unknown", views: r.views }));
+  }
+
+  async getGeoAnalytics(from: Date, to: Date): Promise<{
+    countries: { name: string; visitors: number }[];
+    cities: { name: string; visitors: number }[];
+  }> {
+    const [countryRows, cityRows] = await Promise.all([
+      db
+        .select({
+          name: visitorEvents.country,
+          visitors: sql<number>`cast(count(*) as int)`,
+        })
+        .from(visitorEvents)
+        .where(and(gte(visitorEvents.timestamp, from), lte(visitorEvents.timestamp, to)))
+        .groupBy(visitorEvents.country)
+        .orderBy(sql`count(*) desc`)
+        .limit(20),
+
+      db
+        .select({
+          name: visitorEvents.city,
+          visitors: sql<number>`cast(count(*) as int)`,
+        })
+        .from(visitorEvents)
+        .where(and(gte(visitorEvents.timestamp, from), lte(visitorEvents.timestamp, to)))
+        .groupBy(visitorEvents.city)
+        .orderBy(sql`count(*) desc`)
+        .limit(20),
+    ]);
+
+    return {
+      countries: countryRows.map(r => ({ name: r.name ?? "Unknown", visitors: r.visitors })),
+      cities: cityRows.map(r => ({ name: r.name ?? "Unknown", visitors: r.visitors })),
+    };
   }
 }
 

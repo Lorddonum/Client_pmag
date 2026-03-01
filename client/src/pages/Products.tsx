@@ -358,6 +358,16 @@ export default function Products() {
           setTimeout(() => {
             detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 100);
+          // Fire analytics tracking (non-blocking)
+          fetch('/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              page: `/products/${productId}`,
+              productId: product.id,
+              productName: product.name,
+            }),
+          }).catch(() => {/* silent */ });
         } else {
           console.error("Product not found:", productId);
         }

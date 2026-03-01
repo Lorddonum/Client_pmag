@@ -221,5 +221,74 @@ export async function registerRoutes(
     }
   });
 
+  // ── Analytics ──────────────────────────────────────────────────────────────
+
+  // POST /api/track — called by client on product opens & page visits
+  app.post("/api/track", async (req, res) => {
+    try {
+      const { page, productId, productName } = req.body as {
+        page: string;
+        productId?: number;
+        productName?: string;
+      };
+
+      // Extract real IP (trust Nginx X-Forwarded-For)
+      const raw = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
+      const ip = (Array.isArray(raw) ? raw[0] : raw.split(",")[0]).trim();
+
+      let country: string | undefined;
+      let city: string | undefined;
+
+      // Geo lookup — skip for localhost / private IPs
+      const isPrivate = /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1$)/.test(ip);
+      if (!isPrivate && ip !== "unknown") {
+        try {
+          const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=country,city`);
+          if (geoRes.ok) {
+            const geo = await geoRes.json() as { country?: string; city?: string };
+            country = geo.country;
+            city = geo.city;
+          }
+        } catch {
+          // geo lookup failure is non-fatal
+        }
+      }
+
+      await storage.trackView({ page, productId, productName, ip, country, city });
+      res.json({ ok: true });
+    } catch (error) {
+      console.error("Track error:", error);
+      res.status(500).json({ error: "Failed to track" });
+    }
+  });
+
+  // GET /api/analytics/products?from=ISO&to=ISO
+  app.get("/api/analytics/products", async (req, res) => {
+    try {
+      const to = req.query.to ? new Date(req.query.to as string) : new Date();
+      const from = req.query.from
+        ? new Date(req.query.from as string)
+        : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const data = await storage.getProductAnalytics(from, to);
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch product analytics" });
+    }
+  });
+
+  // GET /api/analytics/geo?from=ISO&to=ISO
+  app.get("/api/analytics/geo", async (req, res) => {
+    try {
+      const to = req.query.to ? new Date(req.query.to as string) : new Date();
+      const from = req.query.from
+        ? new Date(req.query.from as string)
+        : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const data = await storage.getGeoAnalytics(from, to);
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch geo analytics" });
+    }
+  });
+
   return httpServer;
 }
