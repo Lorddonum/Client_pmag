@@ -1527,57 +1527,46 @@ export default function About() {
                   </p>
                 </div>
 
-                {/* Team Member Slider */}
-                <div className="mt-5 -ml-4 lg:-ml-8">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setTeamIndex((prev) => (prev === 0 ? teamMembers.length - 2 : prev - 2))}
-                      className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
-                      data-testid="button-team-prev"
-                    >
-                      <ChevronLeft className="w-4 h-4 text-gray-600" />
-                    </button>
 
-                    <div className="flex gap-6 flex-1 justify-center overflow-visible">
-                      <AnimatePresence mode="popLayout">
-                        {[0, 1].map((offset) => {
-                          const idx = (teamIndex + offset) % teamMembers.length;
-                          const member = teamMembers[idx];
-                          return (
-                            <motion.div
-                              key={`${idx}-${teamIndex}`}
-                              initial={{ opacity: 0, x: 30 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -30 }}
-                              transition={{ duration: 0.3 }}
-                              className="flex items-center gap-3 cursor-pointer group"
-                              onClick={() => setSelectedTeamMember(member)}
-                            >
-                              <div className="w-48 h-48 lg:w-52 lg:h-52 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 group-hover:ring-[#00A8E8] transition-all duration-300">
-                                <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="min-w-0">
-                                <p className="font-semibold text-gray-900 text-base lg:text-lg truncate">{member.name}</p>
-                                <p className="text-sm text-[#00A8E8] truncate font-medium">{member.role}</p>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </AnimatePresence>
-                    </div>
-
-                    <button
-                      onClick={() => setTeamIndex((prev) => (prev + 2) % teamMembers.length)}
-                      className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors flex-shrink-0"
-                      data-testid="button-team-next"
-                    >
-                      <ChevronRight className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </div>
+        </div>
+
+        {/* Team Défilé Strip — spans the full bottom across both columns */}
+        <div className="absolute bottom-0 left-0 right-0 h-36 overflow-hidden z-10">
+          {/* Grad fade left (dark) */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a1628] to-transparent z-10 pointer-events-none" />
+          {/* Grad fade right (light) */}
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+          {/* Continuously scrolling track — duplicate members to create seamless loop */}
+          <div
+            className="flex items-end h-full w-max"
+            style={{ animation: 'teamDefileScroll 28s linear infinite' }}
+          >
+            {[...teamMembers, ...teamMembers, ...teamMembers].map((member, idx) => (
+              <div
+                key={idx}
+                className="flex-shrink-0 flex flex-col items-center cursor-pointer group px-3 pb-2"
+                onClick={() => setSelectedTeamMember(member)}
+              >
+                <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/30 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-lg group-hover:scale-110">
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                </div>
+                <p className="text-[10px] font-semibold text-white/80 mt-1 bg-[#0a1628]/60 px-2 py-0.5 rounded-full whitespace-nowrap backdrop-blur-sm">
+                  {member.name}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <style>{`
+            @keyframes teamDefileScroll {
+              from { transform: translateX(0); }
+              to   { transform: translateX(calc(-100% / 3)); }
+            }
+          `}</style>
         </div>
 
         <AnimatePresence>
