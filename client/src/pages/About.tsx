@@ -541,59 +541,96 @@ function TeamStrip({
     return () => clearInterval(t);
   }, [totalPages]);
 
+  const go = (d: 1 | -1) => {
+    setDir(d);
+    setPage((p) => (p + d + totalPages) % totalPages);
+  };
+
   const visible = Array.from({ length: perPage }, (_, i) =>
     teamMembers[(page * perPage + i) % teamMembers.length]
   );
 
+  // Strip height in px — used to make avatar square match full height
+  const STRIP_H = 160;
+
   return (
     <div
-      className="absolute bottom-0 left-0 right-0 h-44 z-10 overflow-hidden"
-      style={{ backgroundColor: '#0a1628' }}
+      className="absolute bottom-0 left-0 right-0 z-10 flex items-stretch"
+      style={{ backgroundColor: '#0a1628', height: STRIP_H }}
     >
-      <AnimatePresence mode="wait" custom={dir}>
-        <motion.div
-          key={page}
-          custom={dir}
-          initial={{ x: dir * 60, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: dir * -60, opacity: 0 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
-          className="flex items-center justify-center h-full gap-0 px-6"
-        >
-          {visible.map((member, i) => (
-            <div key={i} className="flex items-center">
-              {/* Member card */}
+      {/* Prev arrow */}
+      <button
+        onClick={() => go(-1)}
+        className="flex-shrink-0 w-10 flex items-center justify-center text-white/30 hover:text-white transition-colors border-r border-white/10"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+
+      {/* Slides */}
+      <div className="flex-1 overflow-hidden relative">
+        <AnimatePresence mode="wait" custom={dir}>
+          <motion.div
+            key={page}
+            custom={dir}
+            initial={{ x: dir * 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: dir * -100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            className="absolute inset-0 flex"
+          >
+            {visible.map((member, i) => (
               <div
-                className="flex items-center gap-4 cursor-pointer group px-6"
+                key={i}
+                className="flex-1 flex items-stretch cursor-pointer group"
+                style={{ borderRight: i < perPage - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}
                 onClick={() => onSelect(member)}
               >
-                <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/20 group-hover:ring-[#00A8E8] transition-all duration-300 shadow-lg flex-shrink-0">
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <p className="text-white font-semibold text-sm leading-tight">{member.name}</p>
-                  <p className="text-[#00A8E8] text-xs mt-0.5">{member.role}</p>
+                {/* Avatar — fills full height, square, with per-member cadre */}
+                {(() => {
+                  const isMaglinear = ['Mr. Ou', 'Stephy', 'Taha'].includes(member.name);
+                  const cadreColor = isMaglinear ? '#ECAA00' : '#0080B3';
+                  return (
+                    <div
+                      className="flex-shrink-0 relative overflow-hidden"
+                      style={{ width: STRIP_H, height: STRIP_H }}
+                    >
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {/* Cadre overlay on top of image */}
+                      <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{ border: `3px solid ${cadreColor}` }}
+                      />
+                    </div>
+                  );
+                })()}
+
+                {/* Text block — vertically centred beside avatar */}
+                <div className="flex flex-col justify-center px-8 min-w-0">
+                  <p className="text-white font-bold text-lg lg:text-xl leading-tight truncate">
+                    {member.name}
+                  </p>
+                  <div className="border-t border-white/20 my-2" />
+                  <p className="text-white/50 text-xs tracking-widest uppercase truncate">
+                    {member.role}
+                  </p>
                 </div>
               </div>
-              {/* Separator between items, not after the last */}
-              {i < perPage - 1 && (
-                <span className="text-white/20 text-2xl font-light select-none">/</span>
-              )}
-            </div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Dot indicators */}
-      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => { setDir(i > page ? 1 : -1); setPage(i); }}
-            className={`h-1 rounded-full transition-all duration-300 ${i === page ? 'w-5 bg-[#00A8E8]' : 'w-1.5 bg-white/20'}`}
-          />
-        ))}
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
+
+      {/* Next arrow */}
+      <button
+        onClick={() => go(1)}
+        className="flex-shrink-0 w-10 flex items-center justify-center text-white/30 hover:text-white transition-colors border-l border-white/10"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
     </div>
   );
 }
