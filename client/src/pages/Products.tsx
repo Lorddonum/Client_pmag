@@ -14,7 +14,7 @@ interface Circle {
 function BouncingCircles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const circlesRef = useRef<Circle[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(undefined);
   const dimensionsRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -278,6 +278,7 @@ interface Product {
   threeCct?: string | null;
   protectionRating?: string | null;
   bluetoothVersion?: string | null;
+  adjustableAngle?: string | null;
   technicalSpecs?: string | null;
   accessoriesSpec?: string | null;
   packagingMethodADesc?: string | null;
