@@ -60,6 +60,7 @@ interface Product {
   adjustableAngle?: string | null;
   // Technical Specifications (JSON string for table data)
   technicalSpecs?: string | null;
+  hotSelling?: boolean | null;
 }
 
 // ── Analytics Dashboard ───────────────────────────────────────────────────────
@@ -311,6 +312,7 @@ export default function Admin() {
     bluetoothVersion: "",
     adjustableAngle: "",
     technicalSpecs: "",
+    hotSelling: false,
   });
 
   const availableSeries = useMemo(() => {
@@ -540,7 +542,7 @@ export default function Admin() {
       bluetoothVersion: "",
       adjustableAngle: "",
       technicalSpecs: "",
-      hotSelling: false
+      hotSelling: false,
     });
   };
 
@@ -714,7 +716,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 selection:bg-[#00A8E8] selection:text-white font-sans">
-      <Navbar />
+      <Navbar darkText />
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
@@ -1915,9 +1917,9 @@ export default function Admin() {
                   </div>
                 </section>
               </>)}
-              </div>
             </div>
           </div>
+        </div>
       </main>
       <Footer />
     </div>
