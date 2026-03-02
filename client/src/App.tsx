@@ -39,7 +39,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
-      <Route path="/admin" component={Admin} />
+      <Route path={import.meta.env.VITE_ADMIN_PATH ?? "/pl-sys-7x3k"} component={Admin} />
       <Route path="/products" component={Products} />
       <Route path="/downloads" component={Downloads} />
       <Route component={NotFound} />

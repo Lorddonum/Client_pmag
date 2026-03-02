@@ -247,7 +247,19 @@ function AnalyticsDashboard() {
   );
 }
 
+const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY ?? "pk_9f2a8c1b4e7d";
+
 export default function Admin() {
+  const [, setLocation] = useLocation();
+
+  // Secret key guard — redirect silently if ?key= is wrong or missing
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("key") !== ADMIN_KEY) {
+      setLocation("/");
+    }
+  }, [setLocation]);
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -255,7 +267,7 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [adminSearchQuery, setAdminSearchQuery] = useState("");
-  const [, setLocation] = useLocation();
+
   const [showSeriesDropdown, setShowSeriesDropdown] = useState(false);
   const [seriesFilter, setSeriesFilter] = useState("");
   const [showSubSeriesDropdown, setShowSubSeriesDropdown] = useState(false);
