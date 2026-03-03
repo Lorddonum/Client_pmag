@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import { useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
+import "./i18n"; // Import i18n configuration
 
 // Lazy load pages for better initial load performance
 const Home = lazy(() => import("./pages/Home"));

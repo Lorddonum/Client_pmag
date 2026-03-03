@@ -2,12 +2,15 @@ import { motion } from "framer-motion";
 import mapImg from "@/assets/global-map.webp";
 import { Globe, TrendingUp, Users } from "lucide-react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 
 export default function GlobalNetwork() {
+  const { t } = useTranslation();
+
   const stats = [
-    { icon: Globe, label: "Countries Served", value: "100+" },
-    { icon: Users, label: "Global Partners", value: "3000+" },
-    { icon: TrendingUp, label: "Projects Completed", value: "10k+" },
+    { icon: Globe, label: t('global.stat1'), value: "50+" },
+    { icon: Users, label: t('global.stat2'), value: "5000+" },
+    { icon: TrendingUp, label: t('global.stat3'), value: "10k+" },
   ];
 
   return (
@@ -24,8 +27,8 @@ export default function GlobalNetwork() {
       </div>
 
       {/* Content overlay on left */}
-      <div className="relative z-10">
-        <div className="container mx-auto px-8 lg:px-12 py-12 lg:py-16">
+      <div className="relative z-10 flex flex-col justify-end h-full">
+        <div className="container mx-auto px-8 lg:px-12 py-12 lg:py-16 flex-grow flex items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -34,7 +37,7 @@ export default function GlobalNetwork() {
             className="max-w-xl p-10 lg:p-12 relative"
           >
             {/* Blur background layer with fading edges */}
-            <div 
+            <div
               className="absolute inset-0 -z-10"
               style={{
                 background: 'rgba(245, 240, 232, 0.55)',
@@ -45,30 +48,27 @@ export default function GlobalNetwork() {
               }}
             />
             <span className="inline-block text-[11px] font-medium tracking-[0.3em] uppercase text-gray-500 mb-4">
-              Worldwide Presence
+              {t('global.subtitle')}
             </span>
 
             <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-gray-900 font-medium mb-6">
-              Global Export <span className="italic font-normal">Network</span>
+              {t('global.title1')} <span className="italic font-normal">{t('global.highlight')}</span>
             </h2>
 
             <p className="text-gray-600 text-lg leading-relaxed mb-8">
-              We proudly export our lighting solutions to over 100 countries
-              worldwide, delivering premium aluminum profiles and commercial
-              lighting systems to partners across Asia, Europe, the Middle East,
-              Africa, and the Americas.
+              {t('global.desc')}
             </p>
 
             <Link href="/contact">
               <button className="px-8 py-4 bg-brand-gold text-gray-900 text-sm font-medium tracking-wide hover:bg-[#d49900] transition-colors duration-300">
-                Become a Partner
+                {t('global.btn')}
               </button>
             </Link>
           </motion.div>
         </div>
 
         {/* Stats bar at bottom */}
-        <div className="bg-gray-900/90 backdrop-blur-sm">
+        <div className="bg-gray-900/90 backdrop-blur-sm mt-auto">
           <div className="container mx-auto px-8 lg:px-12">
             <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
               {stats.map((stat, index) => (

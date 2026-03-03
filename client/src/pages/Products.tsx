@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 // Physics-based bouncing circles component
 interface Circle {
@@ -289,6 +290,7 @@ interface Product {
 }
 
 export default function Products() {
+  const { t } = useTranslation();
   const [gridProducts, setGridProducts] = useState<ProductGridItem[]>([]);
   const [activeBrand, setActiveBrand] = useState<string>("All");
   const [activeSeries, setActiveSeries] = useState<string>("All");
@@ -601,8 +603,8 @@ export default function Products() {
     if (activeBrand === "All") return (
       <span style={{ color: '#d4c9b8' }}>LED Aluminum Profiles & Magnetic Track Lighting</span>
     );
-    if (activeBrand === "Paralight") return <span style={{ color: '#0088bb' }}>Premium LED Aluminum Profiles</span>;
-    return <span className="text-brand-gold">Magnetic Track Lighting & Commercial Lights Systems</span>;
+    if (activeBrand === "Paralight") return <span style={{ color: '#0088bb' }}>{t('products.pl_sub')}</span>;
+    return <span className="text-brand-gold">{t('products.ml_sub')}</span>;
   };
 
   return (
@@ -924,7 +926,7 @@ export default function Products() {
                           <div className="relative">
                             <input
                               type="text"
-                              placeholder="Search by name or model..."
+                              placeholder={t("products.search")}
                               value={searchQuery}
                               onChange={(e) => {
                                 setSearchQuery(e.target.value);
@@ -1003,7 +1005,7 @@ export default function Products() {
                                   >
                                     <span className="flex items-center gap-2.5">
                                       <div className="w-2.5 h-2.5 rounded-full bg-[#00A8E8]" />
-                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#00A8E8]">Paralight</span>
+                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#00A8E8]">{t('products.paralight')}</span>
                                     </span>
                                     <ChevronDown className={`w-4 h-4 text-[#00A8E8] transition-transform duration-200 ${expandedFilterBrand.paralight ? '' : '-rotate-90'}`} />
                                   </button>
@@ -1051,7 +1053,7 @@ export default function Products() {
                                   >
                                     <span className="flex items-center gap-2.5">
                                       <div className="w-2.5 h-2.5 rounded-full bg-[#ECAA00]" />
-                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#ECAA00]">Maglinear Lighting</span>
+                                      <span className="text-xs font-bold tracking-[0.12em] uppercase text-[#ECAA00]">{t('products.ml_title')}</span>
                                     </span>
                                     <ChevronDown className={`w-4 h-4 text-[#ECAA00] transition-transform duration-200 ${expandedFilterBrand.maglinear ? '' : '-rotate-90'}`} />
                                   </button>
@@ -1139,7 +1141,7 @@ export default function Products() {
                           <Mail className="w-4 h-4 text-brand-cyan" />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400">Email</p>
+                          <p className="text-xs text-gray-400">{t('products.email')}</p>
                           <p className="text-sm font-medium text-white group-hover:text-brand-cyan transition-colors">inquiry@paralight.cc</p>
                         </div>
                       </a>
@@ -1152,7 +1154,7 @@ export default function Products() {
                           <Phone className="w-4 h-4 text-brand-gold" />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-400">Phone / WhatsApp</p>
+                          <p className="text-xs text-gray-400">{t('products.phone')}</p>
                           <p className="text-sm font-medium text-white group-hover:text-brand-gold transition-colors">+86 181 2825 9727</p>
                         </div>
                       </a>
@@ -1244,12 +1246,12 @@ export default function Products() {
                           </h1>
                           <div className="flex items-center gap-4 mt-3">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">Model</span>
+                              <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">{t('products.model')}</span>
                               <span className="text-sm font-mono font-semibold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">{selectedProduct.modelNumber}</span>
                             </div>
                             {selectedProduct.category && (
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">Category</span>
+                                <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">{t('products.category')}</span>
                                 <span className="text-xs text-gray-600">{selectedProduct.category}</span>
                               </div>
                             )}
@@ -1434,9 +1436,9 @@ export default function Products() {
                                   <table className="w-full text-sm">
                                     <thead className="bg-gray-50">
                                       <tr>
-                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">Method</th>
-                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">Description</th>
-                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">Specifications</th>
+                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">{t('products.method')}</th>
+                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">{t('products.descText')}</th>
+                                        <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">{t('products.specs')}</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -1451,7 +1453,7 @@ export default function Products() {
                                         <tr>
                                           <td className="px-6 py-4">
                                             <span className="font-semibold" style={{ color: brandColor }}>Method B</span>
-                                            <span className="block text-[10px] text-gray-400">(Additional Fee)</span>
+                                            <span className="block text-[10px] text-gray-400">{t('products.add_fee')}</span>
                                           </td>
                                           <td className="px-6 py-4 text-gray-600">{selectedProduct.packagingMethodBDesc}</td>
                                           <td className="px-6 py-4 text-gray-600">{selectedProduct.packagingMethodBSpec || '-'}</td>
@@ -1590,8 +1592,8 @@ export default function Products() {
                                   {allDrawings.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-16 text-center">
                                       <Image className="w-12 h-12 text-gray-300 mb-4" />
-                                      <p className="text-sm text-gray-500">Technical drawings available upon request</p>
-                                      <p className="text-xs text-gray-400 mt-1">Contact us for detailed specifications</p>
+                                      <p className="text-sm text-gray-500">{t('products.avail_req')}</p>
+                                      <p className="text-xs text-gray-400 mt-1">{t('products.contact_spec')}</p>
                                     </div>
                                   ) : (
                                     <div className="space-y-6">
@@ -1681,10 +1683,10 @@ export default function Products() {
                                     <table className="w-full text-sm">
                                       <thead className="bg-gray-50">
                                         <tr>
-                                          <th className="px-6 py-3 text-center text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200 w-20">NO.</th>
+                                          <th className="px-6 py-3 text-center text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200 w-20">{t('products.no')}</th>
                                           <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">Specification</th>
-                                          <th className="px-6 py-3 text-center text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200 w-24">QTY</th>
-                                          <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">Remarks</th>
+                                          <th className="px-6 py-3 text-center text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200 w-24">{t('products.qty')}</th>
+                                          <th className="px-6 py-3 text-left text-xs uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">{t('products.remarks')}</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -1733,7 +1735,7 @@ export default function Products() {
                           className="mt-16"
                         >
                           <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-xl font-display font-medium text-gray-900">Related Products</h2>
+                            <h2 className="text-xl font-display font-medium text-gray-900">{t('products.related')}</h2>
                             <button
                               onClick={handleBackToGrid}
                               className="text-xs text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
@@ -1799,7 +1801,7 @@ export default function Products() {
                         <div>
                           <div className="flex items-center gap-3 mb-8">
                             <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
-                            <h2 className="text-xl font-display font-semibold text-gray-900">Frequently Asked Questions</h2>
+                            <h2 className="text-xl font-display font-semibold text-gray-900">{t('products.faq')}</h2>
                           </div>
                           <div className="space-y-3">
                             {[
@@ -1872,7 +1874,7 @@ export default function Products() {
                         <div>
                           <div className="flex items-center gap-3 mb-8">
                             <div className="w-1 h-6 rounded-full" style={{ backgroundColor: brandColor }} />
-                            <h2 className="text-xl font-display font-semibold text-gray-900">Request Custom Solution</h2>
+                            <h2 className="text-xl font-display font-semibold text-gray-900">{t('products.req_custom')}</h2>
                           </div>
                           <div
                             className="rounded-2xl p-6 border-2 border-dashed"
@@ -1885,7 +1887,7 @@ export default function Products() {
                               >
                                 <Wrench className="w-8 h-8" style={{ color: brandColor }} />
                               </div>
-                              <h3 className="text-lg font-semibold text-gray-900 mb-2">Need a Custom Version?</h3>
+                              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('products.need_custom')}</h3>
                               <p className="text-sm text-gray-600 leading-relaxed">
                                 We can customize this product to meet your specific requirements. Whether you need different dimensions, finishes, or technical specifications, our engineering team is ready to help.
                               </p>
@@ -1997,7 +1999,7 @@ export default function Products() {
                       <div className="flex justify-center py-40">
                         <div className="flex flex-col items-center gap-4">
                           <Loader2 className="w-8 h-8 animate-spin text-brand-cyan" />
-                          <p className="text-sm text-gray-400">Loading products...</p>
+                          <p className="text-sm text-gray-400">{t('products.loading')}</p>
                         </div>
                       </div>
                     ) : (
@@ -2097,8 +2099,8 @@ export default function Products() {
                             <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
                               <Package className="w-8 h-8 text-gray-300" />
                             </div>
-                            <p className="text-sm text-gray-500 font-medium">No products found</p>
-                            <p className="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
+                            <p className="text-sm text-gray-500 font-medium">{t('products.no_found')}</p>
+                            <p className="text-xs text-gray-400 mt-1">{t('products.try_adj')}</p>
                           </motion.div>
                         )}
                       </div>

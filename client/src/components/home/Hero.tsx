@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const heroImages = [
   "/hero/hero-1.webp",
@@ -12,6 +13,7 @@ const heroImages = [
 
 export default function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,7 +50,7 @@ export default function Hero() {
           className="mb-8"
         >
           <span className="inline-block px-4 py-2 text-[11px] font-medium tracking-[0.3em] uppercase text-[#00A8E8] border border-[#00A8E8]/40 bg-[#00A8E8]/10">
-            Architectural Lighting Excellence
+            {t('hero.subtitle')}
           </span>
         </motion.div>
 
@@ -58,10 +60,10 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.4 }}
           className="font-display text-5xl md:text-7xl lg:text-8xl font-medium text-white tracking-tight mb-8"
         >
-          Precision in{" "}
-          <span className="italic font-normal text-[#ECAA00]">Every</span>
+          {t('hero.title1')}
+          <span className="italic font-normal text-[#ECAA00]">{t('hero.highlight')}</span>
           <br />
-          Profile
+          {t('hero.title2')}
         </motion.h1>
 
         <motion.p
@@ -70,8 +72,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="max-w-xl mx-auto text-lg text-white/70 font-light leading-relaxed mb-12"
         >
-          Defining modern spaces with premium aluminum profiles and 
-          advanced magnetic track lighting systems.
+          {t('hero.desc')}
         </motion.p>
 
         <motion.div
@@ -82,12 +83,12 @@ export default function Hero() {
         >
           <Link href="/products">
             <button className="px-10 py-4 bg-[#00A8E8] text-white text-sm font-medium tracking-wide hover:bg-[#0090c8] transition-colors duration-300">
-              Explore Collection
+              {t('hero.explore')}
             </button>
           </Link>
           <Link href="/about">
             <button className="px-10 py-4 border border-[#ECAA00]/50 text-[#ECAA00] text-sm font-medium tracking-wide hover:bg-[#ECAA00]/10 transition-colors duration-300">
-              Our Story
+              {t('hero.story')}
             </button>
           </Link>
         </motion.div>
@@ -99,11 +100,10 @@ export default function Hero() {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex 
-                ? "bg-white w-6" 
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                ? "bg-white w-6"
                 : "bg-white/40 hover:bg-white/60"
-            }`}
+              }`}
           />
         ))}
       </div>

@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-
-const applicationCategories = [
-  { image: "/gallery/villa-pool.webp", label: "Villa and luxury residence" },
-  { image: "/gallery/luxury-living.webp", label: "Super Large Flat Layer" },
-  { image: "/gallery/private-club.webp", label: "Private club" },
-  { image: "/gallery/commercial-office.webp", label: "Real estate project" },
-  { image: "/gallery/five-star-hotel.webp", label: "Commercial Office Space" },
-  { image: "/gallery/top-apartment.webp", label: "Five-star plus hotel" },
-  { image: "/gallery/home-decoration.webp", label: "Top Apartment" },
-  { image: "/gallery/marble-living.webp", label: "Ordinary home decoration" },
-];
+import { useTranslation } from "react-i18next";
 
 export default function ProjectGallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { t } = useTranslation();
+
+  const applicationCategories = [
+    { image: "/gallery/villa-pool.webp", label: t('gallery.cat.villa') },
+    { image: "/gallery/luxury-living.webp", label: t('gallery.cat.flat') },
+    { image: "/gallery/private-club.webp", label: t('gallery.cat.club') },
+    { image: "/gallery/commercial-office.webp", label: t('gallery.cat.estate') },
+    { image: "/gallery/five-star-hotel.webp", label: t('gallery.cat.office') },
+    { image: "/gallery/top-apartment.webp", label: t('gallery.cat.hotel') },
+    { image: "/gallery/home-decoration.webp", label: t('gallery.cat.apt') },
+    { image: "/gallery/marble-living.webp", label: t('gallery.cat.home') },
+  ];
 
   return (
     <section className="h-full overflow-hidden relative flex flex-col">
@@ -37,21 +39,21 @@ export default function ProjectGallery() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-lg"
         >
-          <motion.h2 
+          <motion.h2
             className="font-display text-3xl md:text-4xl lg:text-5xl text-white font-medium leading-tight"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <motion.span 
+            <motion.span
               className="italic font-normal inline-block"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              Industry
+              {t('gallery.highlight')}
             </motion.span>{" "}
             <motion.span
               className="inline-block"
@@ -60,19 +62,17 @@ export default function ProjectGallery() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-              Applications
+              {t('gallery.title2')}
             </motion.span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             className="text-gray-300 mt-4 text-sm lg:text-base leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            Featuring hundreds of LED linear lighting aluminum profile models with 
-            extensive stock of premium materials. The range covers all dimensions, 
-            from compact precision components to large-scale profiles.
+            {t('gallery.desc')}
           </motion.p>
         </motion.div>
       </div>
@@ -83,14 +83,14 @@ export default function ProjectGallery() {
           const isAnyHovered = hoveredIndex !== null;
           const isBlue = index % 2 === 0;
           const accentColor = isBlue ? '#00A8E8' : '#ECAA00';
-          
+
           return (
             <motion.div
               key={index}
               className="relative overflow-hidden cursor-pointer"
-              style={{ 
-                clipPath: isHovered 
-                  ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' 
+              style={{
+                clipPath: isHovered
+                  ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
                   : `polygon(${index === 0 ? '0' : '8%'} 0, 100% 0, ${index === applicationCategories.length - 1 ? '100%' : '92%'} 100%, 0 100%)`,
               }}
               initial={{ flex: 1, height: 238 }}
@@ -107,8 +107,8 @@ export default function ProjectGallery() {
               <motion.div
                 className="absolute inset-0"
                 animate={{
-                  filter: isAnyHovered && !isHovered 
-                    ? "brightness(0.3) saturate(0.3) blur(1px)" 
+                  filter: isAnyHovered && !isHovered
+                    ? "brightness(0.3) saturate(0.3) blur(1px)"
                     : "brightness(1) saturate(1) blur(0px)",
                 }}
                 transition={{ duration: 0.5 }}
@@ -126,11 +126,11 @@ export default function ProjectGallery() {
                 />
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="absolute inset-0"
                 style={{
-                  background: isHovered 
-                    ? `linear-gradient(to top, ${isBlue ? 'rgba(0,30,45,0.7)' : 'rgba(45,35,0,0.7)'} 0%, rgba(0,0,0,0.3) 40%, transparent 70%)` 
+                  background: isHovered
+                    ? `linear-gradient(to top, ${isBlue ? 'rgba(0,30,45,0.7)' : 'rgba(45,35,0,0.7)'} 0%, rgba(0,0,0,0.3) 40%, transparent 70%)`
                     : 'linear-gradient(to top, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)',
                 }}
                 animate={{ opacity: 1 }}
@@ -164,17 +164,17 @@ export default function ProjectGallery() {
                   transition={{ duration: 0.4, delay: 0.2 }}
                 />
                 <span style={{ color: accentColor }} className="text-[9px] uppercase tracking-[0.25em] font-medium">
-                  Application
+                  {t('gallery.appLabel')}
                 </span>
                 <h3 className="text-white text-sm md:text-base font-medium mt-1 font-display leading-tight">
                   {category.label}
                 </h3>
-                <motion.div 
+                <motion.div
                   className="flex items-center gap-2 mt-3"
                   animate={{ opacity: isHovered ? 1 : 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <span className="text-white/60 text-[10px] uppercase tracking-widest">Explore</span>
+                  <span className="text-white/60 text-[10px] uppercase tracking-widest">{t('gallery.explore')}</span>
                   <motion.div
                     animate={{ x: isHovered ? [0, 5, 0] : 0 }}
                     transition={{ repeat: Infinity, duration: 1.5 }}
@@ -187,8 +187,8 @@ export default function ProjectGallery() {
               <motion.div
                 className="absolute inset-0 pointer-events-none"
                 animate={{
-                  boxShadow: isHovered 
-                    ? `inset 0 0 60px ${isBlue ? 'rgba(0, 168, 232, 0.08)' : 'rgba(236, 170, 0, 0.08)'}, inset 0 0 0 1px ${isBlue ? 'rgba(0, 168, 232, 0.25)' : 'rgba(236, 170, 0, 0.25)'}` 
+                  boxShadow: isHovered
+                    ? `inset 0 0 60px ${isBlue ? 'rgba(0, 168, 232, 0.08)' : 'rgba(236, 170, 0, 0.08)'}, inset 0 0 0 1px ${isBlue ? 'rgba(0, 168, 232, 0.25)' : 'rgba(236, 170, 0, 0.25)'}`
                     : 'inset 0 0 0 0 transparent',
                 }}
                 transition={{ duration: 0.4 }}

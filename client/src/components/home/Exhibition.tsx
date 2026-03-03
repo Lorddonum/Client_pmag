@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ExhibitionEvent {
   name: string;
@@ -11,9 +12,9 @@ interface ExhibitionEvent {
 }
 
 const exhibitionEvents: ExhibitionEvent[] = [
-  { 
-    name: "Middle East Energy", 
-    location: "Dubai, UAE", 
+  {
+    name: "Middle East Energy",
+    location: "Dubai, UAE",
     logo: "/exhibitions/logos/middle-east-energy.webp",
     zoomOut: true,
     images: [
@@ -27,9 +28,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/dubai-2024/img-8.webp",
     ]
   },
-  { 
-    name: "Canton Fair", 
-    location: "Guangzhou, China", 
+  {
+    name: "Canton Fair",
+    location: "Guangzhou, China",
     logo: "/exhibitions/logos/canton-fair.webp",
     zoomOut: true,
     images: [
@@ -43,9 +44,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/canton-2024/img-8.webp",
     ]
   },
-  { 
-    name: "GILF", 
-    location: "Guzhen, China", 
+  {
+    name: "GILF",
+    location: "Guzhen, China",
     logo: "/exhibitions/logos/gilf.webp",
     images: [
       "/exhibitions/poland-2024/img-1.webp",
@@ -58,9 +59,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/poland-2024/img-8.webp",
     ]
   },
-  { 
-    name: "LED Middle East", 
-    location: "Cairo, Egypt", 
+  {
+    name: "LED Middle East",
+    location: "Cairo, Egypt",
     logo: "/exhibitions/logos/led-middle-east.webp",
     images: [
       "/exhibitions/egypt-2023/img-1.webp",
@@ -72,9 +73,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/egypt-2023/img-7.webp",
     ]
   },
-  { 
-    name: "HK Lighting Fair", 
-    location: "Hong Kong", 
+  {
+    name: "HK Lighting Fair",
+    location: "Hong Kong",
     logo: "/exhibitions/logos/hk-lighting-fair.webp",
     zoomOut: true,
     images: [
@@ -88,9 +89,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/hongkong-2023/img-8.webp",
     ]
   },
-  { 
-    name: "Light + Building", 
-    location: "Frankfurt, Germany", 
+  {
+    name: "Light + Building",
+    location: "Frankfurt, Germany",
     logo: "/exhibitions/logos/light-building.webp",
     zoomOut: true,
     images: [
@@ -102,9 +103,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/spain-2022/img-6.webp",
     ]
   },
-  { 
-    name: "LEDTEC Asia", 
-    location: "Ho Chi Minh, Vietnam", 
+  {
+    name: "LEDTEC Asia",
+    location: "Ho Chi Minh, Vietnam",
     logo: "/exhibitions/logos/ledtec-asia.webp",
     zoomOut: true,
     images: [
@@ -117,9 +118,9 @@ const exhibitionEvents: ExhibitionEvent[] = [
       "/exhibitions/india-2022/img-7.webp",
     ]
   },
-  { 
-    name: "Expolux", 
-    location: "São Paulo, Brazil", 
+  {
+    name: "Expolux",
+    location: "São Paulo, Brazil",
     logo: "/exhibitions/logos/expolux.webp",
     zoomOut: true,
     images: [
@@ -133,11 +134,11 @@ const exhibitionEvents: ExhibitionEvent[] = [
   },
 ];
 
-function ExhibitionLightbox({ 
-  event, 
-  onClose 
-}: { 
-  event: ExhibitionEvent; 
+function ExhibitionLightbox({
+  event,
+  onClose
+}: {
+  event: ExhibitionEvent;
   onClose: () => void;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -193,7 +194,7 @@ function ExhibitionLightbox({
         <ChevronRight className="w-10 h-10" />
       </button>
 
-      <div 
+      <div
         className="relative w-full max-w-5xl mx-4 aspect-[4/3]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -216,9 +217,8 @@ function ExhibitionLightbox({
           <button
             key={idx}
             onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              idx === currentIndex ? "bg-white w-6" : "bg-white/40 hover:bg-white/60"
-            }`}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? "bg-white w-6" : "bg-white/40 hover:bg-white/60"
+              }`}
           />
         ))}
       </div>
@@ -233,6 +233,7 @@ function ExhibitionLightbox({
 export default function Exhibition() {
   const [selectedEvent, setSelectedEvent] = useState<ExhibitionEvent | null>(null);
   const [activeIndex, setActiveIndex] = useState(1);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -271,14 +272,13 @@ export default function Exhibition() {
           className="text-center mb-16"
         >
           <span className="text-brand-cyan text-[11px] font-medium uppercase tracking-[0.3em]">
-            Meet Us Worldwide
+            {t('exhibition.subtitle')}
           </span>
           <h2 className="font-display text-3xl md:text-5xl text-gray-900 font-medium mt-4 mb-6">
-            <span className="italic font-normal">Exhibitions</span>
+            <span className="italic font-normal">{t('exhibition.title')}</span>
           </h2>
           <p className="text-gray-500 max-w-xl mx-auto text-lg">
-            We participate in leading lighting exhibitions worldwide, showcasing 
-            our latest innovations and connecting with global partners.
+            {t('exhibition.desc')}
           </p>
         </motion.div>
 
@@ -304,12 +304,12 @@ export default function Exhibition() {
               const event = exhibitionEvents[eventIndex];
               const isCenter = position === 2;
               const isNear = position === 1 || position === 3;
-              
+
               return (
                 <motion.div
                   key={`${eventIndex}-${activeIndex}`}
                   initial={{ opacity: 0, x: position < 2 ? -100 : position > 2 ? 100 : 0 }}
-                  animate={{ 
+                  animate={{
                     opacity: isCenter ? 1 : isNear ? 0.7 : 0.4,
                     x: 0,
                     scale: isCenter ? 1.1 : isNear ? 0.95 : 0.8,
@@ -319,11 +319,10 @@ export default function Exhibition() {
                   className="group cursor-pointer flex-shrink-0"
                   data-testid={`exhibition-logo-${eventIndex}`}
                 >
-                  <div className={`overflow-hidden h-32 w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 transition-all duration-500 ${
-                    isCenter 
-                      ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20" 
+                  <div className={`overflow-hidden h-32 w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 transition-all duration-500 ${isCenter
+                      ? "ring-2 ring-brand-cyan/50 shadow-lg shadow-brand-cyan/20"
                       : "hover:opacity-80"
-                  } ${event.zoomOut ? "bg-white flex items-center justify-center p-4" : ""}`}>
+                    } ${event.zoomOut ? "bg-white flex items-center justify-center p-4" : ""}`}>
                     <img
                       src={event.logo}
                       alt={event.name}
@@ -331,9 +330,8 @@ export default function Exhibition() {
                     />
                   </div>
                   <div className="mt-4 text-center">
-                    <h4 className={`text-sm font-medium transition-colors ${
-                      isCenter ? "text-brand-cyan" : "text-gray-500 group-hover:text-gray-700"
-                    }`}>
+                    <h4 className={`text-sm font-medium transition-colors ${isCenter ? "text-brand-cyan" : "text-gray-500 group-hover:text-gray-700"
+                      }`}>
                       {event.name}
                     </h4>
                     <p className="text-gray-400 text-xs mt-1">{event.location}</p>
@@ -348,9 +346,8 @@ export default function Exhibition() {
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  idx === activeIndex ? "bg-brand-cyan w-6" : "bg-gray-300 hover:bg-gray-400"
-                }`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === activeIndex ? "bg-brand-cyan w-6" : "bg-gray-300 hover:bg-gray-400"
+                  }`}
                 data-testid={`exhibition-dot-${idx}`}
               />
             ))}

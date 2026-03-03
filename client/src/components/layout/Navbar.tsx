@@ -1,7 +1,24 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const LANGUAGES = [
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'zh', name: '简体中文', flag: '🇨🇳' },
+  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺' }
+];
 const logoWhite = "/logo-white-navbar.webp";
 const logoBlack = "/logo-black.webp";
 
@@ -12,6 +29,8 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   const [isLightSection, setIsLightSection] = useState(false);
   const [isFooterSection, setIsFooterSection] = useState(false);
   const [hasNavBg, setHasNavBg] = useState(false);
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'en';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,11 +87,11 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
   const useDarkText = (darkText || isLightSection || (!isSnapPage && scrolled) || isProductsPage) && !isFooterSection;
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/products" },
-    { name: "Downloads", href: "/downloads" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: t('nav.home'), href: "/" },
+    { name: t('nav.products'), href: "/products" },
+    { name: t('nav.downloads'), href: "/downloads" },
+    { name: t('nav.about'), href: "/about" },
+    { name: t('nav.contact'), href: "/contact" },
   ];
 
   return (
@@ -143,8 +162,31 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden lg:block">
+          {/* Actions: Language + CTA */}
+          <div className="hidden lg:flex items-center space-x-6">
+            <DropdownMenu>
+              <DropdownMenuTrigger className={cn(
+                "flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-80 outline-none",
+                useDarkText ? "text-gray-900" : "text-white"
+              )}>
+                <Globe className="w-4 h-4" />
+                <span className="text-lg leading-none">{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
+                <ChevronDown className="w-3 h-3 opacity-70" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40 bg-white/95 backdrop-blur-md border-gray-100">
+                {LANGUAGES.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    className="cursor-pointer flex items-center gap-3 py-2"
+                    onClick={() => i18n.changeLanguage(lang.code)}
+                  >
+                    <span className="text-lg">{lang.flag}</span>
+                    <span className="text-sm font-medium text-gray-700">{lang.name}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link href="/contact">
               <button className={cn(
                 "px-6 py-2.5 text-xs font-medium tracking-widest uppercase transition-all duration-300",
@@ -152,7 +194,7 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
                   ? "bg-gray-900 text-white hover:bg-gray-800"
                   : "bg-white text-gray-900 hover:bg-gray-100"
               )}>
-                Get in Touch
+                {t('nav.getInTouch')}
               </button>
             </Link>
           </div>
@@ -191,9 +233,28 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
               {link.name}
             </Link>
           ))}
+          <div className="py-2 border-b border-gray-50 flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-500">{t('nav.language')}</span>
+            <div className="flex gap-2.5 overflow-x-auto pb-1 hide-scrollbar">
+              {LANGUAGES.map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => { i18n.changeLanguage(lang.code); setIsOpen(false); }}
+                  className={cn(
+                    "flex flex-col items-center justify-center p-2 rounded-lg transition-colors min-w-[3rem]",
+                    currentLang === lang.code ? "bg-gray-100" : "hover:bg-gray-50"
+                  )}
+                >
+                  <span className="text-xl mb-1">{lang.flag}</span>
+                  <span className="text-[10px] text-gray-600 font-medium">{lang.code.toUpperCase()}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Link href="/contact" onClick={() => setIsOpen(false)}>
             <button className="w-full mt-4 px-6 py-3 bg-gray-900 text-white text-sm font-medium tracking-wide">
-              Get in Touch
+              {t('nav.getInTouch')}
             </button>
           </Link>
         </div>

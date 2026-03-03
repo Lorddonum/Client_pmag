@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube, Twitter, Music2, Pin, Send, LightbulbOff } from "lucide-react";
 
 export default function Contact() {
+  const { t } = useTranslation();
   const [isLit, setIsLit] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -18,19 +20,19 @@ export default function Contact() {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Visit Us",
-      details: "No. 11, Longsha Industrial Zone, Jianghai District, Jiangmen City, China",
+      title: t('contact.visit_us'),
+      details: t('footer.addr'),
       link: "#map",
     },
     {
       icon: Phone,
-      title: "Call Us",
+      title: t('contact.call_us'),
       details: "+86 181 2825 9727",
       link: "tel:+8618128259727",
     },
     {
       icon: Mail,
-      title: "Email Us",
+      title: t('contact.email_us'),
       details: "inquiry@paralight.cc",
       link: "mailto:inquiry@paralight.cc",
     },
@@ -113,14 +115,14 @@ export default function Contact() {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 bg-white/5 border border-white/10"
                   >
                     <LightbulbOff className="w-4 h-4 text-gray-500" />
-                    <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-300">Let's Connect</span>
+                    <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-300">{t('contact.lets_connect')}</span>
                   </motion.div>
 
                   <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-medium mb-6 leading-[0.95] text-white">
-                    Light Up The
+                    {t('contact.title1')}
                     <br />
                     <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-gold">
-                      Future Together
+                      {t('contact.title2')}
                     </span>
                   </h1>
 
@@ -130,8 +132,7 @@ export default function Contact() {
                     transition={{ duration: 0.8, delay: 0.4 }}
                     className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-gray-400"
                   >
-                    Whether you're a wholesaler, distributor, or working on a lighting project —
-                    our team is here to support you.
+                    {t('contact.desc')}
                   </motion.p>
 
                   <motion.button
@@ -143,7 +144,7 @@ export default function Contact() {
                     whileTap={{ scale: 0.95 }}
                     className="inline-flex items-center gap-3 px-8 py-4 bg-brand-gold text-gray-900 font-medium rounded-full hover:bg-brand-gold/90 transition-all duration-300 group"
                   >
-                    <span>Send an Inquiry</span>
+                    <span>{t('contact.send_inquiry')}</span>
                     <motion.div
                       animate={{
                         opacity: [0.5, 1, 0.5],
@@ -212,10 +213,10 @@ export default function Contact() {
                     <div className="lg:col-span-3">
                       <div className="mb-10">
                         <span className="text-[11px] font-medium tracking-[0.3em] uppercase text-gray-400 block mb-4">
-                          Get in Touch
+                          {t('contact.get_in_touch')}
                         </span>
                         <h2 className="font-display text-4xl md:text-5xl text-gray-900 font-medium">
-                          Send us a <span className="italic font-normal">message</span>
+                          {t('contact.send_msg1')} <span className="italic font-normal">{t('contact.send_msg2')}</span>
                         </h2>
                       </div>
 
@@ -223,7 +224,7 @@ export default function Contact() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
                             <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-400">
-                              Your Name *
+                              {t('contact.your_name')}
                             </label>
                             <input
                               type="text"
@@ -236,7 +237,7 @@ export default function Contact() {
                           </div>
                           <div className="space-y-2">
                             <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-600">
-                              Email Address *
+                              {t('contact.email_addr')}
                             </label>
                             <input
                               type="email"
@@ -252,7 +253,7 @@ export default function Contact() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
                             <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-400">
-                              Whatsapp / Phone
+                              {t('contact.whatsapp')}
                             </label>
                             <input
                               type="text"
@@ -264,7 +265,7 @@ export default function Contact() {
                           </div>
                           <div className="space-y-2">
                             <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-600">
-                              Company Name
+                              {t('contact.company')}
                             </label>
                             <input
                               type="text"
@@ -278,7 +279,7 @@ export default function Contact() {
 
                         <div className="space-y-2">
                           <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-600">
-                            Country / Region
+                            {t('contact.country')}
                           </label>
                           <input
                             type="text"
@@ -291,7 +292,7 @@ export default function Contact() {
 
                         <div className="space-y-2">
                           <label className="text-[11px] font-medium tracking-[0.15em] uppercase text-gray-600">
-                            Your Message
+                            {t('contact.message')}
                           </label>
                           <textarea
                             rows={4}
@@ -309,7 +310,7 @@ export default function Contact() {
                           className="inline-flex items-center gap-3 px-10 py-5 bg-[#D5A021] text-gray-900 font-medium text-sm tracking-wide hover:bg-[#C1901C] transition-colors duration-300 mt-4 shadow-lg shadow-[#D5A021]/20 rounded-sm"
                         >
                           <Send className="w-4 h-4" />
-                          <span>Submit Inquiry</span>
+                          <span>{t('contact.submit')}</span>
                         </motion.button>
                       </form>
                     </div>
@@ -320,17 +321,17 @@ export default function Contact() {
                         {/* Decorative accent */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#D5A021]/10 rounded-full blur-[30px]" />
                         <h3 className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400 mb-6 relative z-10">
-                          Prefer a Quick Call?
+                          {t('contact.prefer_call')}
                         </h3>
                         <a href="tel:+8618128259727" className="block text-3xl font-display font-medium mb-2 hover:text-[#D5A021] transition-colors relative z-10">
                           +86 181 2825 9727
                         </a>
-                        <p className="text-gray-400 text-sm relative z-10">Available Monday - Saturday, 9am - 6pm CST</p>
+                        <p className="text-gray-400 text-sm relative z-10">{t('contact.avail')}</p>
                       </div>
 
                       <div>
                         <h3 className="text-[11px] font-medium tracking-[0.2em] uppercase text-gray-400 mb-6">
-                          Follow Our Journey
+                          {t('contact.follow')}
                         </h3>
                         <div className="grid grid-cols-4 gap-3">
                           {socials.map((social) => (
@@ -383,9 +384,9 @@ export default function Contact() {
                       <MapPin className="w-5 h-5 text-brand-cyan" />
                     </div>
                     <div>
-                      <h4 className="font-display text-lg text-gray-900 font-medium mb-1">Paralight Group HQ</h4>
+                      <h4 className="font-display text-lg text-gray-900 font-medium mb-1">{t('contact.hq')}</h4>
                       <p className="text-gray-500 text-sm leading-relaxed">
-                        No. 11, Longsha Industrial Zone, Jianghai District, Jiangmen City, China
+                        {t('footer.addr')}
                       </p>
                     </div>
                   </div>

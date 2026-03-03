@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import {
@@ -60,6 +61,7 @@ function AnimatedBackground() {
     }
 
     function resize() {
+      if (!cv) return;
       const rc = cv.getBoundingClientRect();
       stateRef.current.w = cv.width = rc.width;
       stateRef.current.h = cv.height = rc.height;
@@ -69,6 +71,7 @@ function AnimatedBackground() {
     ro.observe(cv); resize();
 
     function frame() {
+      if (!ctx) return;
       const s = stateRef.current;
       s.t += 16;
       ctx.clearRect(0, 0, s.w, s.h);
@@ -150,6 +153,7 @@ function AnimatedBackground() {
 
 // ── Page ──────────────────────────────────────────────────────────────────
 export default function Downloads() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -244,7 +248,7 @@ export default function Downloads() {
                   className="text-[11px] font-semibold uppercase tracking-[0.22em]"
                   style={{ color: "#00A8E8" }}
                 >
-                  Resources
+                  {t('downloads.resources')}
                 </span>
               </motion.div>
 
@@ -255,9 +259,9 @@ export default function Downloads() {
                 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6"
                 style={{ color: "#1C1410" }}
               >
-                Download{" "}
+                {t('downloads.dl_center')}
                 <span className="italic font-normal" style={{ color: "#8B6830" }}>
-                  Center
+                  {t('downloads.center')}
                 </span>
               </motion.h1>
 
@@ -268,8 +272,7 @@ export default function Downloads() {
                 className="text-lg leading-relaxed max-w-2xl mb-10"
                 style={{ color: "#6B4E28" }}
               >
-                Access product catalogues, specifications, and technical documentation
-                for our complete range of architectural lighting solutions.
+                {t('downloads.desc')}
               </motion.p>
 
               {/* Stat chips */}
@@ -285,7 +288,7 @@ export default function Downloads() {
                 >
                   <BookOpen className="w-4 h-4" style={{ color: "#A07830" }} />
                   <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{products.length}</span>
-                  <span className="text-xs" style={{ color: "#8B6830" }}>Total Catalogues</span>
+                  <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.total')}</span>
                 </div>
                 <div
                   className="flex items-center gap-3 px-5 py-3 rounded-xl border"
@@ -293,7 +296,7 @@ export default function Downloads() {
                 >
                   <div className="w-2 h-2 rounded-full bg-[#00A8E8]" />
                   <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{paralightCount}</span>
-                  <span className="text-xs" style={{ color: "#8B6830" }}>Paralight</span>
+                  <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.paralight')}</span>
                 </div>
                 <div
                   className="flex items-center gap-3 px-5 py-3 rounded-xl border"
@@ -301,7 +304,7 @@ export default function Downloads() {
                 >
                   <div className="w-2 h-2 rounded-full bg-[#ECAA00]" />
                   <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{maglinearCount}</span>
-                  <span className="text-xs" style={{ color: "#8B6830" }}>Maglinear Lighting</span>
+                  <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.maglinear')}</span>
                 </div>
               </motion.div>
             </div>
@@ -327,7 +330,7 @@ export default function Downloads() {
                   />
                   <input
                     type="text"
-                    placeholder="Search by name, model number, or series..."
+                    placeholder={t('downloads.search')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     className="w-full pl-11 pr-10 py-3 rounded-xl text-sm outline-none transition-all"
@@ -391,7 +394,7 @@ export default function Downloads() {
                     className="text-[10px] uppercase tracking-widest mr-1 font-medium"
                     style={{ color: "#A07830" }}
                   >
-                    Series:
+                    {t('downloads.series')}
                   </span>
                   {["all", ...allSeries].map(s => (
                     <button
@@ -424,7 +427,7 @@ export default function Downloads() {
                 >
                   <Loader2 className="w-7 h-7 animate-spin" style={{ color: "#00A8E8" }} />
                 </div>
-                <p className="text-sm" style={{ color: "#8B6830" }}>Loading catalogues…</p>
+                <p className="text-sm" style={{ color: "#8B6830" }}>{t('downloads.loading')}</p>
               </div>
 
             ) : filteredProducts.length === 0 ? (
@@ -440,9 +443,9 @@ export default function Downloads() {
                 >
                   <FileText className="w-9 h-9" style={{ color: "#A07830" }} />
                 </div>
-                <p className="text-lg font-medium mb-2" style={{ color: "#1C1410" }}>No catalogues found</p>
+                <p className="text-lg font-medium mb-2" style={{ color: "#1C1410" }}>{t('downloads.no_found')}</p>
                 <p className="text-sm" style={{ color: "#8B6830" }}>
-                  {searchQuery ? "Try adjusting your search terms" : "Check back soon for updates"}
+                  {searchQuery ? t('downloads.try_adj') : t('downloads.check_back')}
                 </p>
               </motion.div>
 
@@ -502,7 +505,7 @@ export default function Downloads() {
                                   className="text-[10px] uppercase tracking-wider"
                                   style={{ color: "#8B6830" }}
                                 >
-                                  {prods.length} file{prods.length !== 1 ? "s" : ""}
+                                  {prods.length} {prods.length !== 1 ? t('downloads.files') : t('downloads.file')}
                                 </span>
                               </div>
                             </div>
@@ -599,7 +602,7 @@ export default function Downloads() {
                   className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4"
                 >
                   <p className="text-xs" style={{ color: "#A07830" }}>
-                    Showing {filteredProducts.length} of {products.length} catalogues
+                    {t('downloads.showing')}{filteredProducts.length}{t('downloads.of')}{products.length}{t('downloads.catalogues')}
                   </p>
                   <a
                     href="/contact"
@@ -608,7 +611,7 @@ export default function Downloads() {
                     onMouseEnter={e => (e.currentTarget.style.color = "#00A8E8")}
                     onMouseLeave={e => (e.currentTarget.style.color = "#8B6830")}
                   >
-                    Need a custom specification sheet?
+                    {t('downloads.need_custom')}
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                   </a>
                 </motion.div>
