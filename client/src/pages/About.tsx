@@ -491,6 +491,9 @@ function HonorsSlideshow() {
 
 function ShippingSlideshow() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const INTERVAL = 4000;
   const images = [
     "/about/shipping/1.webp",
     "/about/shipping/2.webp",
@@ -500,31 +503,91 @@ function ShippingSlideshow() {
   ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    if (paused) return;
+    setProgress(0);
+    const step = 50;
+    const increment = (step / INTERVAL) * 100;
+    const progressTimer = setInterval(() => {
+      setProgress(p => Math.min(p + increment, 100));
+    }, step);
+    const slideTimer = setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
+    }, INTERVAL);
+    return () => { clearInterval(progressTimer); clearTimeout(slideTimer); };
+  }, [currentSlide, paused]);
+
+  const goTo = (idx: number) => { setCurrentSlide(idx); setProgress(0); };
+  const prev = () => goTo((currentSlide - 1 + images.length) % images.length);
+  const next = () => goTo((currentSlide + 1) % images.length);
 
   return (
-    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-gray-100 bg-white">
+    <div
+      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <AnimatePresence mode="wait">
         <motion.img
           key={currentSlide}
           src={images[currentSlide]}
           alt={`Shipping Operation ${currentSlide + 1}`}
-          initial={{ opacity: 0, scale: 1.05 }}
+          initial={{ opacity: 0, scale: 1.06 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.8 }}
+          exit={{ opacity: 0, scale: 0.97 }}
+          transition={{ duration: 0.7, ease: 'easeInOut' }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </AnimatePresence>
-      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-10">
+
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
+
+      {/* Slide counter badge */}
+      <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full">
+        {currentSlide + 1} / {images.length}
+      </div>
+
+      {/* Pause indicator */}
+      {paused && (
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="absolute top-4 left-4 bg-black/40 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full flex items-center gap-1.5"
+        >
+          <span className="w-1.5 h-3 bg-white rounded-sm inline-block" />
+          <span className="w-1.5 h-3 bg-white rounded-sm inline-block" />
+          Paused
+        </motion.div>
+      )}
+
+      {/* Prev/Next arrows */}
+      <button
+        onClick={prev}
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100 duration-200"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all opacity-0 group-hover:opacity-100 duration-200"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
+
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
+        <motion.div
+          className="h-full bg-[#00A8E8]"
+          style={{ width: `${progress}%` }}
+          transition={{ ease: 'linear' }}
+        />
+      </div>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
         {images.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setCurrentSlide(idx)}
+            onClick={() => goTo(idx)}
             className={`transition-all duration-300 rounded-full h-1.5 ${idx === currentSlide ? "w-6 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
               }`}
           />
@@ -604,19 +667,27 @@ function TeamStrip({
                   const cadreColor = isMaglinear ? '#ECAA00' : '#0080B3';
                   return (
                     <div
-                      className="flex-shrink-0 relative overflow-hidden"
+                      className="flex-shrink-0 flex items-center justify-center"
                       style={{ width: STRIP_H, height: STRIP_H }}
                     >
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {/* Cadre overlay on top of image */}
                       <div
-                        className="absolute inset-0 pointer-events-none"
-                        style={{ border: `3px solid ${cadreColor}` }}
-                      />
+                        style={{
+                          width: STRIP_H,
+                          height: STRIP_H,
+                          borderRadius: '50%',
+                          overflow: 'hidden',
+                          border: `3px solid ${cadreColor}`,
+                          boxShadow: `0 0 18px ${cadreColor}55`,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                          className="group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
                     </div>
                   );
                 })()}
@@ -1052,7 +1123,7 @@ export default function About() {
       role: "CEO",
       tagline: "One-stop lighting solutions with the client at the center.",
       subtitle: "A globalized perspective managing systematic operations.",
-      bio: "Holding an MBA from Hong Kong, CEO Michelle Tang leads Paralight Group's strategic expansion into international markets, championing client-centric product development, integrated supply chain operations, and long-term vision for global partnerships. Under her leadership, Paralight Group has launched multiple product lines, systematized production workflows, and positioned itself as a comprehensive lighting solutions provider.",
+      bio: "Holding an MBA from Hong Kong, CEO Michelle leads Paralight Group's strategic expansion into international markets, championing client-centric product development, integrated supply chain operations, and long-term vision for global partnerships. Under her leadership, Paralight Group has launched multiple product lines, systematized production workflows, and positioned itself as a comprehensive lighting solutions provider.",
       image: "/michelle.webp",
       color: "#ECAA00",
       bgGradient: "from-amber-50 via-white to-yellow-50",
@@ -1254,35 +1325,35 @@ export default function About() {
       <section className="snap-start h-screen flex flex-col bg-white overflow-hidden relative">
         {/* Background textures */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-[450px] h-[450px] bg-[#00A8E8]/8 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-20 -left-10 w-[500px] h-[500px] bg-[#ECAA00]/7 rounded-full blur-[90px]" />
+          <div className="absolute -top-10 -right-10 w-[450px] h-[450px] bg-[#00A8E8]/20 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-20 -left-10 w-[500px] h-[500px] bg-[#ECAA00]/15 rounded-full blur-[90px]" />
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `radial-gradient(rgba(0,0,0,0.06) 1.5px, transparent 1.5px)`,
+              backgroundImage: `radial-gradient(rgba(0,0,0,0.12) 1.5px, transparent 1.5px)`,
               backgroundSize: '20px 20px',
             }}
           />
-          <div className="absolute top-10 right-10 w-56 h-56 border-2 border-[#00A8E8]/10 rounded-full" />
-          <div className="absolute top-20 right-20 w-36 h-36 border-2 border-[#00A8E8]/15 rounded-full" />
-          <div className="absolute bottom-12 left-12 w-48 h-48 border-2 border-[#ECAA00]/10 rounded-full" />
-          <div className="absolute bottom-20 left-20 w-28 h-28 border-2 border-[#ECAA00]/15 rounded-full" />
+          <div className="absolute top-10 right-10 w-56 h-56 border-2 border-[#00A8E8]/25 rounded-full" />
+          <div className="absolute top-20 right-20 w-36 h-36 border-2 border-[#00A8E8]/30 rounded-full" />
+          <div className="absolute bottom-12 left-12 w-48 h-48 border-2 border-[#ECAA00]/25 rounded-full" />
+          <div className="absolute bottom-20 left-20 w-28 h-28 border-2 border-[#ECAA00]/30 rounded-full" />
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.04) 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.14) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.14) 1px, transparent 1px)`,
               backgroundSize: '60px 60px',
-              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.6) 0%, transparent 50%)',
-              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.6) 0%, transparent 50%)',
+              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.9) 0%, transparent 65%)',
+              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.9) 0%, transparent 65%)',
             }}
           />
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.04) 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.12) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.12) 1px, transparent 1px)`,
               backgroundSize: '60px 60px',
-              maskImage: 'linear-gradient(to top left, rgba(0,0,0,0.6) 0%, transparent 50%)',
-              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,0.6) 0%, transparent 50%)',
+              maskImage: 'linear-gradient(to top left, rgba(0,0,0,0.9) 0%, transparent 65%)',
+              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,0.9) 0%, transparent 65%)',
             }}
           />
         </div>
@@ -1357,13 +1428,13 @@ export default function About() {
       <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Color glows */}
-          <div className="absolute -top-10 -left-10 w-[400px] h-[400px] bg-[#00A8E8]/7 rounded-full blur-[90px]" />
-          <div className="absolute -bottom-10 -right-10 w-[450px] h-[450px] bg-[#ECAA00]/6 rounded-full blur-[90px]" />
+          <div className="absolute -top-10 -left-10 w-[400px] h-[400px] bg-[#00A8E8]/20 rounded-full blur-[90px]" />
+          <div className="absolute -bottom-10 -right-10 w-[450px] h-[450px] bg-[#ECAA00]/15 rounded-full blur-[90px]" />
           {/* Dot grid */}
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `radial-gradient(rgba(0,0,0,0.05) 1.5px, transparent 1.5px)`,
+              backgroundImage: `radial-gradient(rgba(0,0,0,0.10) 1.5px, transparent 1.5px)`,
               backgroundSize: '22px 22px',
             }}
           />
@@ -1371,24 +1442,24 @@ export default function About() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.05) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.05) 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.15) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.15) 1px, transparent 1px)`,
               backgroundSize: '50px 50px',
-              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.8) 0%, transparent 55%)',
-              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,0.8) 0%, transparent 55%)',
+              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, transparent 65%)',
+              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, transparent 65%)',
             }}
           />
           {/* Grid lines - gold from bottom-right */}
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.05) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.05) 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.15) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.15) 1px, transparent 1px)`,
               backgroundSize: '50px 50px',
-              maskImage: 'linear-gradient(to top left, rgba(0,0,0,0.8) 0%, transparent 55%)',
-              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,0.8) 0%, transparent 55%)',
+              maskImage: 'linear-gradient(to top left, rgba(0,0,0,1) 0%, transparent 65%)',
+              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,1) 0%, transparent 65%)',
             }}
           />
           {/* Decorative hexagon shapes - top right (large, overflowing) */}
-          <svg className="absolute -top-32 -right-64 w-[600px] h-[600px] text-[#00A8E8]/8" viewBox="0 0 200 200" fill="none">
+          <svg className="absolute -top-32 -right-64 w-[600px] h-[600px] text-[#00A8E8]/20" viewBox="0 0 200 200" fill="none">
             <polygon points="100,10 170,45 170,115 100,150 30,115 30,45" stroke="currentColor" strokeWidth="1" />
             <polygon points="100,25 155,52 155,108 100,135 45,108 45,52" stroke="currentColor" strokeWidth="0.8" />
             <polygon points="100,40 140,60 140,100 100,120 60,100 60,60" stroke="currentColor" strokeWidth="0.7" />
@@ -1400,29 +1471,29 @@ export default function About() {
             <line x1="170" y1="45" x2="30" y2="115" stroke="currentColor" strokeWidth="0.4" />
           </svg>
           {/* Decorative diamond + cross - bottom left */}
-          <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/10" viewBox="0 0 200 200" fill="none">
+          <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/20" viewBox="0 0 200 200" fill="none">
             <rect x="60" y="60" width="80" height="80" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1.5" />
             <rect x="75" y="75" width="50" height="50" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1" />
             <line x1="100" y1="20" x2="100" y2="180" stroke="currentColor" strokeWidth="0.8" />
             <line x1="20" y1="100" x2="180" y2="100" stroke="currentColor" strokeWidth="0.8" />
           </svg>
           {/* Decorative triangles - top left */}
-          <svg className="absolute top-16 left-16 w-40 h-40 text-[#00A8E8]/6" viewBox="0 0 150 150" fill="none">
+          <svg className="absolute top-16 left-16 w-40 h-40 text-[#00A8E8]/15" viewBox="0 0 150 150" fill="none">
             <polygon points="75,10 140,130 10,130" stroke="currentColor" strokeWidth="1.5" />
             <polygon points="75,35 120,115 30,115" stroke="currentColor" strokeWidth="1" />
             <polygon points="75,55 100,100 50,100" stroke="currentColor" strokeWidth="0.8" />
           </svg>
           {/* Decorative arc pattern - right center */}
-          <svg className="absolute top-1/2 -translate-y-1/2 right-4 w-48 h-96 text-[#ECAA00]/6" viewBox="0 0 100 200" fill="none">
+          <svg className="absolute top-1/2 -translate-y-1/2 right-4 w-48 h-96 text-[#ECAA00]/15" viewBox="0 0 100 200" fill="none">
             <path d="M 100 20 A 80 80 0 0 0 100 180" stroke="currentColor" strokeWidth="1.2" />
             <path d="M 100 40 A 60 60 0 0 0 100 160" stroke="currentColor" strokeWidth="1" />
             <path d="M 100 60 A 40 40 0 0 0 100 140" stroke="currentColor" strokeWidth="0.8" />
             <path d="M 100 80 A 20 20 0 0 0 100 120" stroke="currentColor" strokeWidth="0.6" />
           </svg>
           {/* Small scattered circles */}
-          <div className="absolute top-[15%] right-[30%] w-3 h-3 rounded-full border-2 border-[#00A8E8]/10" />
-          <div className="absolute top-[25%] right-[15%] w-2 h-2 rounded-full bg-[#00A8E8]/8" />
-          <div className="absolute bottom-[20%] left-[25%] w-4 h-4 rounded-full border-2 border-[#ECAA00]/10" />
+          <div className="absolute top-[15%] right-[30%] w-3 h-3 rounded-full border-2 border-[#00A8E8]/25" />
+          <div className="absolute top-[25%] right-[15%] w-2 h-2 rounded-full bg-[#00A8E8]/20" />
+          <div className="absolute bottom-[20%] left-[25%] w-4 h-4 rounded-full border-2 border-[#ECAA00]/25" />
           <div className="absolute bottom-[30%] left-[40%] w-2 h-2 rounded-full bg-[#ECAA00]/8" />
         </div>
         <div className="container mx-auto px-6 relative z-10">
@@ -1539,9 +1610,10 @@ export default function About() {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.25) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.25) 1px, transparent 1px)`,
+                backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.35) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.35) 1px, transparent 1px)`,
                 backgroundSize: '32px 32px',
-                opacity: 0.6,
+                maskImage: 'linear-gradient(to bottom right, transparent 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom right, transparent 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
               }}
             />
             <div className="relative z-10">
@@ -1562,9 +1634,10 @@ export default function About() {
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
-                backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.25) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.25) 1px, transparent 1px)`,
+                backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.35) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.35) 1px, transparent 1px)`,
                 backgroundSize: '32px 32px',
-                opacity: 0.6,
+                maskImage: 'linear-gradient(to bottom left, transparent 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom left, transparent 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
               }}
             />
             <div className="relative z-10">
@@ -1587,17 +1660,17 @@ export default function About() {
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           {/* Left: Core Team Image */}
           <div className="relative bg-[#0a1628]">
-            <motion.div
-              initial={{ opacity: 0, scale: 1.1 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
-              className="absolute inset-0"
-            >
-              <img src="/core-team.webp" alt="Paralight Core Team" className="w-full h-full object-cover opacity-80" />
+            {/* Background image — rendered independently so objectPosition always applies */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src="/core-team.webp"
+                alt="Paralight Core Team"
+                className="absolute inset-0 w-full h-full opacity-80"
+                style={{ objectFit: 'cover', objectPosition: '50% 20%' }}
+              />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/80 via-[#0a1628]/40 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-transparent to-transparent" />
-            </motion.div>
+            </div>
 
             <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12 pb-48 lg:pb-52">
               <motion.div
@@ -1621,55 +1694,100 @@ export default function About() {
           </div>
 
           {/* Right: Philosophy Content */}
-          <div className="bg-gradient-to-br from-[#F5F0E8] to-white p-8 lg:p-16 flex flex-col justify-center">
+          <div className="bg-gradient-to-br from-[#06101e] via-[#0a1628] to-[#0d1f38] p-8 lg:p-14 flex flex-col justify-center relative overflow-hidden">
+            {/* Subtle grid */}
+            <div className="absolute inset-0 pointer-events-none" style={{
+              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.06) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.06) 1px, transparent 1px)`,
+              backgroundSize: '40px 40px',
+            }} />
+            {/* Glow */}
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#00A8E8]/10 rounded-full blur-[80px] pointer-events-none" />
+
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              className="relative z-10"
             >
-              <span className="text-[#ECAA00] text-xs font-semibold uppercase tracking-widest mb-4 block">Our Philosophy</span>
-              <h2 className="font-display text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#ECAA00]/10 border border-[#ECAA00]/30 rounded-full mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ECAA00] animate-pulse" />
+                <span className="text-[#ECAA00] text-xs font-semibold uppercase tracking-widest">Our Philosophy</span>
+              </div>
+
+              <h2 className="font-display text-3xl lg:text-4xl font-bold text-white mb-3">
                 Client-Centric <span className="italic font-normal text-[#00A8E8]">Excellence</span>
               </h2>
+              <p className="text-white/50 leading-relaxed text-sm mb-8 max-w-sm">
+                Our culture is defined by seamless integration of manufacturing and trade, always placing the client at the center.
+              </p>
 
-              <div className="space-y-6">
-                <p className="text-gray-600 leading-relaxed">
-                  At Paralight Group, our culture is defined by a <span className="font-semibold text-[#00A8E8]">"Client-Centric"</span> philosophy,
-                  brought to life through seamless integration of manufacturing and trade.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[
-                    { icon: Target, label: "Precision", desc: "Every detail matters" },
-                    { icon: Sparkles, label: "Innovation", desc: "Constant evolution" },
-                    { icon: Zap, label: "Speed", desc: "Rapid response" },
-                  ].map((item, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 + idx * 0.1 }}
-                      className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+              {/* Big icon feature rows */}
+              <div className="space-y-4">
+                {[
+                  {
+                    icon: Target,
+                    label: "Precision",
+                    desc: "Every component, every tolerance, every detail matters — built to exact specification.",
+                    color: "#00A8E8",
+                    bg: "rgba(0,168,232,0.12)",
+                    border: "rgba(0,168,232,0.25)",
+                  },
+                  {
+                    icon: Sparkles,
+                    label: "Innovation",
+                    desc: "Constant evolution in product design, materials, and production techniques.",
+                    color: "#ECAA00",
+                    bg: "rgba(236,170,0,0.12)",
+                    border: "rgba(236,170,0,0.25)",
+                  },
+                  {
+                    icon: Zap,
+                    label: "Speed",
+                    desc: "Rapid response to demand changes with a fully integrated supply chain.",
+                    color: "#00A8E8",
+                    bg: "rgba(0,168,232,0.12)",
+                    border: "rgba(0,168,232,0.25)",
+                  },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.15 + idx * 0.1 }}
+                    whileHover={{ x: 4 }}
+                    className="flex items-center gap-5 p-4 rounded-2xl border transition-all duration-300 cursor-default group"
+                    style={{ backgroundColor: item.bg, borderColor: item.border }}
+                  >
+                    <div
+                      className="flex items-center justify-center shrink-0"
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '9999px',
+                        backgroundColor: item.color,
+                        boxShadow: `0 0 20px ${item.color}40`,
+                        flexShrink: 0,
+                      }}
                     >
-                      <item.icon className="w-6 h-6 text-[#00A8E8] mb-2" />
-                      <h4 className="font-semibold text-gray-900 text-sm">{item.label}</h4>
-                      <p className="text-gray-500 text-xs mt-1">{item.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="bg-white/60 backdrop-blur-sm p-5 rounded-xl border border-gray-200/50">
-                  <Quote className="w-6 h-6 text-[#ECAA00] opacity-30 mb-2" />
-                  <p className="text-gray-700 leading-relaxed text-sm italic">
-                    "This closed-loop system—from responsive demand to collaborative support and full-chain satisfaction—represents
-                    the core competitive advantage of Paralight Group."
-                  </p>
-                </div>
-
-
+                      <item.icon style={{ width: '26px', height: '26px', color: '#fff' }} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-base mb-0.5" style={{ color: item.color }}>{item.label}</h4>
+                      <p className="text-white/50 text-xs leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
+
+              {/* Quote strip */}
+              <div className="mt-6 border-l-2 border-[#ECAA00]/50 pl-4">
+                <p className="text-white/40 text-xs italic leading-relaxed">
+                  "From responsive demand to collaborative support and full-chain satisfaction — the core competitive advantage of Paralight Group."
+                </p>
+              </div>
+
             </motion.div>
           </div>
         </div>
@@ -1721,44 +1839,65 @@ export default function About() {
       <ShowcaseSection />
 
       {/* REDESIGNED: Certifications + Honors - Side by Side */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-[#060d18] via-[#0a1628] to-[#0d1f38] overflow-hidden">
-        <div className="container mx-auto px-8 lg:px-12">
+      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-[#060d18] via-[#0a1628] to-[#0d1f38] overflow-hidden relative">
+        {/* Diagonal grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.07) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.07) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+            maskImage: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 60%)',
+            WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 60%)',
+          }}
+        />
+        {/* Glows */}
+        <div className="absolute top-0 left-0 w-[350px] h-[350px] bg-[#00A8E8]/8 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-[#ECAA00]/8 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
             {/* Left: Certifications */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="pt-16 lg:pt-24"
+              className="pt-8 lg:pt-0"
             >
-              <div className="flex items-center gap-4 mb-10">
-                <div className="w-14 h-14 rounded-xl bg-[#00A8E8]/20 flex items-center justify-center">
-                  <CheckCircle className="w-7 h-7 text-[#00A8E8]" />
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-[#00A8E8]/15 border border-[#00A8E8]/30 flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-[#00A8E8]" />
                 </div>
                 <div>
-                  <span className="text-[#00A8E8] text-sm font-semibold uppercase tracking-widest">Quality Assurance</span>
-                  <h3 className="font-display text-3xl text-white font-bold">Certifications</h3>
+                  <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Quality Assurance</span>
+                  <h3 className="font-display text-2xl lg:text-3xl text-white font-bold">Certifications</h3>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
                 {[
                   { name: "High-tech Enterprise", desc: "Recognized innovation leader" },
-                  { name: "CB / BIS / RoHS / CE", desc: "International compliance" },
-                  { name: "Lighting Association", desc: "Industry partnership" },
-                  { name: "Gold Supplier Awards", desc: "Excellence in service" },
+                  { name: "CB / BIS / RoHS / CE", desc: "International compliance standards" },
+                  { name: "Lighting Association", desc: "Industry partnership & membership" },
+                  { name: "Gold Supplier Awards", desc: "Excellence in trade service" },
                 ].map((cert, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
+                    whileHover={{ backgroundColor: 'rgba(0,168,232,0.08)', borderColor: 'rgba(0,168,232,0.3)' }}
+                    className="bg-white/5 border border-white/10 rounded-xl p-4 group transition-all duration-300 cursor-default flex items-center gap-4"
                   >
-                    <CheckCircle className="w-6 h-6 text-[#00A8E8] mb-3 group-hover:scale-110 transition-transform" />
-                    <h4 className="font-semibold text-white text-sm mb-1">{cert.name}</h4>
-                    <p className="text-xs text-white/50">{cert.desc}</p>
+                    <div className="w-9 h-9 rounded-lg bg-[#00A8E8]/15 border border-[#00A8E8]/25 flex items-center justify-center shrink-0 group-hover:bg-[#00A8E8]/25 transition-colors">
+                      <CheckCircle className="w-5 h-5 text-[#00A8E8]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-white text-sm group-hover:text-[#00A8E8] transition-colors">{cert.name}</h4>
+                      <p className="text-xs text-white/40 mt-0.5">{cert.desc}</p>
+                    </div>
+                    <span className="text-[#00A8E8]/60 text-xs font-medium shrink-0 border border-[#00A8E8]/20 px-2 py-0.5 rounded-full group-hover:border-[#00A8E8]/50 group-hover:text-[#00A8E8] transition-all">Granted</span>
                   </motion.div>
                 ))}
               </div>
@@ -1770,13 +1909,13 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center gap-4 mb-10">
-                <div className="w-14 h-14 rounded-xl bg-[#ECAA00]/20 flex items-center justify-center">
-                  <Award className="w-7 h-7 text-[#ECAA00]" />
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-[#ECAA00]/15 border border-[#ECAA00]/30 flex items-center justify-center">
+                  <Award className="w-6 h-6 text-[#ECAA00]" />
                 </div>
                 <div>
-                  <span className="text-[#ECAA00] text-sm font-semibold uppercase tracking-widest">Recognition</span>
-                  <h3 className="font-display text-3xl text-white font-bold">Official Certificates</h3>
+                  <span className="text-[#ECAA00] text-xs font-semibold uppercase tracking-widest">Recognition</span>
+                  <h3 className="font-display text-2xl lg:text-3xl text-white font-bold">Official Certificates</h3>
                 </div>
               </div>
 
@@ -1784,44 +1923,87 @@ export default function About() {
                 <HonorsSlideshow />
               </div>
             </motion.div>
+
           </div>
         </div>
       </section>
 
       {/* REDESIGNED: Exhibitions - Carousel */}
       <section className="snap-start h-screen flex flex-col justify-center bg-[#0a1628] overflow-hidden relative">
+        {/* Radial glow center */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(0,168,232,0.10) 0%, transparent 70%)'
+        }} />
+        {/* Top-right glow */}
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-[#00A8E8]/8 rounded-full blur-[120px] pointer-events-none" />
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)`,
+            backgroundSize: '28px 28px',
+          }}
+        />
+
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12"
+            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10"
           >
             <div>
-              <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest mb-3 block">Meet Us</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#00A8E8]/10 border border-[#00A8E8]/25 rounded-full mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00A8E8] animate-pulse" />
+                <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Meet Us</span>
+              </div>
               <h2 className="font-display text-3xl lg:text-5xl text-white font-bold">
-                <span className="italic font-normal">Global</span> Exhibitions
+                <span className="italic font-normal text-white/70">Global</span> Exhibitions
               </h2>
             </div>
 
-            <div className="flex items-center gap-4">
-              <p className="text-white/50 max-w-md text-sm lg:text-base hidden lg:block mr-8">
+            <div className="flex flex-col lg:items-end gap-4">
+              <p className="text-white/40 max-w-xs text-sm hidden lg:block">
                 We participate in leading lighting exhibitions worldwide, showcasing our latest innovations.
               </p>
-              <button
-                onClick={scrollPrev}
-                className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all text-white/70 hover:text-white"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={scrollNext}
-                className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-white/40 transition-all text-white/70 hover:text-white"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={scrollPrev}
+                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-[#00A8E8]/50 transition-all text-white/70 hover:text-white group"
+                >
+                  <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+                </button>
+                <button
+                  onClick={scrollNext}
+                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-[#00A8E8]/50 transition-all text-white/70 hover:text-white group"
+                >
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              </div>
             </div>
           </motion.div>
+
+          {/* Stats strip */}
+          <div className="flex gap-8 mb-8">
+            {[
+              { value: "20+", label: "Expos / Year" },
+              { value: "15+", label: "Countries" },
+              { value: "10k+", label: "Visitors Met" },
+            ].map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="flex items-center gap-3"
+              >
+                <span className="text-2xl font-display font-bold text-[#00A8E8]">{s.value}</span>
+                <span className="text-white/30 text-xs uppercase tracking-widest">{s.label}</span>
+                {i < 2 && <span className="text-white/15 ml-3">|</span>}
+              </motion.div>
+            ))}
+          </div>
 
           <div className="overflow-hidden -mx-4 px-4" ref={emblaRef}>
             <div className="flex gap-6">
@@ -1834,60 +2016,93 @@ export default function About() {
           </div>
         </div>
 
-        <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
-          <div className="w-64 h-64 bg-[#00A8E8] rounded-full blur-[120px]" />
-        </div>
-
         <AnimatePresence>
           {selectedEvent && <ExhibitionLightbox event={selectedEvent} onClose={() => setSelectedEvent(null)} />}
         </AnimatePresence>
       </section>
 
       {/* REDESIGNED: Global Delivery - Full width with stats */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-r from-[#F5F0E8] to-white relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#00A8E8]/5 to-transparent" />
+      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-[#06101e] via-[#0a1628] to-[#0d1f38] relative overflow-hidden">
+        {/* Background grid */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.08) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.08) 1px, transparent 1px)`,
+            backgroundSize: '48px 48px',
+          }}
+        />
+        {/* Glowing orbs */}
+        <div className="absolute -top-24 -left-24 w-[400px] h-[400px] bg-[#00A8E8]/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-[400px] h-[400px] bg-[#ECAA00]/8 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="container mx-auto px-8 lg:px-12">
+        <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+            {/* Left: Text content */}
             <div className="lg:col-span-7">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest mb-4 block">Worldwide Shipping</span>
-                <h2 className="font-display text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Fast & <span className="italic font-normal text-[#00A8E8]">Efficient</span> Delivery
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#00A8E8]/10 border border-[#00A8E8]/30 rounded-full mb-5">
+                  <span className="w-2 h-2 rounded-full bg-[#00A8E8] animate-pulse" />
+                  <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Worldwide Shipping</span>
+                </div>
+                <h2 className="font-display text-3xl lg:text-5xl font-bold text-white mb-4">
+                  Fast &amp; <span className="italic font-normal text-[#00A8E8]">Efficient</span> Delivery
                 </h2>
-                <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
-                  We load an average of 2 containers per day, and 50-60 containers a month. Our reinforced 5-layer
+                <p className="text-white/60 leading-relaxed mb-8 max-w-xl">
+                  We load an average of 2 containers per day, and 50–60 containers a month. Our reinforced 5-layer
                   packaging system ensures product safety across moisture, pressure, and impact during international transit.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-8">
+                {/* Animated stats */}
+                <div className="grid grid-cols-3 gap-6 mb-8">
                   {[
-                    { value: "2", label: "Containers / Day", color: "#00A8E8" },
-                    { value: "5", label: "Layer Packaging", color: "#ECAA00" },
-                    { value: "60+", label: "Countries Served", color: "#00A8E8" },
+                    { value: "2", unit: "/day", label: "Containers", color: "#00A8E8" },
+                    { value: "5", unit: "-layer", label: "Packaging", color: "#ECAA00" },
+                    { value: "100+", unit: "", label: "Countries", color: "#00A8E8" },
                   ].map((stat, idx) => (
                     <motion.div
                       key={idx}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="text-center"
+                      transition={{ delay: idx * 0.12 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center cursor-default hover:bg-white/10 hover:border-white/20 transition-all duration-300"
                     >
-                      <div className="text-4xl lg:text-5xl font-display font-bold" style={{ color: stat.color }}>
-                        {stat.value}
+                      <div className="text-4xl font-display font-bold" style={{ color: stat.color }}>
+                        {stat.value}<span className="text-lg">{stat.unit}</span>
                       </div>
-                      <div className="text-xs uppercase tracking-widest text-gray-500 mt-2">{stat.label}</div>
+                      <div className="text-xs uppercase tracking-widest text-white/40 mt-2">{stat.label}</div>
                     </motion.div>
+                  ))}
+                </div>
+
+                {/* Feature tags */}
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    "Sea Freight", "Air Express", "Door-to-Door", "Real-time Tracking", "Insurance Covered"
+                  ].map((tag, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + i * 0.07 }}
+                      whileHover={{ backgroundColor: 'rgba(0,168,232,0.2)', borderColor: 'rgba(0,168,232,0.5)' }}
+                      className="text-xs text-white/70 border border-white/15 px-3 py-1.5 rounded-full hover:text-white transition-all cursor-default"
+                    >
+                      {tag}
+                    </motion.span>
                   ))}
                 </div>
               </motion.div>
             </div>
 
+            {/* Right: Slideshow */}
             <div className="lg:col-span-5">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -1895,10 +2110,11 @@ export default function About() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="absolute -inset-4 bg-gradient-to-br from-[#00A8E8]/20 to-[#ECAA00]/20 rounded-3xl blur-2xl" />
+                <div className="absolute -inset-4 bg-gradient-to-br from-[#00A8E8]/25 to-[#ECAA00]/20 rounded-3xl blur-2xl" />
                 <ShippingSlideshow />
               </motion.div>
             </div>
+
           </div>
         </div>
       </section>
