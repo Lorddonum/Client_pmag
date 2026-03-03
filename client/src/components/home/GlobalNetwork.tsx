@@ -8,7 +8,7 @@ export default function GlobalNetwork() {
   const { t } = useTranslation();
 
   const stats = [
-    { icon: Globe, label: t('global.stat1'), value: "50+" },
+    { icon: Globe, label: t('global.stat1'), value: "100+" },
     { icon: Users, label: t('global.stat2'), value: "5000+" },
     { icon: TrendingUp, label: t('global.stat3'), value: "10k+" },
   ];

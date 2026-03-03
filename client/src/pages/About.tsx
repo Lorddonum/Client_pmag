@@ -18,6 +18,19 @@ import milestone2021sep_2 from "@/assets/milestone-2021sep-2.webp";
 import milestone2022dec_1 from "@/assets/milestone-2022dec-1.webp";
 import milestone2022dec_2 from "@/assets/milestone-2022dec-2.webp";
 import milestone2022dec_3 from "@/assets/milestone-2022dec-3.webp";
+
+import milestone2023jan_1 from "@/assets/milestone-2023jan-1.webp";
+import milestone2023jan_2 from "@/assets/milestone-2023jan-2.webp";
+import milestone2023jan_3 from "@/assets/milestone-2023jan-3.webp";
+
+import milestone2024jul_1 from "@/assets/milestone-2024jul-1.webp";
+import milestone2024jul_2 from "@/assets/milestone-2024jul-2.webp";
+
+import milestone2025mar_1 from "@/assets/milestone-2025mar-1.webp";
+import milestone2025mar_2 from "@/assets/milestone-2025mar-2.webp";
+import milestone2025mar_3 from "@/assets/milestone-2025mar-3.webp";
+import milestone2025mar_4 from "@/assets/milestone-2025mar-4.webp";
+import milestone2025mar_5 from "@/assets/milestone-2025mar-5.webp";
 import honor1 from "@/assets/honor-1.webp";
 import honor2 from "@/assets/honor-2.webp";
 import honor3 from "@/assets/honor-3.webp";
@@ -1049,45 +1062,59 @@ export default function About() {
   const milestones = [
     {
       year: "2016",
-      month: "Dec",
-      title: "Paralight Founded in Guzhen",
-      description: "In December 2016, Paralight was officially established in Guzhen, the lighting capital of China. Initially specializing in LED linear lighting aluminum profiles, the company quickly became a key industry player with its focus on quality and extensive product range.",
+      month: "Oct",
+      title: "Establishment of the Paralight Aluminum Accessories Sales Department",
+      description: "Focusing on the core business of LED linear lighting aluminum profiles and kits — This marked our formal entry into the linear lighting sector. Through precise positioning, we built our initial client base and industry expertise, laying a solid foundation for deep manufacturing integration and future supply chain expansion.",
       images: [milestone2016_1, milestone2016_2, milestone2016_3],
     },
     {
       year: "2019",
-      month: "Jan",
-      title: "Birth of Maglinear Lighting Brand",
-      description: "To meet growing demand for smart commercial lighting, Maglinear Lighting was launched. Specializing in high-end magnetic track systems and commercial fixtures, Maglinear Lighting marked Paralight Group's entry into integrated lighting solutions.",
+      month: "Dec",
+      title: "Establishment of Zhongshan Paralight Lighting Technology Co.,Ltd.",
+      description: 'Transitioning from "component sales" to a dual-track "manufacturing + sales" model, we deepened our R&D and production capabilities for core products, further solidifying our manufacturing edge in the linear lighting sector.',
       images: [milestone2019_1, milestone2019_2, milestone2019_3],
     },
     {
       year: "2021",
       month: "Jan",
-      title: "New 30,000 sqm Factory Operational",
-      description: "Paralight Group officially moved to a new 30,000 sqm manufacturing base, featuring dedicated production lines, warehousing, a display center, and office space. This was a major step in scaling our capacity.",
+      title: "Establishment of Jiangmen Dingsu Plastic Co., Ltd. in Jiangmen.",
+      description: "Achieving in-house production and sales of PC covers for linear lighting, we have completely integrated the entire chain: from raw materials to aluminum profiles and PC covers, through to finished products.",
       images: [milestone2021jan_1, milestone2021jan_2, milestone2021jan_3],
     },
     {
       year: "2021",
       month: "Sep",
-      title: "Showroom Unveiled",
-      description: "Paralight Group officially inaugurated its upgraded showroom, reflecting the company's product vision and aesthetic philosophy through immersive lighting displays.",
+      title: "Establishment of Guangdong Changqi Lighting Technology Co., Ltd. in Zhongshan.",
+      description: "We focused on the R&D and scaled production of linear luminaires and LED linear aluminum profiles. By expanding production capacity and driving technological iteration, we significantly enhanced the manufacturing strength of our core products, meeting the demands of global market expansion.",
       images: [milestone2021sep_1, milestone2021sep_2],
     },
     {
       year: "2022",
       month: "Dec",
-      title: "VIP Room & International Expansion",
-      description: "The Maglinear Lighting VIP experience room was introduced to provide an immersive product demonstration environment for global partners. This year also marked Paralight Group's active global strategy in overseas markets.",
+      title: "Establishment of Jiangmen Tianmai Trading Co., Ltd.",
+      description: "Professional integration of the Polycarbonate (PC) resin raw material supply chain — Establishing an industrial centralized procurement system to ensure stable supply and quality control of premium PC resin. This secures product consistency from the very start of the raw material stage and solidifies our core advantage: a fully controllable supply chain.",
       images: [milestone2022dec_1, milestone2022dec_2, milestone2022dec_3],
     },
     {
-      year: "2025",
+      year: "2023",
       month: "Jan",
-      title: "Full-Chain Service for All Lighting Scenarios",
-      description: "Moving forward, Paralight Group will continue building toward a comprehensive lighting ecosystem, offering customized, one-stop lighting solutions for commercial, residential, and architectural projects worldwide.",
-      images: [],
+      title: "Establishment of Jiangmen Paralight Lighting Technology Co., Ltd.",
+      description: "Relocation of the office team from Zhongshan to Jiangmen — Establishing the group's core operational hub to deeply integrate Jiangmen's industrial resources. This move drives the integrated development of production, R&D, and management, providing the organizational backbone for large-scale and global operations.",
+      images: [milestone2023jan_1, milestone2023jan_2, milestone2023jan_3],
+    },
+    {
+      year: "2024",
+      month: "Jul",
+      title: "Establishment of overseas company C & B in Brazil",
+      description: "Positioned as a distribution center in South America, we have built a regional warehousing and distribution network, significantly shortening delivery cycles in the South American market and enhancing the responsiveness and localized service capabilities of our global supply chain.",
+      images: [milestone2024jul_1, milestone2024jul_2],
+    },
+    {
+      year: "2025",
+      month: "Mar",
+      title: "Establishment of Maglinear Lighting Technology Co., Ltd.",
+      description: 'By incorporating commercial lighting and magnetic track series into the product portfolio, we have expanded from a singular focus on linear lighting to a fullscenario linear lighting range encompassing "linear + commercial + magnetic" solutions, officially advancing toward becoming a "full-scenario linear lighting solution provider."',
+      images: [milestone2025mar_1, milestone2025mar_2, milestone2025mar_3, milestone2025mar_4, milestone2025mar_5],
     },
   ];
 
@@ -1227,8 +1254,8 @@ export default function About() {
       <section className="snap-start h-screen flex flex-col bg-white overflow-hidden relative">
         {/* Background textures */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-[450px] h-[450px] bg-[#00A8E8]/[0.08] rounded-full blur-[80px]" />
-          <div className="absolute -bottom-20 -left-10 w-[500px] h-[500px] bg-[#ECAA00]/[0.07] rounded-full blur-[90px]" />
+          <div className="absolute -top-10 -right-10 w-[450px] h-[450px] bg-[#00A8E8]/8 rounded-full blur-[80px]" />
+          <div className="absolute -bottom-20 -left-10 w-[500px] h-[500px] bg-[#ECAA00]/7 rounded-full blur-[90px]" />
           <div
             className="absolute inset-0"
             style={{
@@ -1330,8 +1357,8 @@ export default function About() {
       <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Color glows */}
-          <div className="absolute -top-10 -left-10 w-[400px] h-[400px] bg-[#00A8E8]/[0.07] rounded-full blur-[90px]" />
-          <div className="absolute -bottom-10 -right-10 w-[450px] h-[450px] bg-[#ECAA00]/[0.06] rounded-full blur-[90px]" />
+          <div className="absolute -top-10 -left-10 w-[400px] h-[400px] bg-[#00A8E8]/7 rounded-full blur-[90px]" />
+          <div className="absolute -bottom-10 -right-10 w-[450px] h-[450px] bg-[#ECAA00]/6 rounded-full blur-[90px]" />
           {/* Dot grid */}
           <div
             className="absolute inset-0"
@@ -1361,7 +1388,7 @@ export default function About() {
             }}
           />
           {/* Decorative hexagon shapes - top right (large, overflowing) */}
-          <svg className="absolute -top-32 -right-64 w-[600px] h-[600px] text-[#00A8E8]/[0.08]" viewBox="0 0 200 200" fill="none">
+          <svg className="absolute -top-32 -right-64 w-[600px] h-[600px] text-[#00A8E8]/8" viewBox="0 0 200 200" fill="none">
             <polygon points="100,10 170,45 170,115 100,150 30,115 30,45" stroke="currentColor" strokeWidth="1" />
             <polygon points="100,25 155,52 155,108 100,135 45,108 45,52" stroke="currentColor" strokeWidth="0.8" />
             <polygon points="100,40 140,60 140,100 100,120 60,100 60,60" stroke="currentColor" strokeWidth="0.7" />
@@ -1373,20 +1400,20 @@ export default function About() {
             <line x1="170" y1="45" x2="30" y2="115" stroke="currentColor" strokeWidth="0.4" />
           </svg>
           {/* Decorative diamond + cross - bottom left */}
-          <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/[0.1]" viewBox="0 0 200 200" fill="none">
+          <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/10" viewBox="0 0 200 200" fill="none">
             <rect x="60" y="60" width="80" height="80" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1.5" />
             <rect x="75" y="75" width="50" height="50" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1" />
             <line x1="100" y1="20" x2="100" y2="180" stroke="currentColor" strokeWidth="0.8" />
             <line x1="20" y1="100" x2="180" y2="100" stroke="currentColor" strokeWidth="0.8" />
           </svg>
           {/* Decorative triangles - top left */}
-          <svg className="absolute top-16 left-16 w-40 h-40 text-[#00A8E8]/[0.06]" viewBox="0 0 150 150" fill="none">
+          <svg className="absolute top-16 left-16 w-40 h-40 text-[#00A8E8]/6" viewBox="0 0 150 150" fill="none">
             <polygon points="75,10 140,130 10,130" stroke="currentColor" strokeWidth="1.5" />
             <polygon points="75,35 120,115 30,115" stroke="currentColor" strokeWidth="1" />
             <polygon points="75,55 100,100 50,100" stroke="currentColor" strokeWidth="0.8" />
           </svg>
           {/* Decorative arc pattern - right center */}
-          <svg className="absolute top-1/2 -translate-y-1/2 right-4 w-48 h-96 text-[#ECAA00]/[0.06]" viewBox="0 0 100 200" fill="none">
+          <svg className="absolute top-1/2 -translate-y-1/2 right-4 w-48 h-96 text-[#ECAA00]/6" viewBox="0 0 100 200" fill="none">
             <path d="M 100 20 A 80 80 0 0 0 100 180" stroke="currentColor" strokeWidth="1.2" />
             <path d="M 100 40 A 60 60 0 0 0 100 160" stroke="currentColor" strokeWidth="1" />
             <path d="M 100 60 A 40 40 0 0 0 100 140" stroke="currentColor" strokeWidth="0.8" />
@@ -1394,9 +1421,9 @@ export default function About() {
           </svg>
           {/* Small scattered circles */}
           <div className="absolute top-[15%] right-[30%] w-3 h-3 rounded-full border-2 border-[#00A8E8]/10" />
-          <div className="absolute top-[25%] right-[15%] w-2 h-2 rounded-full bg-[#00A8E8]/[0.08]" />
+          <div className="absolute top-[25%] right-[15%] w-2 h-2 rounded-full bg-[#00A8E8]/8" />
           <div className="absolute bottom-[20%] left-[25%] w-4 h-4 rounded-full border-2 border-[#ECAA00]/10" />
-          <div className="absolute bottom-[30%] left-[40%] w-2 h-2 rounded-full bg-[#ECAA00]/[0.08]" />
+          <div className="absolute bottom-[30%] left-[40%] w-2 h-2 rounded-full bg-[#ECAA00]/8" />
         </div>
         <div className="container mx-auto px-6 relative z-10">
           <motion.div
