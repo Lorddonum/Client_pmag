@@ -1101,7 +1101,7 @@ function ShowcaseSection() {
 
 export default function About() {
   const stats = [
-    { label: "Production Facility", value: "30,000㎡", icon: Package },
+    { label: "Production Facility", value: "+50,000㎡", icon: Package },
     { label: "Skilled Professionals", value: "200+", icon: Users },
     { label: "Annual Revenue", value: "$47.8M", icon: Globe },
     { label: "Years Experience", value: "10+", icon: Award },
