@@ -1839,20 +1839,7 @@ export default function About() {
       <ShowcaseSection />
 
       {/* REDESIGNED: Certifications + Honors - Side by Side */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-[#060d18] via-[#0a1628] to-[#0d1f38] overflow-hidden relative">
-        {/* Diagonal grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.07) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.07) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-            maskImage: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 60%)',
-            WebkitMaskImage: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, transparent 60%)',
-          }}
-        />
-        {/* Glows */}
-        <div className="absolute top-0 left-0 w-[350px] h-[350px] bg-[#00A8E8]/8 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-[#ECAA00]/8 rounded-full blur-[100px] pointer-events-none" />
+      <section className="snap-start h-screen flex flex-col justify-center bg-[#0a1628] overflow-hidden relative">
 
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
@@ -1929,21 +1916,7 @@ export default function About() {
       </section>
 
       {/* REDESIGNED: Exhibitions - Carousel */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-[#0a1628] overflow-hidden relative">
-        {/* Radial glow center */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(0,168,232,0.10) 0%, transparent 70%)'
-        }} />
-        {/* Top-right glow */}
-        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-[#00A8E8]/8 rounded-full blur-[120px] pointer-events-none" />
-        {/* Dot grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)`,
-            backgroundSize: '28px 28px',
-          }}
-        />
+      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-b from-[#0a1628] to-[#060d18] overflow-hidden relative">
 
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
