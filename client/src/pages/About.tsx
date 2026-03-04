@@ -202,7 +202,7 @@ function ExhibitionCard({ event, onClick, index }: { event: ExhibitionEvent; onC
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
       onClick={onClick}
-      className="group relative bg-[#0a1628] border border-white/10 overflow-hidden hover:border-[#00A8E8]/50 transition-all duration-500 cursor-pointer"
+      className="group relative bg-white border border-gray-200 overflow-hidden hover:border-[#00A8E8]/50 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer"
     >
       <div className="relative h-56 overflow-hidden">
         <AnimatePresence mode="wait">
@@ -217,13 +217,13 @@ function ExhibitionCard({ event, onClick, index }: { event: ExhibitionEvent; onC
             transition={{ duration: 0.5 }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628] via-[#0a1628]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
           {event.images.slice(0, 5).map((_, idx) => (
             <div
               key={idx}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex % 5 ? "bg-[#00A8E8] w-4" : "bg-white/40"
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex % 5 ? "bg-[#00A8E8] w-4" : "bg-white/60"
                 }`}
             />
           ))}
@@ -231,10 +231,10 @@ function ExhibitionCard({ event, onClick, index }: { event: ExhibitionEvent; onC
       </div>
 
       <div className="p-6">
-        <h3 className="font-display text-xl text-white font-medium mb-2 group-hover:text-[#00A8E8] transition-colors duration-300">
+        <h3 className="font-display text-xl text-gray-900 font-medium mb-2 group-hover:text-[#00A8E8] transition-colors duration-300">
           {event.name}
         </h3>
-        <p className="text-white/50 text-sm">{event.location}</p>
+        <p className="text-gray-500 text-sm">{event.location}</p>
       </div>
     </motion.div>
   );
@@ -1189,19 +1189,6 @@ export default function About() {
     },
   ];
 
-  const [currentMilestone, setCurrentMilestone] = useState(0);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const nextMilestone = () => {
-    setCurrentMilestone((prev) => (prev + 1) % milestones.length);
-    setCurrentImageIndex(0);
-  };
-
-  const prevMilestone = () => {
-    setCurrentMilestone((prev) => (prev - 1 + milestones.length) % milestones.length);
-    setCurrentImageIndex(0);
-  };
-
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
 
   const scrollPrev = useCallback(() => {
@@ -1211,16 +1198,6 @@ export default function About() {
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
-
-  useEffect(() => {
-    const currentImages = milestones[currentMilestone].images;
-    if (currentImages.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % currentImages.length);
-      }, 4000);
-      return () => clearInterval(interval);
-    }
-  }, [currentMilestone]);
 
   const [selectedEvent, setSelectedEvent] = useState<ExhibitionEvent | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<{ name: string; role: string; image: string } | null>(null);
@@ -1496,105 +1473,112 @@ export default function About() {
           <div className="absolute bottom-[20%] left-[25%] w-4 h-4 rounded-full border-2 border-[#ECAA00]/25" />
           <div className="absolute bottom-[30%] left-[40%] w-2 h-2 rounded-full bg-[#ECAA00]/8" />
         </div>
-        <div className="container mx-auto px-6 relative z-10">
+      </section>
+
+      {/* REDESIGNED: Development Journey - Dynamic Alternating Layout */}
+      <section className="bg-gray-50 py-24 pb-32 relative overflow-hidden">
+        <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-20"
           >
-            <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">
-              Advancing with Strategic Vision
-            </span>
-            <h2 className="text-3xl md:text-5xl font-display font-bold mt-2 mb-4">Development Journey</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto text-base">
-              Guided by a clear strategic roadmap, Paralight Group has steadily advanced from a focused expert in linear lighting to a complete solutions partner for all lighting scenarios.
-            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-full mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00A8E8] animate-pulse" />
+              <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Our History</span>
+            </div>
+            <h2 className="font-display text-4xl lg:text-5xl text-gray-900 font-medium">
+              Development <span className="italic font-normal text-[#00A8E8]">Journey</span>
+            </h2>
           </motion.div>
 
-          <div className="max-w-5xl mx-auto">
-            <div className="relative">
-              <button
-                onClick={prevMilestone}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-                data-testid="button-prev-milestone"
-              >
-                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-              </button>
-              <button
-                onClick={nextMilestone}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-20 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-                data-testid="button-next-milestone"
-              >
-                <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-              </button>
+          {/* Central Timeline Line */}
+          <div className="absolute left-1/2 top-48 bottom-0 w-px bg-gray-200 hidden lg:block" />
 
-              <motion.div
-                key={currentMilestone}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.4 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-2">
-                  <div className="h-64 lg:h-80 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
-                    {milestones[currentMilestone].images.length > 0 ? (
-                      <img
-                        src={milestones[currentMilestone].images[currentImageIndex]}
-                        alt={milestones[currentMilestone].title}
-                        loading="eager"
-                        className="w-full h-full object-cover transition-opacity duration-500"
-                      />
-                    ) : (
-                      <div className="text-center p-8">
-                        <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-400 text-sm">Image coming soon</p>
-                      </div>
-                    )}
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                      <span className="text-[#00A8E8] font-bold text-sm">{milestones[currentMilestone].month}</span>
-                      <span className="text-3xl font-display font-bold text-gray-900 ml-2">{milestones[currentMilestone].year}</span>
+          <div className="flex flex-col gap-24 lg:gap-32">
+            {milestones.map((milestone, index) => {
+              const isEven = index % 2 === 0;
+
+              return (
+                <div key={index} className="relative flex flex-col lg:flex-row items-center gap-12 lg:gap-24 group">
+                  {/* Timeline Dot (Desktop only) */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-[3px] border-[#00A8E8] z-20 hidden lg:block transition-all duration-300 group-hover:scale-150 group-hover:shadow-[0_0_15px_rgba(0,168,232,0.4)]" />
+
+                  {/* Date Badge (Mobile Strategy: absolute top left, Desktop Strategy: floating attached to content) */}
+                  <div className={`lg:hidden flex items-baseline gap-2 mb-4`}>
+                    <span className="text-4xl font-display font-bold text-gray-900">{milestone.year}</span>
+                    <span className="text-[#00A8E8] font-bold tracking-widest uppercase text-sm">{milestone.month}</span>
+                  </div>
+
+                  {/* Content Block */}
+                  <motion.div
+                    initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className={`flex-1 w-full lg:w-1/2 flex flex-col ${isEven ? 'lg:text-right lg:items-end' : 'lg:text-left lg:items-start'} ${!isEven && 'lg:order-2'}`}
+                  >
+                    <div className="hidden lg:flex items-baseline gap-2 mb-4">
+                      {isEven ? (
+                        <>
+                          <span className="text-[#00A8E8] font-bold tracking-widest uppercase text-sm">{milestone.month}</span>
+                          <span className="text-5xl font-display font-bold text-gray-900">{milestone.year}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-5xl font-display font-bold text-gray-900">{milestone.year}</span>
+                          <span className="text-[#00A8E8] font-bold tracking-widest uppercase text-sm">{milestone.month}</span>
+                        </>
+                      )}
                     </div>
-                    {milestones[currentMilestone].images.length > 1 && (
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                        {milestones[currentMilestone].images.map((_, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setCurrentImageIndex(idx)}
-                            className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer hover:scale-125 ${idx === currentImageIndex ? "bg-white" : "bg-white/50"
-                              }`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="p-6 lg:p-8 flex flex-col justify-center">
-                    <h3 className="text-xl lg:text-2xl font-display font-bold text-gray-900 mb-4">
-                      {milestones[currentMilestone].title}
+                    <h3 className="text-2xl font-display font-bold text-gray-900 mb-4 max-w-lg">
+                      {milestone.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
-                      {milestones[currentMilestone].description}
+                    <p className="text-gray-600 leading-relaxed text-base max-w-lg">
+                      {milestone.description}
                     </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+                  </motion.div>
 
-            <div className="flex justify-center items-center gap-2 mt-8">
-              {milestones.map((milestone, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentMilestone(index)}
-                  className={`transition-all duration-300 rounded-full ${index === currentMilestone ? "w-8 h-3 bg-gray-600" : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  data-testid={`button-milestone-${index}`}
-                >
-                  <span className="sr-only">{milestone.year}</span>
-                </button>
-              ))}
-            </div>
+                  {/* Image Grid Block */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, x: isEven ? 50 : -50 }}
+                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                    className={`flex-1 w-full lg:w-1/2 ${isEven ? 'lg:order-2' : ''}`}
+                  >
+                    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500">
+                      {milestone.images && milestone.images.length > 0 ? (
+                        <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-2 p-2 bg-white">
+                          <div className={`overflow-hidden rounded-xl ${milestone.images.length === 1 ? 'col-span-2 row-span-2' : milestone.images.length === 2 ? 'col-span-1 row-span-2' : 'col-span-2 row-span-1'}`}>
+                            <img src={milestone.images[0]} alt={`${milestone.year} milestone view 1`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
+                          </div>
+                          {milestone.images.length > 1 && (
+                            <div className={`overflow-hidden rounded-xl ${milestone.images.length === 2 ? 'col-span-1 row-span-2' : 'col-span-1 row-span-1'}`}>
+                              <img src={milestone.images[1]} alt={`${milestone.year} milestone view 2`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
+                            </div>
+                          )}
+                          {milestone.images.length > 2 && (
+                            <div className="overflow-hidden rounded-xl col-span-1 row-span-1">
+                              <img src={milestone.images[2]} alt={`${milestone.year} milestone view 3`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" loading="lazy" />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                          <Calendar className="w-12 h-12 text-gray-300" />
+                        </div>
+                      )}
+
+                      {/* Subtle overlay overlay for polish */}
+                      <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none" />
+                    </div>
+                  </motion.div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1916,39 +1900,36 @@ export default function About() {
       </section>
 
       {/* REDESIGNED: Exhibitions - Carousel */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-b from-[#0a1628] to-[#060d18] overflow-hidden relative">
+      <section className="snap-start h-screen flex flex-col justify-center bg-gray-50 overflow-hidden relative">
 
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10"
+            className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6"
           >
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#00A8E8]/10 border border-[#00A8E8]/25 rounded-full mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-full mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00A8E8] animate-pulse" />
-                <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Meet Us</span>
+                <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Global Reach</span>
               </div>
-              <h2 className="font-display text-3xl lg:text-5xl text-white font-bold">
-                <span className="italic font-normal text-white/70">Global</span> Exhibitions
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-gray-900 font-medium">
+                Worldwide <span className="italic font-normal text-[#00A8E8]">Exhibitions</span>
               </h2>
             </div>
 
-            <div className="flex flex-col lg:items-end gap-4">
-              <p className="text-white/40 max-w-xs text-sm hidden lg:block">
-                We participate in leading lighting exhibitions worldwide, showcasing our latest innovations.
-              </p>
-              <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
                 <button
                   onClick={scrollPrev}
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-[#00A8E8]/50 transition-all text-white/70 hover:text-white group"
+                  className="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center hover:border-[#00A8E8]/50 transition-all text-gray-400 hover:text-gray-900 group"
                 >
                   <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
                 </button>
                 <button
                   onClick={scrollNext}
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-[#00A8E8]/50 transition-all text-white/70 hover:text-white group"
+                  className="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center hover:border-[#00A8E8]/50 transition-all text-gray-400 hover:text-gray-900 group"
                 >
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
                 </button>
@@ -1972,8 +1953,8 @@ export default function About() {
                 className="flex items-center gap-3"
               >
                 <span className="text-2xl font-display font-bold text-[#00A8E8]">{s.value}</span>
-                <span className="text-white/30 text-xs uppercase tracking-widest">{s.label}</span>
-                {i < 2 && <span className="text-white/15 ml-3">|</span>}
+                <span className="text-gray-400 text-xs uppercase tracking-widest">{s.label}</span>
+                {i < 2 && <span className="text-gray-200 ml-3">|</span>}
               </motion.div>
             ))}
           </div>
@@ -1995,18 +1976,7 @@ export default function About() {
       </section>
 
       {/* REDESIGNED: Global Delivery - Full width with stats */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-[#06101e] via-[#0a1628] to-[#0d1f38] relative overflow-hidden">
-        {/* Background grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.08) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.08) 1px, transparent 1px)`,
-            backgroundSize: '48px 48px',
-          }}
-        />
-        {/* Glowing orbs */}
-        <div className="absolute -top-24 -left-24 w-[400px] h-[400px] bg-[#00A8E8]/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-[400px] h-[400px] bg-[#ECAA00]/8 rounded-full blur-[100px] pointer-events-none" />
+      <section className="snap-start h-screen flex flex-col justify-center bg-white relative overflow-hidden">
 
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -2018,14 +1988,14 @@ export default function About() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#00A8E8]/10 border border-[#00A8E8]/30 rounded-full mb-5">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 shadow-sm rounded-full mb-5">
                   <span className="w-2 h-2 rounded-full bg-[#00A8E8] animate-pulse" />
                   <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Worldwide Shipping</span>
                 </div>
-                <h2 className="font-display text-3xl lg:text-5xl font-bold text-white mb-4">
+                <h2 className="font-display text-3xl lg:text-5xl font-bold text-gray-900 mb-4">
                   Fast &amp; <span className="italic font-normal text-[#00A8E8]">Efficient</span> Delivery
                 </h2>
-                <p className="text-white/60 leading-relaxed mb-8 max-w-xl">
+                <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
                   We load an average of 2 containers per day, and 50–60 containers a month. Our reinforced 5-layer
                   packaging system ensures product safety across moisture, pressure, and impact during international transit.
                 </p>
@@ -2044,12 +2014,12 @@ export default function About() {
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.12 }}
                       whileHover={{ scale: 1.05 }}
-                      className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center cursor-default hover:bg-white/10 hover:border-white/20 transition-all duration-300"
+                      className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 text-center cursor-default hover:border-gray-300 transition-all duration-300"
                     >
                       <div className="text-4xl font-display font-bold" style={{ color: stat.color }}>
                         {stat.value}<span className="text-lg">{stat.unit}</span>
                       </div>
-                      <div className="text-xs uppercase tracking-widest text-white/40 mt-2">{stat.label}</div>
+                      <div className="text-xs uppercase tracking-widest text-gray-400 mt-2">{stat.label}</div>
                     </motion.div>
                   ))}
                 </div>
@@ -2065,8 +2035,8 @@ export default function About() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.07 }}
-                      whileHover={{ backgroundColor: 'rgba(0,168,232,0.2)', borderColor: 'rgba(0,168,232,0.5)' }}
-                      className="text-xs text-white/70 border border-white/15 px-3 py-1.5 rounded-full hover:text-white transition-all cursor-default"
+                      whileHover={{ backgroundColor: '#fff', borderColor: 'rgba(0,168,232,0.3)', color: '#00A8E8' }}
+                      className="text-xs text-gray-500 border border-gray-200 bg-gray-50 px-3 py-1.5 rounded-full transition-all cursor-default"
                     >
                       {tag}
                     </motion.span>
