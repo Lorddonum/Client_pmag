@@ -54,7 +54,7 @@ export default function Navbar({ darkText = false }: { darkText?: boolean }) {
         setIsFooterSection(index === 4 || index === 5);
         setHasNavBg(false);
       } else if (location === '/about') {
-        setIsLightSection((index >= 1 && index <= 5) || index === 6 || index === 9);
+        setIsLightSection((index >= 1 && index <= 5) || index === 6 || index === 8);
         setIsFooterSection(index === 10);
         setHasNavBg(index === 5);
       }

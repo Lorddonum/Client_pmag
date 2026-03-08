@@ -522,7 +522,7 @@ function ShippingSlideshow() {
 
   return (
     <div
-      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer"
+      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] group cursor-pointer border border-white/10 ring-1 ring-white/5"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -1401,87 +1401,43 @@ export default function About() {
         </div>
       </section>
 
-      {/* Development Journey */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Color glows */}
-          <div className="absolute -top-10 -left-10 w-[400px] h-[400px] bg-[#00A8E8]/20 rounded-full blur-[90px]" />
-          <div className="absolute -bottom-10 -right-10 w-[450px] h-[450px] bg-[#ECAA00]/15 rounded-full blur-[90px]" />
-          {/* Dot grid */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(rgba(0,0,0,0.10) 1.5px, transparent 1.5px)`,
-              backgroundSize: '22px 22px',
-            }}
-          />
-          {/* Grid lines - cyan from top-left */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(0,168,232,0.15) 1px, transparent 1px), linear-gradient(to right, rgba(0,168,232,0.15) 1px, transparent 1px)`,
-              backgroundSize: '50px 50px',
-              maskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, transparent 65%)',
-              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0,0,0,1) 0%, transparent 65%)',
-            }}
-          />
-          {/* Grid lines - gold from bottom-right */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `linear-gradient(to bottom, rgba(236,170,0,0.15) 1px, transparent 1px), linear-gradient(to right, rgba(236,170,0,0.15) 1px, transparent 1px)`,
-              backgroundSize: '50px 50px',
-              maskImage: 'linear-gradient(to top left, rgba(0,0,0,1) 0%, transparent 65%)',
-              WebkitMaskImage: 'linear-gradient(to top left, rgba(0,0,0,1) 0%, transparent 65%)',
-            }}
-          />
-          {/* Decorative hexagon shapes - top right (large, overflowing) */}
-          <svg className="absolute -top-32 -right-64 w-[600px] h-[600px] text-[#00A8E8]/20" viewBox="0 0 200 200" fill="none">
-            <polygon points="100,10 170,45 170,115 100,150 30,115 30,45" stroke="currentColor" strokeWidth="1" />
-            <polygon points="100,25 155,52 155,108 100,135 45,108 45,52" stroke="currentColor" strokeWidth="0.8" />
-            <polygon points="100,40 140,60 140,100 100,120 60,100 60,60" stroke="currentColor" strokeWidth="0.7" />
-            <polygon points="100,55 125,67 125,93 100,105 75,93 75,67" stroke="currentColor" strokeWidth="0.6" />
-            <polygon points="100,68 112,74 112,86 100,92 88,86 88,74" stroke="currentColor" strokeWidth="0.5" />
-            <line x1="100" y1="10" x2="100" y2="150" stroke="currentColor" strokeWidth="0.4" />
-            <line x1="30" y1="80" x2="170" y2="80" stroke="currentColor" strokeWidth="0.4" />
-            <line x1="30" y1="45" x2="170" y2="115" stroke="currentColor" strokeWidth="0.4" />
-            <line x1="170" y1="45" x2="30" y2="115" stroke="currentColor" strokeWidth="0.4" />
-          </svg>
-          {/* Decorative diamond + cross - bottom left */}
-          <svg className="absolute bottom-8 left-8 w-56 h-56 text-[#ECAA00]/20" viewBox="0 0 200 200" fill="none">
-            <rect x="60" y="60" width="80" height="80" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1.5" />
-            <rect x="75" y="75" width="50" height="50" transform="rotate(45 100 100)" stroke="currentColor" strokeWidth="1" />
-            <line x1="100" y1="20" x2="100" y2="180" stroke="currentColor" strokeWidth="0.8" />
-            <line x1="20" y1="100" x2="180" y2="100" stroke="currentColor" strokeWidth="0.8" />
-          </svg>
-          {/* Decorative triangles - top left */}
-          <svg className="absolute top-16 left-16 w-40 h-40 text-[#00A8E8]/15" viewBox="0 0 150 150" fill="none">
-            <polygon points="75,10 140,130 10,130" stroke="currentColor" strokeWidth="1.5" />
-            <polygon points="75,35 120,115 30,115" stroke="currentColor" strokeWidth="1" />
-            <polygon points="75,55 100,100 50,100" stroke="currentColor" strokeWidth="0.8" />
-          </svg>
-          {/* Decorative arc pattern - right center */}
-          <svg className="absolute top-1/2 -translate-y-1/2 right-4 w-48 h-96 text-[#ECAA00]/15" viewBox="0 0 100 200" fill="none">
-            <path d="M 100 20 A 80 80 0 0 0 100 180" stroke="currentColor" strokeWidth="1.2" />
-            <path d="M 100 40 A 60 60 0 0 0 100 160" stroke="currentColor" strokeWidth="1" />
-            <path d="M 100 60 A 40 40 0 0 0 100 140" stroke="currentColor" strokeWidth="0.8" />
-            <path d="M 100 80 A 20 20 0 0 0 100 120" stroke="currentColor" strokeWidth="0.6" />
-          </svg>
-          {/* Small scattered circles */}
-          <div className="absolute top-[15%] right-[30%] w-3 h-3 rounded-full border-2 border-[#00A8E8]/25" />
-          <div className="absolute top-[25%] right-[15%] w-2 h-2 rounded-full bg-[#00A8E8]/20" />
-          <div className="absolute bottom-[20%] left-[25%] w-4 h-4 rounded-full border-2 border-[#ECAA00]/25" />
-          <div className="absolute bottom-[30%] left-[40%] w-2 h-2 rounded-full bg-[#ECAA00]/8" />
-        </div>
-      </section>
 
       {/* REDESIGNED: Development Journey - Dynamic Alternating Layout */}
-      <section className="bg-gray-50 py-24 pb-32 relative overflow-hidden">
+      <section className="snap-start py-20 relative overflow-hidden bg-white">
+        {/* Dynamic Background */}
+        <div className="absolute inset-0 pointer-events-none select-none z-0">
+          {/* Subtle color glows for depth */}
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#00A8E8]/15 rounded-full blur-[90px]" />
+          <div className="absolute top-[20%] right-0 w-[500px] h-[500px] bg-[#ECAA00]/15 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-[10%] w-[600px] h-[600px] bg-[#00A8E8]/10 rounded-full blur-[100px]" />
+
+          {/* Hexagonal/Tech Grid */}
+          <div
+            className="absolute inset-0 opacity-100"
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)`,
+              backgroundSize: '40px 40px',
+              maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)',
+            }}
+          />
+
+          {/* Faint blue angled streaks */}
+          <div className="absolute top-0 right-0 w-full h-full opacity-60"
+            style={{
+              background: 'linear-gradient(135deg, transparent 40%, rgba(0,168,232,0.06) 45%, transparent 50%, rgba(0,168,232,0.04) 55%, transparent 60%)'
+            }}
+          />
+
+          {/* Vertical gradient line (behind the main timeline line) */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-[#00A8E8]/40 to-transparent hidden lg:block -translate-x-1/2" />
+        </div>
+
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-full mb-4">
@@ -1513,10 +1469,9 @@ export default function About() {
 
                   {/* Content Block */}
                   <motion.div
-                    initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    initial={{ opacity: 0, x: isEven ? -40 : 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
                     className={`flex-1 w-full lg:w-1/2 flex flex-col ${isEven ? 'lg:text-right lg:items-end' : 'lg:text-left lg:items-start'} ${!isEven && 'lg:order-2'}`}
                   >
                     <div className="hidden lg:flex items-baseline gap-2 mb-4">
@@ -1543,10 +1498,9 @@ export default function About() {
 
                   {/* Image Grid Block */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9, x: isEven ? 50 : -50 }}
-                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                    initial={{ opacity: 0, scale: 0.95, x: isEven ? 40 : -40 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 + (index * 0.1) }}
                     className={`flex-1 w-full lg:w-1/2 ${isEven ? 'lg:order-2' : ''}`}
                   >
                     <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500">
@@ -1976,7 +1930,19 @@ export default function About() {
       </section>
 
       {/* REDESIGNED: Global Delivery - Full width with stats */}
-      <section className="snap-start h-screen flex flex-col justify-center bg-white relative overflow-hidden">
+      <section className="snap-start min-h-screen py-24 flex flex-col justify-center relative overflow-hidden bg-gray-900 z-10">
+
+        {/* Stylized Image Background */}
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: "url('/shipping_background_aboutus.jpg')",
+            }}
+          />
+          {/* Clean dark gradient overlay for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent" />
+        </div>
 
         <div className="container mx-auto px-8 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -1988,14 +1954,17 @@ export default function About() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 shadow-sm rounded-full mb-5">
-                  <span className="w-2 h-2 rounded-full bg-[#00A8E8] animate-pulse" />
-                  <span className="text-[#00A8E8] text-xs font-semibold uppercase tracking-widest">Worldwide Shipping</span>
+                <div className="mb-6">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-[2px] border border-white/20 shadow-sm rounded-full mb-4">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00A8E8] shadow-[0_0_8px_#00A8E8] animate-pulse" />
+                    <span className="text-white text-xs font-semibold uppercase tracking-widest">Global Reach</span>
+                  </div>
+                  <h2 className="font-display text-4xl lg:text-5xl text-white font-medium">
+                    Worldwide <span className="italic font-normal text-[#00A8E8]">Shipping</span>
+                  </h2>
                 </div>
-                <h2 className="font-display text-3xl lg:text-5xl font-bold text-gray-900 mb-4">
-                  Fast &amp; <span className="italic font-normal text-[#00A8E8]">Efficient</span> Delivery
-                </h2>
-                <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
+
+                <p className="text-gray-300 leading-relaxed mb-8 max-w-xl text-lg">
                   We load an average of 2 containers per day, and 50–60 containers a month. Our reinforced 5-layer
                   packaging system ensures product safety across moisture, pressure, and impact during international transit.
                 </p>
@@ -2014,10 +1983,10 @@ export default function About() {
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.12 }}
                       whileHover={{ scale: 1.05 }}
-                      className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 text-center cursor-default hover:border-gray-300 transition-all duration-300"
+                      className="bg-white/5 backdrop-blur-sm border border-white/10 shadow-sm rounded-2xl p-5 text-center cursor-default hover:border-white/20 hover:bg-white/10 transition-all duration-300"
                     >
                       <div className="text-4xl font-display font-bold" style={{ color: stat.color }}>
-                        {stat.value}<span className="text-lg">{stat.unit}</span>
+                        {stat.value}<span className="text-lg text-white/50 ml-1">{stat.unit}</span>
                       </div>
                       <div className="text-xs uppercase tracking-widest text-gray-400 mt-2">{stat.label}</div>
                     </motion.div>
@@ -2025,7 +1994,7 @@ export default function About() {
                 </div>
 
                 {/* Feature tags */}
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 mt-8">
                   {[
                     "Sea Freight", "Air Express", "Door-to-Door", "Real-time Tracking", "Insurance Covered"
                   ].map((tag, i) => (
@@ -2035,8 +2004,8 @@ export default function About() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.07 }}
-                      whileHover={{ backgroundColor: '#fff', borderColor: 'rgba(0,168,232,0.3)', color: '#00A8E8' }}
-                      className="text-xs text-gray-500 border border-gray-200 bg-gray-50 px-3 py-1.5 rounded-full transition-all cursor-default"
+                      whileHover={{ backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: '#fff' }}
+                      className="text-xs text-white/70 border border-white/10 bg-white/5 backdrop-blur-[2px] px-4 py-2 rounded-full transition-all cursor-default"
                     >
                       {tag}
                     </motion.span>
@@ -2053,7 +2022,7 @@ export default function About() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="absolute -inset-4 bg-gradient-to-br from-[#00A8E8]/25 to-[#ECAA00]/20 rounded-3xl blur-2xl" />
+                <div className="absolute -inset-4 bg-gradient-to-br from-[#00A8E8]/20 to-[#ECAA00]/15 rounded-3xl blur-lg" />
                 <ShippingSlideshow />
               </motion.div>
             </div>

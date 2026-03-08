@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import { useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
+import WelcomePopup from "@/components/home/WelcomePopup";
 import "./i18n"; // Import i18n configuration
 
 // Lazy load pages for better initial load performance
@@ -55,6 +56,7 @@ function App() {
         <Toaster />
         <ScrollToTop />
         <FloatingSidebar />
+        <WelcomePopup />
         <Suspense fallback={<PageLoader />}>
           <Router />
         </Suspense>
