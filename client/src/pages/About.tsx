@@ -1205,14 +1205,14 @@ export default function About() {
 
   const teamMembers = [
     { name: "Mr. Ou", role: "Production Manager", image: "/team-mr-ou.webp" },
-    { name: "Stephy", role: "Sales Manager", image: "/team-stephy.webp" },
-    { name: "Taha", role: "Marketing Specialist", image: "/team-taha.webp" },
-    { name: "Name", role: "Role", image: "/team-member-1.webp" },
-    { name: "Name", role: "Role", image: "/team-member-2.webp" },
-    { name: "Name", role: "Role", image: "/team-member-3.webp" },
-    { name: "Name", role: "Role", image: "/team-member-4.webp" },
-    { name: "Name", role: "Role", image: "/team-member-5.webp" },
-    { name: "Name", role: "Role", image: "/team-member-6.webp" },
+    { name: "Stephy", role: "Assistant Manager", image: "/team-stephy.webp" },
+    { name: "Taha", role: "Communications Manager", image: "/team-taha.webp" },
+    { name: "Mr Qiang", role: "Factory Manager", image: "/team-member-1.webp" },
+    { name: "Effie", role: "Marketing Manager", image: "/team-member-2.webp" },
+    { name: "Stanford", role: "Sales Agent", image: "/team-member-3.webp" },
+    { name: "Owen", role: "Sales Agent", image: "/team-member-4.webp" },
+    { name: "Helen", role: "Sales Agent", image: "/team-member-5.webp" },
+    { name: "Annie", role: "Sales Agent", image: "/team-member-6.webp" },
   ];
 
   return (
