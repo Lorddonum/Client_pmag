@@ -25,10 +25,10 @@ export const MAGLINEAR_SERIES = {
     "5mm Magnetic Light Fixtures",
     "5mm Magnetic Accessories"
   ],
-  "6mm Magnetic Track Series": [
-    "6mm Magnetic Tracks",
-    "6mm Magnetic Light Fixtures",
-    "6mm Magnetic Accessories"
+  "Flexible 6mm Magnetic Track Series": [
+    "Flexible 6mm Magnetic Tracks",
+    "Flexible 6mm Magnetic Light Fixtures",
+    "Flexible 6mm Magnetic Accessories"
   ],
   "10mm Magnetic Track Series": [
     "10mm Magnetic Tracks",
