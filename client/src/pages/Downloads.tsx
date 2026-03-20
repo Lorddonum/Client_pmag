@@ -1,23 +1,61 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import {
-  FileText, Download, Loader2, FolderOpen,
-  Search, ArrowRight, BookOpen, Layers, X, Package, Key, CheckCircle
-} from "lucide-react";
+import { FileText, Download, Loader2, BookOpen, ArrowRight, X } from "lucide-react";
 
-interface Product {
-  id: number;
+interface Catalogue {
   name: string;
-  modelNumber: string;
-  series: string[];
-  brand: string;
-  category: string;
-  catalogueUrl: string | null;
-  image: string | null;
+  filename: string;
+  url: string;
+  description: string;
 }
+
+const CATALOGUES: Catalogue[] = [
+  {
+    name: "2026 Paralight Aluminum Profile Catalog",
+    filename: "2026 Paralight Aluminum Profile Catalog — Comprehensive.pdf",
+    url: "/catalogues/2026 Paralight Aluminum Profile Catalog — Comprehensive.pdf",
+    description: "Comprehensive aluminum profile catalogue — full range",
+  },
+  {
+    name: "Commercial Lighting Catalog",
+    filename: "Commercial Lighting Catalog.pdf",
+    url: "/catalogues/Commercial Lighting Catalog.pdf",
+    description: "Full commercial lighting product range",
+  },
+  {
+    name: "Colorful Linear Series Catalog",
+    filename: "Colorful Linear Series Catalog.pdf",
+    url: "/catalogues/Colorful Linear Series Catalog.pdf",
+    description: "Colorful linear lighting series",
+  },
+  {
+    name: "05 Series Magnetic Track Brochure",
+    filename: "05 Series Magnetic Track Brochure.pdf",
+    url: "/catalogues/05 Series Magnetic Track Brochure.pdf",
+    description: "Maglinear 05 Series magnetic track system",
+  },
+  {
+    name: "10 Series Magnetic Track Brochure",
+    filename: "10 Series Magnetic Track Brochure.pdf",
+    url: "/catalogues/10 Series Magnetic Track Brochure.pdf",
+    description: "Maglinear 10 Series magnetic track system",
+  },
+  {
+    name: "20 Series Magnetic Track Brochure",
+    filename: "20 Series Magnetic Track Brochure.pdf",
+    url: "/catalogues/20 Series Magnetic Track Brochure.pdf",
+    description: "Maglinear 20 Series magnetic track system",
+  },
+  {
+    name: "S06 Series Magnetic Track Brochure",
+    filename: "S06 Series Magnetic Track Brochure.pdf",
+    url: "/catalogues/S06 Series Magnetic Track Brochure.pdf",
+    description: "Maglinear S06 Series magnetic track system",
+  },
+];
 
 // ── Animated warm background ──────────────────────────────────────────────
 function AnimatedBackground() {
@@ -154,11 +192,6 @@ function AnimatedBackground() {
 // ── Page ──────────────────────────────────────────────────────────────────
 export default function Downloads() {
   const { t } = useTranslation();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeBrand, setActiveBrand] = useState<"all" | "Paralight" | "Maglinear">("all");
-  const [activeSeries, setActiveSeries] = useState<string>("all");
 
   // Request popup state
   const [requestTarget, setRequestTarget] = useState<{ catalogueUrl: string; catalogueName: string } | null>(null);
@@ -170,58 +203,6 @@ export default function Downloads() {
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemStatus, setRedeemStatus] = useState<"idle" | "loading" | "error">("idle");
   const [redeemError, setRedeemError] = useState("");
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        let res = await fetch("/api/products");
-        if (!res.ok) res = await fetch("/data/products.json");
-        if (res.ok) {
-          const data: Product[] = await res.json();
-          setProducts(data.filter(p => !!p.catalogueUrl));
-        }
-      } catch (e) {
-        console.error("Downloads: failed to load products", e);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  const filteredProducts = useMemo(() => products.filter(p => {
-    if (activeBrand !== "all" && p.brand !== activeBrand) return false;
-    if (activeSeries !== "all" && !(p.series || []).includes(activeSeries)) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      if (
-        !p.name.toLowerCase().includes(q) &&
-        !p.modelNumber.toLowerCase().includes(q) &&
-        !(p.series || []).some(s => s.toLowerCase().includes(q))
-      ) return false;
-    }
-    return true;
-  }), [products, activeBrand, activeSeries, searchQuery]);
-
-  const allSeries = useMemo(() => {
-    const pool = activeBrand === "all" ? products : products.filter(p => p.brand === activeBrand);
-    const set = new Set<string>();
-    for (const p of pool) for (const s of (p.series || [])) set.add(s);
-    return Array.from(set).sort();
-  }, [products, activeBrand]);
-
-  const grouped = useMemo(() => {
-    const acc: Record<string, Product[]> = {};
-    for (const p of filteredProducts) {
-      const key = (p.series && p.series.length > 0) ? p.series[0] : "Other";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(p);
-    }
-    return acc;
-  }, [filteredProducts]);
-
-  const paralightCount = products.filter(p => p.brand === "Paralight").length;
-  const maglinearCount = products.filter(p => p.brand === "Maglinear").length;
 
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,7 +316,7 @@ export default function Downloads() {
                 {t('downloads.desc')}
               </motion.p>
 
-              {/* Stat chips */}
+              {/* Count chip */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -347,24 +328,8 @@ export default function Downloads() {
                   style={{ backgroundColor: "rgba(255,245,220,0.55)", borderColor: "rgba(180,135,60,0.35)", backdropFilter: "blur(8px)" }}
                 >
                   <BookOpen className="w-4 h-4" style={{ color: "#A07830" }} />
-                  <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{products.length}</span>
+                  <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{CATALOGUES.length}</span>
                   <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.total')}</span>
-                </div>
-                <div
-                  className="flex items-center gap-3 px-5 py-3 rounded-xl border"
-                  style={{ backgroundColor: "rgba(255,245,220,0.55)", borderColor: "rgba(180,135,60,0.35)", backdropFilter: "blur(8px)" }}
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#00A8E8]" />
-                  <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{paralightCount}</span>
-                  <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.paralight')}</span>
-                </div>
-                <div
-                  className="flex items-center gap-3 px-5 py-3 rounded-xl border"
-                  style={{ backgroundColor: "rgba(255,245,220,0.55)", borderColor: "rgba(180,135,60,0.35)", backdropFilter: "blur(8px)" }}
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#ECAA00]" />
-                  <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{maglinearCount}</span>
-                  <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.maglinear')}</span>
                 </div>
               </motion.div>
 
@@ -402,307 +367,68 @@ export default function Downloads() {
               </motion.div>
             </div>
 
-            {/* ── Filters ── */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="rounded-2xl border p-6 mb-10"
-              style={{
-                backgroundColor: "rgba(255,245,220,0.50)",
-                borderColor: "rgba(180,135,60,0.30)",
-                backdropFilter: "blur(12px)",
-              }}
-            >
-              <div className="flex flex-col lg:flex-row gap-4">
-                {/* Search */}
-                <div className="relative flex-1">
-                  <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4"
-                    style={{ color: "#A07830" }}
-                  />
-                  <input
-                    type="text"
-                    placeholder={t('downloads.search')}
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-11 pr-10 py-3 rounded-xl text-sm outline-none transition-all"
-                    style={{
-                      backgroundColor: "rgba(255,248,230,0.7)",
-                      border: "1px solid rgba(180,135,60,0.40)",
-                      color: "#1C1410",
-                    }}
-                    onFocus={e => (e.currentTarget.style.borderColor = "#00A8E8")}
-                    onBlur={e => (e.currentTarget.style.borderColor = "rgba(180,135,60,0.40)")}
-                    data-testid="input-search-downloads"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: "rgba(180,135,60,0.30)" }}
-                    >
-                      <X className="w-3 h-3" style={{ color: "#6B4E28" }} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Brand tabs */}
-                <div
-                  className="flex items-center gap-1 p-1 rounded-xl"
-                  style={{ backgroundColor: "rgba(200,160,80,0.20)", border: "1px solid rgba(180,135,60,0.30)" }}
-                >
-                  {(["all", "Paralight", "Maglinear"] as const).map(key => (
-                    <button
-                      key={key}
-                      onClick={() => { setActiveBrand(key); setActiveSeries("all"); }}
-                      className="px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
-                      style={
-                        activeBrand === key
-                          ? {
-                            backgroundColor:
-                              key === "Paralight" ? "#00A8E8"
-                                : key === "Maglinear" ? "#ECAA00"
-                                  : "#1C1410",
-                            color: "#fff",
-                            boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
-                          }
-                          : { color: "#8B6830" }
-                      }
-                      data-testid={`filter-${key}`}
-                    >
-                      {key === "all" ? "All" : key}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Series pills */}
-              {allSeries.length > 1 && (
-                <div
-                  className="mt-4 pt-4 flex items-center gap-2 flex-wrap"
-                  style={{ borderTop: "1px solid rgba(180,135,60,0.20)" }}
-                >
-                  <span
-                    className="text-[10px] uppercase tracking-widest mr-1 font-medium"
-                    style={{ color: "#A07830" }}
-                  >
-                    {t('downloads.series')}
-                  </span>
-                  {["all", ...allSeries].map(s => (
-                    <button
-                      key={s}
-                      onClick={() => setActiveSeries(s)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                      style={
-                        activeSeries === s
-                          ? {
-                            backgroundColor: "rgba(180,135,60,0.25)",
-                            color: "#1C1410",
-                            border: "1px solid rgba(180,135,60,0.50)",
-                          }
-                          : { color: "#8B6830", border: "1px solid transparent" }
-                      }
-                    >
-                      {s === "all" ? "All" : s}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-
-            {/* ── Content ── */}
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-40">
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                  style={{ backgroundColor: "rgba(200,160,80,0.30)" }}
-                >
-                  <Loader2 className="w-7 h-7 animate-spin" style={{ color: "#00A8E8" }} />
-                </div>
-                <p className="text-sm" style={{ color: "#8B6830" }}>{t('downloads.loading')}</p>
-              </div>
-
-            ) : filteredProducts.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-32 rounded-2xl border"
-                style={{ backgroundColor: "rgba(255,245,220,0.40)", borderColor: "rgba(180,135,60,0.30)" }}
-              >
-                <div
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6"
-                  style={{ backgroundColor: "rgba(200,160,80,0.25)" }}
-                >
-                  <FileText className="w-9 h-9" style={{ color: "#A07830" }} />
-                </div>
-                <p className="text-lg font-medium mb-2" style={{ color: "#1C1410" }}>{t('downloads.no_found')}</p>
-                <p className="text-sm" style={{ color: "#8B6830" }}>
-                  {searchQuery ? t('downloads.try_adj') : t('downloads.check_back')}
-                </p>
-              </motion.div>
-
-            ) : (
-              <div className="space-y-8">
-                <AnimatePresence mode="wait">
-                  {Object.entries(grouped).map(([series, prods], sIdx) => {
-                    const brandColor = prods[0]?.brand === "Paralight" ? "#00A8E8" : "#ECAA00";
-                    const brandName = prods[0]?.brand === "Maglinear"
-                      ? "Maglinear Lighting" : (prods[0]?.brand ?? "");
-
-                    return (
-                      <motion.div
-                        key={series}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ delay: sIdx * 0.05 }}
-                        className="rounded-2xl border overflow-hidden"
-                        style={{
-                          backgroundColor: "rgba(255,245,220,0.40)",
-                          borderColor: "rgba(180,135,60,0.28)",
-                          backdropFilter: "blur(8px)",
-                        }}
-                      >
-                        {/* Series header */}
-                        <div
-                          className="px-6 py-5 flex items-center justify-between"
-                          style={{
-                            backgroundColor: "rgba(200,160,75,0.25)",
-                            borderBottom: "1px solid rgba(180,135,60,0.20)",
-                          }}
-                        >
-                          <div className="flex items-center gap-4">
-                            <div
-                              className="w-10 h-10 rounded-xl flex items-center justify-center"
-                              style={{ backgroundColor: `${brandColor}20` }}
-                            >
-                              <FolderOpen className="w-4 h-4" style={{ color: brandColor }} />
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-semibold" style={{ color: "#1C1410" }}>
-                                {series}
-                              </h3>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                <span
-                                  className="text-[10px] uppercase tracking-widest font-semibold"
-                                  style={{ color: brandColor }}
-                                >
-                                  {brandName}
-                                </span>
-                                <span
-                                  className="w-1 h-1 rounded-full"
-                                  style={{ backgroundColor: "#A07830" }}
-                                />
-                                <span
-                                  className="text-[10px] uppercase tracking-wider"
-                                  style={{ color: "#8B6830" }}
-                                >
-                                  {prods.length} {prods.length !== 1 ? t('downloads.files') : t('downloads.file')}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <Layers className="w-4 h-4" style={{ color: "#C4A060" }} />
-                        </div>
-
-                        {/* Product rows */}
-                        <div>
-                          {prods.map((product, idx) => (
-                            <motion.div
-                              key={product.id}
-                              data-testid={`download-${product.id}`}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: idx * 0.03 }}
-                              className="group flex items-center gap-4 px-6 py-4 transition-all"
-                              style={{
-                                borderBottom:
-                                  idx < prods.length - 1
-                                    ? "1px solid rgba(180,135,60,0.15)"
-                                    : undefined,
-                              }}
-                            >
-                              {/* Thumbnail */}
-                              <div
-                                className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                style={{
-                                  backgroundColor: "rgba(200,160,75,0.25)",
-                                  border: "1px solid rgba(180,135,60,0.30)",
-                                }}
-                              >
-                                {product.image ? (
-                                  <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <Package className="w-5 h-5" style={{ color: "#A07830" }} />
-                                )}
-                              </div>
-
-                              <div className="flex-1 min-w-0">
-                                <h4
-                                  className="text-sm font-medium truncate"
-                                  style={{ color: "#1C1410" }}
-                                >
-                                  {product.name}
-                                </h4>
-                                <span
-                                  className="text-[10px] uppercase tracking-wider font-mono"
-                                  style={{ color: "#8B6830" }}
-                                >
-                                  {product.modelNumber}
-                                </span>
-                              </div>
-
-                              <button
-                                onClick={() => {
-                                  setReqForm({ name: "", email: "", company: "", comment: "" });
-                                  setReqDone(false);
-                                  setRequestTarget({
-                                    catalogueUrl: product.catalogueUrl!,
-                                    catalogueName: product.name,
-                                  });
-                                }}
-                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-105"
-                                style={{ backgroundColor: `${brandColor}18`, color: brandColor, border: `1px solid ${brandColor}40` }}
-                              >
-                                <Download className="w-3.5 h-3.5" />
-                                Request
-                              </button>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
-
-                {/* Footer */}
+            {/* ── Catalogue Grid ── */}
+            <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: "rgba(255,245,220,0.40)", borderColor: "rgba(180,135,60,0.28)", backdropFilter: "blur(8px)" }}>
+              {CATALOGUES.map((cat, idx) => (
                 <motion.div
+                  key={cat.filename}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4"
+                  transition={{ delay: idx * 0.04 }}
+                  className="flex items-center gap-4 px-6 py-5 transition-all"
+                  style={{ borderBottom: idx < CATALOGUES.length - 1 ? "1px solid rgba(180,135,60,0.15)" : undefined }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(200,160,75,0.12)")}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
-                  <p className="text-xs" style={{ color: "#A07830" }}>
-                    {t('downloads.showing')}{filteredProducts.length}{t('downloads.of')}{products.length}{t('downloads.catalogues')}
-                  </p>
-                  <a
-                    href="/contact"
-                    className="flex items-center gap-2 text-xs group transition-colors"
-                    style={{ color: "#8B6830" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#00A8E8")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "#8B6830")}
+                  {/* Icon */}
+                  <div
+                    className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center"
+                    style={{ backgroundColor: "rgba(200,160,75,0.25)", border: "1px solid rgba(180,135,60,0.30)" }}
                   >
-                    {t('downloads.need_custom')}
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </a>
+                    <FileText className="w-5 h-5" style={{ color: "#A07830" }} />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold truncate" style={{ color: "#1C1410" }}>{cat.name}</h4>
+                    <p className="text-xs mt-0.5 truncate" style={{ color: "#8B6830" }}>{cat.description}</p>
+                  </div>
+
+                  {/* Request button */}
+                  <button
+                    onClick={() => {
+                      setReqForm({ name: "", email: "", company: "", comment: "" });
+                      setReqDone(false);
+                      setRequestTarget({ catalogueUrl: cat.url, catalogueName: cat.name });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-105 shrink-0"
+                    style={{ backgroundColor: "rgba(26,35,50,0.10)", color: "#1a2332", border: "1px solid rgba(26,35,50,0.25)" }}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Request
+                  </button>
                 </motion.div>
-              </div>
-            )}
+              ))}
+            </div>
+
+            {/* Footer link */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center justify-end pt-4 pb-4"
+            >
+              <a
+                href="/contact"
+                className="flex items-center gap-2 text-xs group transition-colors"
+                style={{ color: "#8B6830" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#00A8E8")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#8B6830")}
+              >
+                {t('downloads.need_custom')}
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            </motion.div>
           </div>
         </main>
       </div>
