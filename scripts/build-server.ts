@@ -30,6 +30,8 @@ await build({
         "lightningcss",
         "@tailwindcss/oxide",
         "@babel/core",
+        // CJS-only packages (use dynamic require internally)
+        "nodemailer",
     ],
 });
 
