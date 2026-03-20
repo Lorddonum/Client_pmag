@@ -209,12 +209,24 @@ export default function Downloads() {
     if (!requestTarget) return;
     setReqSubmitting(true);
     try {
-      await fetch("/api/catalogue-request", {
+      const res = await fetch("/api/catalogue-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...reqForm, ...requestTarget }),
+        body: JSON.stringify({
+          name: reqForm.name,
+          email: reqForm.email,
+          company: reqForm.name, // same field — "Name / Company"
+          comment: reqForm.comment,
+          ...requestTarget,
+        }),
       });
-      setReqDone(true);
+      if (res.ok) {
+        setReqDone(true);
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch {
+      alert("Network error. Please try again.");
     } finally {
       setReqSubmitting(false);
     }
