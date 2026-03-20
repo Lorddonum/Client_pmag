@@ -7,6 +7,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomUUID } from "crypto";
+import { createRequest, getRequests, approveRequest, redeemCode } from "./catalogue-store";
+import { sendRequestConfirmation, sendDownloadCode } from "./mailer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Uploads dir sits at project root (/../uploads relative to dist/server.js)
@@ -288,6 +290,56 @@ export async function registerRoutes(
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch geo analytics" });
     }
+  });
+
+  // ── Catalogue Request System ──────────────────────────────────────────────
+
+  // POST /api/catalogue-request — user submits request
+  app.post("/api/catalogue-request", async (req, res) => {
+    try {
+      const { name, email, company, comment, catalogueUrl, catalogueName } = req.body;
+      if (!name || !email || !company || !catalogueUrl || !catalogueName) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      const request = createRequest({ name, email, company, comment, catalogueUrl, catalogueName });
+      // Send confirmation email (non-blocking — don't fail if email fails)
+      sendRequestConfirmation(email, name, catalogueName).catch((e) =>
+        console.error("[mailer] confirmation email failed:", e.message)
+      );
+      res.status(201).json({ ok: true, id: request.id });
+    } catch (error) {
+      console.error("catalogue-request error:", error);
+      res.status(500).json({ error: "Failed to submit request" });
+    }
+  });
+
+  // GET /api/admin/catalogue-requests — admin view
+  app.get("/api/admin/catalogue-requests", (_req, res) => {
+    res.json(getRequests());
+  });
+
+  // POST /api/admin/catalogue-requests/:id/approve — admin approves, generates + emails code
+  app.post("/api/admin/catalogue-requests/:id/approve", async (req, res) => {
+    try {
+      const result = approveRequest(req.params.id);
+      if (!result) return res.status(404).json({ error: "Request not found" });
+      sendDownloadCode(result.request.email, result.request.name, result.code, result.request.catalogueName).catch(
+        (e) => console.error("[mailer] code email failed:", e.message)
+      );
+      res.json({ ok: true, code: result.code });
+    } catch (error) {
+      console.error("approve error:", error);
+      res.status(500).json({ error: "Failed to approve" });
+    }
+  });
+
+  // POST /api/catalogue-redeem — user redeems code
+  app.post("/api/catalogue-redeem", (req, res) => {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ error: "Code required" });
+    const result = redeemCode(code);
+    if (!result) return res.status(404).json({ error: "Invalid or already used code" });
+    res.json({ ok: true, catalogueUrl: result.catalogueUrl });
   });
 
   return httpServer;

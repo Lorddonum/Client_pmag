@@ -5,7 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import {
   FileText, Download, Loader2, FolderOpen,
-  Search, ArrowRight, BookOpen, Layers, X, Package
+  Search, ArrowRight, BookOpen, Layers, X, Package, Key, CheckCircle
 } from "lucide-react";
 
 interface Product {
@@ -160,6 +160,17 @@ export default function Downloads() {
   const [activeBrand, setActiveBrand] = useState<"all" | "Paralight" | "Maglinear">("all");
   const [activeSeries, setActiveSeries] = useState<string>("all");
 
+  // Request popup state
+  const [requestTarget, setRequestTarget] = useState<{ catalogueUrl: string; catalogueName: string } | null>(null);
+  const [reqForm, setReqForm] = useState({ name: "", email: "", company: "", comment: "" });
+  const [reqSubmitting, setReqSubmitting] = useState(false);
+  const [reqDone, setReqDone] = useState(false);
+
+  // Redeem code state
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemStatus, setRedeemStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [redeemError, setRedeemError] = useState("");
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -211,6 +222,55 @@ export default function Downloads() {
 
   const paralightCount = products.filter(p => p.brand === "Paralight").length;
   const maglinearCount = products.filter(p => p.brand === "Maglinear").length;
+
+  const handleRequestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requestTarget) return;
+    setReqSubmitting(true);
+    try {
+      await fetch("/api/catalogue-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...reqForm, ...requestTarget }),
+      });
+      setReqDone(true);
+    } finally {
+      setReqSubmitting(false);
+    }
+  };
+
+  const handleRedeem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!redeemCode.trim()) return;
+    setRedeemStatus("loading");
+    setRedeemError("");
+    try {
+      const res = await fetch("/api/catalogue-redeem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: redeemCode.trim() }),
+      });
+      if (res.ok) {
+        const { catalogueUrl } = await res.json();
+        // Trigger download
+        const a = document.createElement("a");
+        a.href = catalogueUrl;
+        a.download = catalogueUrl.split("/").pop() || "catalogue.pdf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setRedeemCode("");
+        setRedeemStatus("idle");
+      } else {
+        const { error } = await res.json();
+        setRedeemError(error || "Invalid or already used code");
+        setRedeemStatus("error");
+      }
+    } catch {
+      setRedeemError("Network error, please try again");
+      setRedeemStatus("error");
+    }
+  };
 
   return (
     <div className="min-h-screen font-sans" style={{ backgroundColor: "#EDE0C4", color: "#1C1410" }}>
@@ -306,6 +366,39 @@ export default function Downloads() {
                   <span className="text-lg font-bold" style={{ color: "#1C1410" }}>{maglinearCount}</span>
                   <span className="text-xs" style={{ color: "#8B6830" }}>{t('downloads.maglinear')}</span>
                 </div>
+              </motion.div>
+
+              {/* Redeem Code bar */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mt-8 rounded-2xl border p-5"
+                style={{ backgroundColor: "rgba(255,245,220,0.50)", borderColor: "rgba(180,135,60,0.30)", backdropFilter: "blur(12px)" }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#A07830" }}>Redeem Download Code</p>
+                <form onSubmit={handleRedeem} className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={redeemCode}
+                    onChange={e => { setRedeemCode(e.target.value.toUpperCase()); setRedeemStatus("idle"); setRedeemError(""); }}
+                    placeholder="Enter 6-char code"
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-mono uppercase outline-none tracking-widest"
+                    style={{ backgroundColor: "rgba(255,248,230,0.7)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={redeemStatus === "loading" || redeemCode.length < 6}
+                    className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
+                    style={{ backgroundColor: "#1a2332", color: "#fff" }}
+                  >
+                    {redeemStatus === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : "Download"}
+                  </button>
+                </form>
+                {redeemStatus === "error" && (
+                  <p className="text-xs mt-2 text-red-500">{redeemError}</p>
+                )}
               </motion.div>
             </div>
 
@@ -516,10 +609,8 @@ export default function Downloads() {
                         {/* Product rows */}
                         <div>
                           {prods.map((product, idx) => (
-                            <motion.a
+                            <motion.div
                               key={product.id}
-                              href={product.catalogueUrl || "#"}
-                              download={`${product.name}-Catalogue.pdf`}
                               data-testid={`download-${product.id}`}
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
@@ -531,12 +622,6 @@ export default function Downloads() {
                                     ? "1px solid rgba(180,135,60,0.15)"
                                     : undefined,
                               }}
-                              onMouseEnter={e =>
-                                (e.currentTarget.style.backgroundColor = "rgba(200,160,75,0.15)")
-                              }
-                              onMouseLeave={e =>
-                                (e.currentTarget.style.backgroundColor = "transparent")
-                              }
                             >
                               {/* Thumbnail */}
                               <div
@@ -572,21 +657,22 @@ export default function Downloads() {
                                 </span>
                               </div>
 
-                              <div className="flex items-center gap-3 opacity-40 group-hover:opacity-100 transition-opacity">
-                                <span
-                                  className="text-[10px] uppercase tracking-wider hidden sm:block"
-                                  style={{ color: "#8B6830" }}
-                                >
-                                  PDF
-                                </span>
-                                <div
-                                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                                  style={{ backgroundColor: `${brandColor}20` }}
-                                >
-                                  <Download className="w-4 h-4" style={{ color: brandColor }} />
-                                </div>
-                              </div>
-                            </motion.a>
+                              <button
+                                onClick={() => {
+                                  setReqForm({ name: "", email: "", company: "", comment: "" });
+                                  setReqDone(false);
+                                  setRequestTarget({
+                                    catalogueUrl: product.catalogueUrl!,
+                                    catalogueName: product.name,
+                                  });
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-105"
+                                style={{ backgroundColor: `${brandColor}18`, color: brandColor, border: `1px solid ${brandColor}40` }}
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                Request
+                              </button>
+                            </motion.div>
                           ))}
                         </div>
                       </motion.div>
@@ -622,6 +708,102 @@ export default function Downloads() {
       </div>
 
       <Footer />
+
+      {/* ── Request Popup Modal ── */}
+      <AnimatePresence>
+        {requestTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ backgroundColor: "rgba(28,20,16,0.7)", backdropFilter: "blur(6px)" }}
+            onClick={() => setRequestTarget(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 16 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              className="relative w-full max-w-md rounded-2xl p-8"
+              style={{ backgroundColor: "#f9f6f0", border: "1px solid rgba(180,135,60,0.35)" }}
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setRequestTarget(null)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ backgroundColor: "rgba(180,135,60,0.15)", color: "#8B6830" }}
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {reqDone ? (
+                <div className="text-center py-4">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "rgba(0,168,232,0.12)" }}>
+                    <FileText className="w-7 h-7" style={{ color: "#00A8E8" }} />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2" style={{ color: "#1C1410" }}>Request Submitted!</h3>
+                  <p className="text-sm" style={{ color: "#8B6830" }}>We've received your request for <strong>{requestTarget.catalogueName}</strong>. You'll get a download code in your email once approved.</p>
+                  <button
+                    onClick={() => setRequestTarget(null)}
+                    className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold"
+                    style={{ backgroundColor: "#1a2332", color: "#fff" }}
+                  >Close</button>
+                </div>
+              ) : (
+                <>
+                  <h3 className="text-lg font-bold mb-1" style={{ color: "#1C1410" }}>Request Catalogue</h3>
+                  <p className="text-xs mb-6" style={{ color: "#8B6830" }}>{requestTarget.catalogueName}</p>
+                  <form onSubmit={handleRequestSubmit} className="space-y-4">
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-semibold block mb-1.5" style={{ color: "#A07830" }}>Name / Company *</label>
+                      <input
+                        required
+                        value={reqForm.name}
+                        onChange={e => setReqForm(f => ({ ...f, name: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                        style={{ backgroundColor: "rgba(255,248,230,0.8)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
+                        placeholder="Your name or company"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-semibold block mb-1.5" style={{ color: "#A07830" }}>Email *</label>
+                      <input
+                        required
+                        type="email"
+                        value={reqForm.email}
+                        onChange={e => setReqForm(f => ({ ...f, email: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                        style={{ backgroundColor: "rgba(255,248,230,0.8)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest font-semibold block mb-1.5" style={{ color: "#A07830" }}>Comment (optional)</label>
+                      <textarea
+                        rows={3}
+                        value={reqForm.comment}
+                        onChange={e => setReqForm(f => ({ ...f, comment: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl text-sm outline-none resize-none"
+                        style={{ backgroundColor: "rgba(255,248,230,0.8)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
+                        placeholder="Any specific questions..."
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={reqSubmitting}
+                      className="w-full py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-60"
+                      style={{ backgroundColor: "#1a2332", color: "#fff" }}
+                    >
+                      {reqSubmitting ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Submit Request"}
+                    </button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

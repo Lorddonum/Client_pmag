@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search, ChevronDown, Check, Copy, BarChart2, TrendingUp, Globe, Eye, Users } from "lucide-react";
+import { Plus, Trash2, LogOut, Package, ChevronRight, Upload, Settings, Edit2, X, Image as ImageIcon, FileText, Ruler, Search, ChevronDown, Check, Copy, BarChart2, TrendingUp, Globe, Eye, Users, Mail, CheckCircle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { PARALIGHT_SERIES, MAGLINEAR_SERIES, MAGLINEAR_ALL_SERIES, MAGLINEAR_ALL_SUBSERIES } from "@shared/series-config";
 
@@ -274,7 +274,33 @@ export default function Admin() {
   const [subSeriesFilter, setSubSeriesFilter] = useState("");
   const [adminBrandFilter, setAdminBrandFilter] = useState<"All" | "Paralight" | "Maglinear">("All");
   const [adminSeriesFilter, setAdminSeriesFilter] = useState("All");
-  const [activePanel, setActivePanel] = useState<'products' | 'analytics'>('products');
+  const [activePanel, setActivePanel] = useState<'products' | 'analytics' | 'catalogues'>('products');
+
+  // Catalogue requests state
+  const [catRequests, setCatRequests] = useState<any[]>([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+
+  const fetchCatRequests = async () => {
+    setCatLoading(true);
+    try {
+      const res = await fetch("/api/admin/catalogue-requests");
+      if (res.ok) setCatRequests(await res.json());
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  const handleApprove = async (id: string) => {
+    setApprovingId(id);
+    try {
+      const res = await fetch(`/api/admin/catalogue-requests/${id}/approve`, { method: "POST" });
+      if (res.ok) await fetchCatRequests();
+      else alert("Failed to approve");
+    } finally {
+      setApprovingId(null);
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -751,6 +777,12 @@ export default function Admin() {
                 >
                   Analytics <BarChart2 className="w-4 h-4" />
                 </button>
+                <button
+                  onClick={() => { setActivePanel('catalogues'); fetchCatRequests(); }}
+                  className={`w-full flex items-center justify-between p-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg ${activePanel === 'catalogues' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20' : 'bg-white border border-gray-200 text-gray-700 hover:border-purple-400 hover:text-purple-500'}`}
+                >
+                  Catalogue Requests <Mail className="w-4 h-4" />
+                </button>
                 <button className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 text-gray-700 text-[10px] font-bold uppercase tracking-widest hover:border-[#ECAA00] hover:text-[#ECAA00] transition-colors rounded-lg">
                   Product List <Package className="w-4 h-4" />
                 </button>
@@ -766,6 +798,51 @@ export default function Admin() {
             <div className="flex-1 space-y-12">
               {activePanel === 'analytics' ? (
                 <AnalyticsDashboard />
+              ) : activePanel === 'catalogues' ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">Catalogue Requests</h2>
+                      <p className="text-xs text-gray-500 mt-0.5">Approve requests to send download codes</p>
+                    </div>
+                    <button onClick={fetchCatRequests} className="text-xs text-gray-400 hover:text-[#00A8E8] transition-colors">Refresh</button>
+                  </div>
+                  {catLoading ? (
+                    <div className="flex justify-center py-16"><div className="w-8 h-8 border-2 border-[#00A8E8] border-t-transparent rounded-full animate-spin" /></div>
+                  ) : catRequests.length === 0 ? (
+                    <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+                      <Mail className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                      <p className="text-sm text-gray-400">No requests yet</p>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                      {catRequests.map((req, i) => (
+                        <div key={req.id} className={`flex flex-col sm:flex-row sm:items-center gap-4 p-5 ${i < catRequests.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-semibold text-sm text-gray-900">{req.name}</span>
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${req.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{req.status}</span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-0.5">{req.email}</p>
+                            <p className="text-xs text-[#00A8E8] mt-0.5 truncate">{req.catalogueName}</p>
+                            {req.comment && <p className="text-xs text-gray-400 mt-1 italic">"{req.comment}"</p>}
+                            <p className="text-[10px] text-gray-300 mt-1">{new Date(req.createdAt).toLocaleString()}</p>
+                          </div>
+                          {req.status === 'pending' && (
+                            <button
+                              onClick={() => handleApprove(req.id)}
+                              disabled={approvingId === req.id}
+                              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 shrink-0"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                              {approvingId === req.id ? 'Sending...' : 'Approve & Send Code'}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ) : (<>
                 <section className="bg-white border border-gray-200 rounded-xl p-8 md:p-12 relative shadow-sm">
                   <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-[#00A8E8]/20 -mt-2 -mr-2 pointer-events-none rounded-tr-xl" />

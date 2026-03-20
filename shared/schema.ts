@@ -99,3 +99,29 @@ export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Product = typeof products.$inferSelect;
 export type PageView = typeof pageViews.$inferSelect;
 export type VisitorEvent = typeof visitorEvents.$inferSelect;
+
+// ── Catalogue Request System ───────────────────────────────────────────────────
+
+export const catalogueRequests = pgTable("catalogue_requests", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  company: text("company").notNull(),
+  comment: text("comment"),
+  catalogueUrl: text("catalogue_url").notNull(),
+  catalogueName: text("catalogue_name").notNull(),
+  status: text("status").notNull().default("pending"), // pending | approved | rejected
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const downloadCodes = pgTable("download_codes", {
+  id: serial("id").primaryKey(),
+  requestId: integer("request_id").notNull(),
+  code: text("code").notNull().unique(),
+  catalogueUrl: text("catalogue_url").notNull(),
+  used: boolean("used").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type CatalogueRequest = typeof catalogueRequests.$inferSelect;
+export type DownloadCode = typeof downloadCodes.$inferSelect;
