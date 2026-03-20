@@ -342,7 +342,7 @@ export async function registerRoutes(
     if (!code) return res.status(400).json({ error: "Code required" });
     const result = redeemCode(code);
     if (!result) return res.status(404).json({ error: "Invalid or already used code" });
-    res.json({ ok: true, catalogueUrl: result.catalogueUrl });
+    res.json({ ok: true, catalogueUrl: result.catalogueUrl, universal: result.universal });
   });
 
   return httpServer;

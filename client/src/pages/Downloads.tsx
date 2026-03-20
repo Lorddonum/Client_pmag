@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { FileText, Download, Loader2, BookOpen, ArrowRight, X } from "lucide-react";
+import { FileText, Download, Loader2, BookOpen, ArrowRight, X, CheckSquare, Square } from "lucide-react";
 
 interface Catalogue {
   name: string;
@@ -201,8 +201,10 @@ export default function Downloads() {
 
   // Redeem code state
   const [redeemCode, setRedeemCode] = useState("");
-  const [redeemStatus, setRedeemStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [redeemStatus, setRedeemStatus] = useState<"idle" | "loading" | "error" | "success">("idle");
   const [redeemError, setRedeemError] = useState("");
+  const [unlocked, setUnlocked] = useState(false);
+  const [selectedCatalogues, setSelectedCatalogues] = useState<Set<string>>(new Set());
 
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -244,16 +246,24 @@ export default function Downloads() {
         body: JSON.stringify({ code: redeemCode.trim() }),
       });
       if (res.ok) {
-        const { catalogueUrl } = await res.json();
-        // Trigger download
-        const a = document.createElement("a");
-        a.href = catalogueUrl;
-        a.download = catalogueUrl.split("/").pop() || "catalogue.pdf";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setRedeemCode("");
-        setRedeemStatus("idle");
+        const { catalogueUrl, universal } = await res.json();
+        
+        if (universal) {
+          // Universal code -> unlock selection mode
+          setUnlocked(true);
+          setRedeemStatus("success");
+          setRedeemCode("");
+        } else {
+          // Single catalogue code -> direct download
+          const a = document.createElement("a");
+          a.href = catalogueUrl;
+          a.download = catalogueUrl.split("/").pop() || "catalogue.pdf";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setRedeemCode("");
+          setRedeemStatus("idle");
+        }
       } else {
         const { error } = await res.json();
         setRedeemError(error || "Invalid or already used code");
@@ -263,6 +273,28 @@ export default function Downloads() {
       setRedeemError("Network error, please try again");
       setRedeemStatus("error");
     }
+  };
+
+  const handleDownloadSelected = () => {
+    if (selectedCatalogues.size === 0) return;
+    // Download each selected sequentially
+    Array.from(selectedCatalogues).forEach((url, i) => {
+      setTimeout(() => {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = url.split("/").pop() || "catalogue.pdf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }, i * 300); // Stagger downloads slightly
+    });
+  };
+
+  const toggleSelection = (url: string) => {
+    const next = new Set(selectedCatalogues);
+    if (next.has(url)) next.delete(url);
+    else next.add(url);
+    setSelectedCatalogues(next);
   };
 
   return (
@@ -345,38 +377,78 @@ export default function Downloads() {
                 </div>
               </motion.div>
 
-              {/* Redeem Code bar */}
+              {/* Redeem Code / Action Bar */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="mt-8 rounded-2xl border p-5"
+                className="mt-8 rounded-2xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-6"
                 style={{ backgroundColor: "rgba(255,245,220,0.50)", borderColor: "rgba(180,135,60,0.30)", backdropFilter: "blur(12px)" }}
               >
-                <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#A07830" }}>Redeem Download Code</p>
-                <form onSubmit={handleRedeem} className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={redeemCode}
-                    onChange={e => { setRedeemCode(e.target.value.toUpperCase()); setRedeemStatus("idle"); setRedeemError(""); }}
-                    placeholder="Enter 6-char code"
-                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-mono uppercase outline-none tracking-widest"
-                    style={{ backgroundColor: "rgba(255,248,230,0.7)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={redeemStatus === "loading" || redeemCode.length < 6}
-                    className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
-                    style={{ backgroundColor: "#1a2332", color: "#fff" }}
-                  >
-                    {redeemStatus === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : "Download"}
-                  </button>
-                </form>
-                {redeemStatus === "error" && (
-                  <p className="text-xs mt-2 text-red-500">{redeemError}</p>
+                {!unlocked ? (
+                  <>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#A07830" }}>Redeem Download Code</p>
+                      <form onSubmit={handleRedeem} className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={redeemCode}
+                          onChange={e => { setRedeemCode(e.target.value.toUpperCase()); setRedeemStatus("idle"); setRedeemError(""); }}
+                          placeholder="Enter 6-char code"
+                          className="flex-1 px-4 py-2.5 rounded-xl text-sm font-mono uppercase outline-none tracking-widest max-w-[240px]"
+                          style={{ backgroundColor: "rgba(255,248,230,0.7)", border: "1px solid rgba(180,135,60,0.40)", color: "#1C1410" }}
+                        />
+                        <button
+                          type="submit"
+                          disabled={redeemStatus === "loading" || redeemCode.length < 6}
+                          className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
+                          style={{ backgroundColor: "#1a2332", color: "#fff" }}
+                        >
+                          {redeemStatus === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : "Download"}
+                        </button>
+                      </form>
+                      {redeemStatus === "error" && (
+                        <p className="text-xs mt-2 text-red-500">{redeemError}</p>
+                      )}
+                    </div>
+                    <div className="hidden md:block w-px h-12 bg-black/10" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#A07830" }}>Need full access?</p>
+                      <button
+                        onClick={() => {
+                          setReqForm({ name: "", email: "", company: "", comment: "" });
+                          setReqDone(false);
+                          // Universal request targets all catalogues
+                          setRequestTarget({ catalogueUrl: "*", catalogueName: "All Catalogues (Universal Access)" });
+                        }}
+                        className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:scale-105 inline-flex items-center gap-2"
+                        style={{ border: "1px solid #1a2332", color: "#1a2332" }}
+                      >
+                        <FileText className="w-4 h-4" />
+                        Request Access
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <p className="text-lg font-bold" style={{ color: "#1C1410" }}>Access Granted</p>
+                      <p className="text-sm" style={{ color: "#8B6830" }}>Select the catalogues you wish to download below.</p>
+                    </div>
+                    <button
+                      onClick={handleDownloadSelected}
+                      disabled={selectedCatalogues.size === 0}
+                      className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-102 flex items-center justify-center gap-2 disabled:opacity-50"
+                      style={{ backgroundColor: "#1a2332", color: "#fff" }}
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Selected ({selectedCatalogues.size})
+                    </button>
+                  </div>
                 )}
               </motion.div>
+
             </div>
 
             {/* ── Catalogue Grid ── */}
@@ -406,19 +478,33 @@ export default function Downloads() {
                     <p className="text-xs mt-0.5 truncate" style={{ color: "#8B6830" }}>{cat.description}</p>
                   </div>
 
-                  {/* Request button */}
-                  <button
-                    onClick={() => {
-                      setReqForm({ name: "", email: "", company: "", comment: "" });
-                      setReqDone(false);
-                      setRequestTarget({ catalogueUrl: cat.url, catalogueName: cat.name });
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-105 shrink-0"
-                    style={{ backgroundColor: "rgba(26,35,50,0.10)", color: "#1a2332", border: "1px solid rgba(26,35,50,0.25)" }}
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    Request
-                  </button>
+                  {/* Selection Checkbox OR specific request button */}
+                  {unlocked ? (
+                    <button
+                      onClick={() => toggleSelection(cat.url)}
+                      className="p-2 transition-transform hover:scale-110"
+                    >
+                      {selectedCatalogues.has(cat.url) ? (
+                        <CheckSquare className="w-6 h-6" style={{ color: "#00A8E8" }} />
+                      ) : (
+                        <Square className="w-6 h-6" style={{ color: "#A07830", opacity: 0.5 }} />
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-105 shrink-0"
+                      style={{ backgroundColor: "rgba(26,35,50,0.10)", color: "#1a2332", border: "1px solid rgba(26,35,50,0.25)" }}
+                      onClick={() => {
+                        // For backwards compatibility: if they request a specific one
+                        setReqForm({ name: "", email: "", company: "", comment: "" });
+                        setReqDone(false);
+                        setRequestTarget({ catalogueUrl: cat.url, catalogueName: cat.name });
+                      }}
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Request
+                    </button>
+                  )}
                 </motion.div>
               ))}
             </div>

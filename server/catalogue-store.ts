@@ -30,15 +30,10 @@ export interface DownloadCode {
   createdAt: string;
 }
 
-// ── Permanent seed codes (one per catalogue) ─────────────────────────────
+// ── Permanent seed codes ────────────────────────────────────────────────
 const SEED_CODES: Omit<DownloadCode, "id" | "used" | "createdAt">[] = [
-  { code: "PL2026", catalogueUrl: "/catalogues/2026 Paralight Aluminum Profile Catalog \u2014 Comprehensive.pdf", requestId: "seed", permanent: true },
-  { code: "PLCOML", catalogueUrl: "/catalogues/Commercial Lighting Catalog.pdf",              requestId: "seed", permanent: true },
-  { code: "PLCOLR", catalogueUrl: "/catalogues/Colorful Linear Series Catalog.pdf",            requestId: "seed", permanent: true },
-  { code: "ML05SR", catalogueUrl: "/catalogues/05 Series Magnetic Track Brochure.pdf",         requestId: "seed", permanent: true },
-  { code: "ML10SR", catalogueUrl: "/catalogues/10 Series Magnetic Track Brochure.pdf",         requestId: "seed", permanent: true },
-  { code: "ML20SR", catalogueUrl: "/catalogues/20 Series Magnetic Track Brochure.pdf",         requestId: "seed", permanent: true },
-  { code: "MLS06R", catalogueUrl: "/catalogues/S06 Series Magnetic Track Brochure.pdf",        requestId: "seed", permanent: true },
+  // Universal code — unlocks all catalogues
+  { code: "PLUNIV", catalogueUrl: "*", requestId: "seed", permanent: true },
 ];
 
 function ensureDataDir() {
@@ -118,7 +113,7 @@ export function approveRequest(id: string): { request: CatalogueRequest; code: s
     id: randomBytes(8).toString("hex"),
     requestId: id,
     code,
-    catalogueUrl: requests[idx].catalogueUrl,
+    catalogueUrl: "*", // universal — lets user pick any catalogue
     used: false,
     createdAt: new Date().toISOString(),
   });
@@ -127,14 +122,14 @@ export function approveRequest(id: string): { request: CatalogueRequest; code: s
   return { request: requests[idx], code };
 }
 
-export function redeemCode(code: string): { catalogueUrl: string } | null {
+export function redeemCode(code: string): { catalogueUrl: string; universal: boolean } | null {
   const codes = readCodes();
   const idx = codes.findIndex((c) => c.code === code.toUpperCase() && !c.used);
   if (idx === -1) return null;
-  // Only mark as used if it's not a permanent code
   if (!codes[idx].permanent) {
     codes[idx].used = true;
     writeCodes(codes);
   }
-  return { catalogueUrl: codes[idx].catalogueUrl };
+  const universal = codes[idx].catalogueUrl === "*";
+  return { catalogueUrl: codes[idx].catalogueUrl, universal };
 }
