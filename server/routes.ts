@@ -7,7 +7,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomUUID } from "crypto";
-import { createRequest, getRequests, approveRequest, redeemCode } from "./catalogue-store";
+import { createRequest, getRequests, approveRequest, redeemCode, seedPermanentCodes } from "./catalogue-store";
 import { sendRequestConfirmation, sendDownloadCode } from "./mailer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +19,9 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  // Seed permanent per-catalogue download codes on every startup (idempotent)
+  seedPermanentCodes();
 
   // Get all products for grid view (optimized - only essential fields)
   app.get("/api/products/grid", async (req, res) => {
