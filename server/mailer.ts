@@ -1,12 +1,14 @@
 import nodemailer from "nodemailer";
 
+const smtpPort = parseInt(process.env.SMTP_PORT || "587");
+
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.qiye.163.com",
-  port: parseInt(process.env.SMTP_PORT || "465"),
-  secure: true,
+  host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
+  port: smtpPort,
+  secure: smtpPort === 465, // true for SSL, false for STARTTLS (587)
   auth: {
-    user: process.env.SMTP_USER || "infor@paralight.cc",
-    pass: process.env.SMTP_PASS || "3ggTB753rVXtWDBR",
+    user: process.env.SMTP_USER || "",
+    pass: process.env.SMTP_PASS || "",
   },
 });
 
