@@ -2208,9 +2208,7 @@ export default function Products() {
             className="fixed bottom-6 z-40 flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-shadow"
             style={{
               right: '4.5rem',
-              background: selectedProduct.brand === 'Paralight'
-                ? 'linear-gradient(to right, #00A8E8, #0077b6)'
-                : 'linear-gradient(to right, #ECAA00, #c47d00)',
+              background: brandColor,
               color: selectedProduct.brand === 'Paralight' ? '#fff' : '#1a1a1a',
               boxShadow: `0 4px 20px ${brandColor}40`,
             }}
