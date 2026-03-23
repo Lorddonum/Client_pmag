@@ -2196,6 +2196,24 @@ export default function Products() {
       </main>
       <Footer />
 
+      {/* Floating sticky "Get a quote!" button — visible while scrolling through product detail */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.button
+            initial={{ opacity: 0, y: 16, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.9 }}
+            transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
+            onClick={() => setShowQuoteModal(true)}
+            className="fixed bottom-6 right-20 z-40 flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-cyan to-[#0077b6] shadow-lg shadow-brand-cyan/30 hover:shadow-xl hover:shadow-brand-cyan/40 transition-shadow"
+            style={{ right: '4.5rem' }}
+          >
+            <Mail className="w-4 h-4" />
+            Get a quote!
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* Get a Quote Modal */}
       <AnimatePresence>
         {showQuoteModal && (
