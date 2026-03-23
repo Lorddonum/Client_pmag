@@ -2205,8 +2205,15 @@ export default function Products() {
             exit={{ opacity: 0, y: 16, scale: 0.9 }}
             transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
             onClick={() => setShowQuoteModal(true)}
-            className="fixed bottom-6 right-20 z-40 flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-white bg-gradient-to-r from-brand-cyan to-[#0077b6] shadow-lg shadow-brand-cyan/30 hover:shadow-xl hover:shadow-brand-cyan/40 transition-shadow"
-            style={{ right: '4.5rem' }}
+            className="fixed bottom-6 z-40 flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-shadow"
+            style={{
+              right: '4.5rem',
+              background: selectedProduct.brand === 'Paralight'
+                ? 'linear-gradient(to right, #00A8E8, #0077b6)'
+                : 'linear-gradient(to right, #ECAA00, #c47d00)',
+              color: selectedProduct.brand === 'Paralight' ? '#fff' : '#1a1a1a',
+              boxShadow: `0 4px 20px ${brandColor}40`,
+            }}
           >
             <Mail className="w-4 h-4" />
             Get a quote!
