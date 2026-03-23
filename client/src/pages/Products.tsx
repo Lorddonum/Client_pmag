@@ -2253,7 +2253,7 @@ export default function Products() {
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-full aspect-square rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm p-2 bg-white">
                       <img
-                        src="/wechat-qr.webp"
+                        src="/images/wechat_qr.png"
                         alt="WeChat QR Code"
                         className="w-full h-full object-contain"
                       />
@@ -2272,7 +2272,7 @@ export default function Products() {
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-full aspect-square rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm p-2 bg-white">
                       <img
-                        src="/whatsapp-qr.jpg"
+                        src="/images/whatsapp_qr.png"
                         alt="WhatsApp QR Code"
                         className="w-full h-full object-contain"
                       />

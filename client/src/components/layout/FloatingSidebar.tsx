@@ -103,7 +103,7 @@ export default function FloatingSidebar() {
                     >
                       <div className="text-xs text-gray-500 text-center mb-2 font-medium">Scan with WeChat</div>
                       <div className="w-48 h-auto">
-                        <img src="/wechat-qr.png?v=4" alt="WeChat QR Code" className="w-full h-auto object-contain" />
+                        <img src="/images/wechat_qr.png" alt="WeChat QR Code" className="w-full h-auto object-contain" />
                       </div>
                     </motion.div>
                   )}
@@ -130,7 +130,7 @@ export default function FloatingSidebar() {
                     >
                       <div className="text-xs text-gray-500 text-center mb-2 font-medium">Scan with WhatsApp</div>
                       <div className="w-48 h-auto">
-                        <img src="/whatsapp-qr.webp" alt="WhatsApp QR Code" className="w-full h-auto object-contain" />
+                        <img src="/images/whatsapp_qr.png" alt="WhatsApp QR Code" className="w-full h-auto object-contain" />
                       </div>
                     </motion.div>
                   )}
